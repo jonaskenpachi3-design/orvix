@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Insights | Orvix</title>
+    <link rel="icon" type="image/svg+xml" href="/images/orvix-favicon.svg" />
+    <link rel="stylesheet" href="/css/orvix-design-system.css">
+
+    <link
+        rel="stylesheet"
+        href="/css/insights.css"
+    >
+    <link rel="stylesheet" href="/css/app-shell.css">
+</head>
+
+<body>
+
+    <div class="app-layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="brand">
+                <img class="brand-logo" src="/images/orvix-logo.svg" alt="Orvix" />
+                <span class="brand-wordmark">ORVIX</span>
+            </div>
+
+
+            <nav class="navigation">
+
+                <a
+                    href="/dashboard.html"
+                    class="nav-item"
+                >
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+
+                <a
+                    href="/transactions.html"
+                    class="nav-item"
+                >
+                    <span>↕</span>
+                    Transações
+                </a>
+
+
+                <a
+                    href="/goals.html"
+                    class="nav-item"
+                >
+                    <span>◎</span>
+                    Metas
+                </a>
+
+
+                <a
+                    href="/budgets.html"
+                    class="nav-item"
+                >
+                    <span>◫</span>
+                    Orçamentos
+                </a>
+
+
+                <a
+                    href="/categories.html"
+                    class="nav-item"
+                >
+                    <span>◇</span>
+                    Categorias
+                </a>
+
+
+                <a
+                    href="/reports.html"
+                    class="nav-item"
+                >
+                    <span>▤</span>
+                    Relatórios
+                </a>
+
+
+                <a
+                    href="/insights.html"
+                    class="nav-item active"
+                >
+                    <span>✦</span>
+                    Insights
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-footer">
+
+                <div class="user-card">
+                    <div id="user-avatar" class="user-avatar">U</div>
+                    <div class="user-info">
+                        <strong id="user-name">Usuário</strong>
+                        <span>Conta pessoal</span>
+                    </div>
+                </div>
+
+                <button
+                    id="logout-button"
+                    class="logout-button"
+                >
+                    <span>↪</span>
+                    Sair
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- CONTEÚDO PRINCIPAL -->
+
+        <main class="main-content">
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
+                <div class="topbar-title">
+
+                    <span class="topbar-eyebrow">
+                        FINANCIAL INTELLIGENCE PLATFORM
+                    </span>
+
+                    <h1>
+                        Insights
+                    </h1>
+
+                    <p>
+                        Transforme seus dados financeiros em decisões melhores.
+                    </p>
+
+                </div>
+
+
+                <div class="topbar-user">
+
+                    <div
+                        data-user-initial
+                        class="user-avatar"
+                    >
+                        U
+                    </div>
+
+
+                    <div class="user-info">
+
+                        <strong data-user-name>
+                            Usuário
+                        </strong>
+
+                        <span>
+                            Minha conta
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- PÁGINA -->
+
+            <section class="insights-page">
+
+                <!-- FILTRO -->
+
+                <section class="insights-filter-card">
+
+                    <div class="filter-title">
+
+                        <span class="section-eyebrow">
+                            INTELIGÊNCIA
+                        </span>
+
+                        <h2>
+                            Análise financeira
+                        </h2>
+
+                        <p>
+                            Escolha o período que deseja analisar.
+                        </p>
+
+                    </div>
+
+
+                    <div class="filter-controls">
+
+                        <div class="filter-group">
+
+                            <label for="start-date">
+                                Data inicial
+                            </label>
+
+                            <input
+                                type="date"
+                                id="start-date"
+                            >
+
+                        </div>
+
+
+                        <div class="filter-group">
+
+                            <label for="end-date">
+                                Data final
+                            </label>
+
+                            <input
+                                type="date"
+                                id="end-date"
+                            >
+
+                        </div>
+
+
+                        <button
+                            id="generate-insights-button"
+                            class="primary-button"
+                        >
+                            Analisar período
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="insights-error"
+                        class="insights-error hidden"
+                    >
+                    </div>
+
+                </section>
+
+
+                <!-- LOADING -->
+
+                <div
+                    id="insights-loading"
+                    class="insights-loading hidden"
+                >
+
+                    <div class="insights-spinner"></div>
+
+                    <p>
+                        Analisando suas finanças...
+                    </p>
+
+                </div>
+
+
+                <!-- CONTEÚDO -->
+
+                <div
+                    id="insights-content"
+                    class="hidden"
+                >
+
+                    <!-- RESUMO -->
+
+                    <section class="insights-summary">
+
+                        <div class="insight-summary-card">
+
+                            <div class="summary-card-top">
+
+                                <span>
+                                    Receitas
+                                </span>
+
+                                <span class="summary-icon income">
+                                    ↑
+                                </span>
+
+                            </div>
+
+
+                            <strong
+                                id="insight-income"
+                                class="income-value"
+                            >
+                                R$ 0,00
+                            </strong>
+
+
+                            <p>
+                                Total recebido
+                            </p>
+
+                        </div>
+
+
+                        <div class="insight-summary-card">
+
+                            <div class="summary-card-top">
+
+                                <span>
+                                    Despesas
+                                </span>
+
+                                <span class="summary-icon expense">
+                                    ↓
+                                </span>
+
+                            </div>
+
+
+                            <strong
+                                id="insight-expense"
+                                class="expense-value"
+                            >
+                                R$ 0,00
+                            </strong>
+
+
+                            <p>
+                                Total gasto
+                            </p>
+
+                        </div>
+
+
+                        <div class="insight-summary-card">
+
+                            <div class="summary-card-top">
+
+                                <span>
+                                    Saldo
+                                </span>
+
+                                <span class="summary-icon balance">
+                                    ◈
+                                </span>
+
+                            </div>
+
+
+                            <strong
+                                id="insight-balance"
+                                class="balance-value"
+                            >
+                                R$ 0,00
+                            </strong>
+
+
+                            <p>
+                                Resultado financeiro
+                            </p>
+
+                        </div>
+
+
+                        <div class="insight-summary-card">
+
+                            <div class="summary-card-top">
+
+                                <span>
+                                    Transações
+                                </span>
+
+                                <span class="summary-icon transactions">
+                                    #
+                                </span>
+
+                            </div>
+
+
+                            <strong
+                                id="insight-transactions"
+                            >
+                                0
+                            </strong>
+
+
+                            <p>
+                                Movimentações analisadas
+                            </p>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- INTELIGÊNCIA FINANCEIRA -->
+
+                    <section class="insights-section">
+
+                        <div class="section-header">
+
+                            <div>
+
+                                <span class="section-eyebrow">
+                                    ANÁLISE
+                                </span>
+
+                                <h2>
+                                    Inteligência financeira
+                                </h2>
+
+                                <p>
+                                    Recomendações geradas a partir do seu comportamento financeiro.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="insights-list"
+                            class="insights-list"
+                        >
+                        </div>
+
+                    </section>
+
+
+                    <!-- CATEGORIAS -->
+
+                    <section class="insights-section">
+
+                        <div class="section-header">
+
+                            <div>
+
+                                <span class="section-eyebrow">
+                                    DESPESAS
+                                </span>
+
+                                <h2>
+                                    Principais categorias
+                                </h2>
+
+                                <p>
+                                    Veja onde seu dinheiro está sendo concentrado.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="top-categories"
+                            class="top-categories"
+                        >
+                        </div>
+
+                    </section>
+
+
+                    <!-- PERÍODO -->
+
+                    <div class="insight-period">
+
+                        <span>
+                            Período analisado
+                        </span>
+
+                        <strong id="insight-period">
+                            -
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="/js/insights.js"></script>
+    <script src="/js/page-transitions.js"></script>
+</body>
+</html>

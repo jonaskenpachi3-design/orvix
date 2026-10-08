@@ -1,0 +1,951 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background: #0B0F14;
+    --card: #121820;
+    --card-hover: #17212C;
+    --primary: #6C63FF;
+    --primary-hover: #5B52E8;
+    --positive: #22C55E;
+    --negative: #EF4444;
+    --text: #F8FAFC;
+    --secondary: #94A3B8;
+    --muted: #64748B;
+    --border: rgba(148, 163, 184, 0.12);
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+button,
+input,
+select {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =====================================================
+   APP
+===================================================== */
+
+.app {
+    min-height: 100vh;
+    display: flex;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    min-width: 250px;
+    min-height: 100vh;
+    background: rgba(18, 24, 32, 0.96);
+    border-right: 1px solid var(--border);
+    padding: 28px 18px;
+    box-shadow: var(--shadow-sm, 0 4px 12px rgba(0, 0, 0, 0.18));
+    z-index: 10;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 10px;
+    margin-bottom: 42px;
+}
+
+.brand-logo {
+    display: block;
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 10px 20px rgba(108, 99, 255, 0.18));
+}
+
+.brand-wordmark {
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 44px;
+    padding: 12px 13px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: var(--secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nav-item span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 17px;
+    line-height: 1;
+}
+
+.nav-item:hover {
+    background: rgba(108, 99, 255, 0.08);
+    color: var(--text);
+    border-color: rgba(108, 99, 255, 0.14);
+    transform: translateX(2px);
+    box-shadow: inset 0 0 0 1px rgba(108, 99, 255, 0.06);
+}
+
+.nav-item.active {
+    background: rgba(108, 99, 255, 0.14);
+    color: var(--text);
+    border-color: rgba(108, 99, 255, 0.24);
+    box-shadow: inset 0 0 0 1px rgba(108, 99, 255, 0.18);
+}
+
+.nav-item.active span {
+    color: var(--primary);
+}
+
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(108, 99, 255, 0.16);
+    background: rgba(108, 99, 255, 0.05);
+}
+
+.user-card .user-avatar {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(108, 99, 255, 0.14);
+    border: 1px solid rgba(108, 99, 255, 0.24);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.user-card .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.user-card .user-info strong {
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.2;
+}
+
+.user-card .user-info span {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.2;
+}
+
+.logout-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 13px;
+    border: 1px solid rgba(239, 68, 68, 0.16);
+    border-radius: 10px;
+    background: rgba(15, 18, 23, 0.9);
+    color: var(--secondary);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.logout-button:hover {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.22);
+    color: var(--negative);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(239, 68, 68, 0.08);
+}
+
+.logout-button span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 17px;
+    line-height: 1;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.main-content {
+    width: calc(100% - 250px);
+
+    margin-left: 250px;
+
+    padding: 42px 48px 60px;
+
+    min-height: 100vh;
+}
+
+
+/* =====================================================
+   TOPBAR
+===================================================== */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    margin-bottom: 38px;
+}
+
+.eyebrow {
+    color: var(--primary);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+
+    margin-bottom: 8px;
+}
+
+.topbar h1 {
+    font-size: 32px;
+    line-height: 1.2;
+
+    letter-spacing: -0.8px;
+
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: var(--secondary);
+    font-size: 14px;
+}
+
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background: rgba(108, 99, 255, 0.05);
+    border: 1px solid rgba(108, 99, 255, 0.14);
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
+}
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    border-radius: 50%;
+
+    background: rgba(108, 99, 255, 0.15);
+    border: 1px solid rgba(108, 99, 255, 0.3);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--primary);
+
+    font-weight: 700;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.user-info strong {
+    font-size: 13px;
+}
+
+.user-info span {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.message {
+    padding: 13px 16px;
+
+    border-radius: 10px;
+
+    margin-bottom: 20px;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.message.success {
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.18);
+
+    color: var(--positive);
+}
+
+.message.error {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.18);
+
+    color: var(--negative);
+}
+
+
+/* =====================================================
+   CARDS
+===================================================== */
+
+.transaction-form-card,
+.transactions-card {
+    width: 100%;
+
+    background: var(--card);
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    padding: 26px;
+
+    margin-bottom: 24px;
+}
+
+.transaction-form-card > .section-heading,
+.transactions-card > .section-heading {
+    margin-bottom: 22px;
+}
+
+
+/* =====================================================
+   SECTION HEADING
+===================================================== */
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 24px;
+}
+
+.section-heading h2 {
+    font-size: 18px;
+    line-height: 1.3;
+
+    letter-spacing: -0.3px;
+}
+
+.transactions-heading {
+    margin-bottom: 18px;
+}
+
+.transaction-count {
+    color: var(--muted);
+
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 2fr)
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        minmax(0, 1.3fr)
+        minmax(0, 1.1fr);
+
+    gap: 16px;
+}
+
+.form-group {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: var(--secondary);
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    height: 45px;
+
+    padding: 0 13px;
+
+    background: #0D131A;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    color: var(--text);
+
+    outline: none;
+
+    font-size: 13px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: var(--muted);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: rgba(108, 99, 255, 0.65);
+
+    box-shadow:
+        0 0 0 3px rgba(108, 99, 255, 0.08);
+}
+
+.form-group select {
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-top: 20px;
+}
+
+.primary-button {
+    border: none;
+    border-radius: 9px;
+
+    background: var(--primary);
+    color: white;
+
+    padding: 12px 20px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+.primary-button:hover {
+    background: var(--primary-hover);
+}
+
+.primary-button:active {
+    transform: translateY(1px);
+}
+
+.primary-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loading {
+    color: var(--secondary);
+
+    text-align: center;
+
+    padding: 40px 20px;
+
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.empty-state {
+    padding: 55px 20px;
+
+    text-align: center;
+}
+
+.empty-icon {
+    width: 55px;
+    height: 55px;
+
+    margin: 0 auto 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(108, 99, 255, 0.08);
+
+    color: var(--primary);
+
+    font-size: 28px;
+}
+
+.empty-state h3 {
+    font-size: 15px;
+
+    margin-bottom: 7px;
+}
+
+.empty-state p {
+    color: var(--secondary);
+
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   TRANSACTION LIST
+===================================================== */
+
+.transactions-list {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-item {
+    display: grid;
+
+    grid-template-columns:
+        minmax(180px, 2fr)
+        minmax(100px, 1.2fr)
+        minmax(80px, 1fr)
+        minmax(90px, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 17px 5px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-main {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.transaction-icon {
+    width: 38px;
+    height: 38px;
+
+    min-width: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.transaction-icon.income {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--positive);
+}
+
+.transaction-icon.expense {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--negative);
+}
+
+.transaction-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.transaction-description {
+    font-size: 13px;
+    font-weight: 600;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.transaction-category {
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+.transaction-type {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.transaction-type.income {
+    color: var(--positive);
+}
+
+.transaction-type.expense {
+    color: var(--negative);
+}
+
+.transaction-date {
+    color: var(--secondary);
+
+    font-size: 12px;
+}
+
+.transaction-amount {
+    font-size: 13px;
+    font-weight: 700;
+
+    text-align: right;
+
+    white-space: nowrap;
+}
+
+.transaction-amount.income {
+    color: var(--positive);
+}
+
+.transaction-amount.expense {
+    color: var(--negative);
+}
+
+.transaction-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.action-button {
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+
+    border-radius: 8px;
+
+    border: 1px solid var(--border);
+
+    background: transparent;
+
+    color: var(--secondary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 14px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.action-button:hover {
+    background: rgba(108, 99, 255, 0.08);
+
+    border-color: rgba(108, 99, 255, 0.25);
+
+    color: var(--primary);
+}
+
+.action-button.delete:hover {
+    background: rgba(239, 68, 68, 0.08);
+
+    border-color: rgba(239, 68, 68, 0.25);
+
+    color: var(--negative);
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1200px) {
+
+    .main-content {
+        padding: 36px 32px 50px;
+    }
+
+    .form-grid {
+        grid-template-columns:
+            minmax(0, 1.5fr)
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+    }
+
+    .transaction-item {
+        grid-template-columns:
+            minmax(170px, 2fr)
+            minmax(100px, 1fr)
+            minmax(90px, 1fr)
+            auto;
+    }
+
+    .transaction-type {
+        display: none;
+    }
+}
+
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        width: 210px;
+        min-width: 210px;
+    }
+
+    .main-content {
+        width: calc(100% - 210px);
+        margin-left: 210px;
+    }
+
+    .form-grid {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+    }
+
+    .transaction-item {
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto
+            auto;
+    }
+
+    .transaction-category {
+        display: none;
+    }
+
+    .transaction-date {
+        display: none;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 100%;
+        min-width: 100%;
+
+        min-height: auto;
+        height: auto;
+
+        position: static;
+
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+
+        padding: 18px;
+    }
+
+    .app {
+        display: block;
+    }
+
+    .brand {
+        margin-bottom: 20px;
+    }
+
+    .navigation {
+        flex-direction: row;
+
+        overflow-x: auto;
+
+        padding-bottom: 3px;
+    }
+
+    .nav-item {
+        width: auto;
+        flex-shrink: 0;
+    }
+
+    .sidebar-bottom {
+        display: none;
+    }
+
+    .main-content {
+        width: 100%;
+        margin-left: 0;
+
+        padding: 28px 18px 40px;
+    }
+
+    .topbar {
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .user-area {
+        align-self: flex-start;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .transaction-item {
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+    }
+
+    .transaction-amount {
+        text-align: left;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .transaction-form-card,
+    .transactions-card {
+        padding: 20px;
+
+        border-radius: 13px;
+    }
+
+    .topbar h1 {
+        font-size: 27px;
+    }
+
+    .transaction-item {
+        gap: 10px;
+    }
+
+    .transaction-icon {
+        width: 34px;
+        height: 34px;
+
+        min-width: 34px;
+    }
+
+    .transaction-actions {
+        gap: 4px;
+    }
+
+    .action-button {
+        width: 31px;
+        height: 31px;
+
+        min-width: 31px;
+    }
+}

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Orvix — Transações</title>
+    <link rel="icon" type="image/svg+xml" href="/images/orvix-favicon.svg" />
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+        crossorigin
+    >
+    <link rel="stylesheet" href="/css/orvix-design-system.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/transactions.css"
+    >
+    <link rel="stylesheet" href="/css/app-shell.css">
+
+</head>
+
+
+<body>
+
+    <div class="app">
+
+
+        <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
+
+        <aside class="sidebar">
+
+            <div class="brand">
+                <img class="brand-logo" src="/images/orvix-logo.svg" alt="Orvix" />
+                <span class="brand-wordmark">ORVIX</span>
+            </div>
+
+
+            <nav class="navigation">
+
+                <a href="/dashboard.html" class="nav-item">
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+                <a href="/transactions.html" class="nav-item active">
+                    <span>↕</span>
+                    Transações
+                </a>
+
+                <a href="/goals.html" class="nav-item">
+                    <span>◎</span>
+                    Metas
+                </a>
+
+                <a href="/budgets.html" class="nav-item">
+                    <span>◫</span>
+                    Orçamentos
+                </a>
+
+                <a href="/categories.html" class="nav-item">
+                    <span>◇</span>
+                    Categorias
+                </a>
+
+                <a href="/reports.html" class="nav-item">
+                    <span>▤</span>
+                    Relatórios
+                </a>
+
+                <a href="/insights.html" class="nav-item">
+                    <span>✦</span>
+                    Insights
+                </a>
+            </nav>
+
+
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar" data-user-initial>U</div>
+                    <div class="user-info">
+                        <strong data-user-name>Usuário</strong>
+                        <span>Conta pessoal</span>
+                    </div>
+                </div>
+
+                <button id="logout-button" class="logout-button">
+                    <span>↪</span>
+                    Sair
+                </button>
+            </div>
+
+        </aside>
+
+
+
+        <!-- =====================================================
+             CONTEÚDO PRINCIPAL
+        ====================================================== -->
+
+        <main class="main-content">
+
+
+            <!-- =================================================
+                 TOPBAR
+            ================================================== -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <p class="eyebrow">
+                        FINANCIAL INTELLIGENCE PLATFORM
+                    </p>
+
+                    <h1>
+                        Transações
+                    </h1>
+
+                    <p class="subtitle">
+                        Gerencie suas entradas e despesas.
+                    </p>
+
+                </div>
+
+
+                <div class="user-area">
+
+                    <div
+                        class="user-avatar"
+                        data-user-initial
+                    >
+                        O
+                    </div>
+
+
+                    <div class="user-info">
+
+                        <strong data-user-name>
+                            Usuário
+                        </strong>
+
+                        <span>
+                            Minha conta
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- =================================================
+                 MENSAGEM
+            ================================================== -->
+
+            <div
+                id="message"
+                class="message hidden"
+            >
+            </div>
+
+
+
+            <!-- =================================================
+                 FORMULÁRIO
+            ================================================== -->
+
+            <section class="transaction-form-card">
+
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            Controle
+                        </p>
+
+                        <h2>
+                            Nova transação
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <form id="transaction-form">
+
+
+                    <div class="form-grid">
+
+
+                        <!-- DESCRIÇÃO -->
+
+                        <div class="form-group">
+
+                            <label for="description">
+                                Descrição
+                            </label>
+
+                            <input
+                                type="text"
+                                id="description"
+                                name="description"
+                                placeholder="Ex: Salário, Aluguel..."
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- VALOR -->
+
+                        <div class="form-group">
+
+                            <label for="amount">
+                                Valor
+                            </label>
+
+                            <input
+                                type="number"
+                                id="amount"
+                                name="amount"
+                                placeholder="0,00"
+                                min="0.01"
+                                step="0.01"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- TIPO -->
+
+                        <div class="form-group">
+
+                            <label for="type">
+                                Tipo
+                            </label>
+
+                            <select
+                                id="type"
+                                name="type"
+                                required
+                            >
+
+                                <option value="expense">
+                                    Despesa
+                                </option>
+
+                                <option value="income">
+                                    Receita
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- CATEGORIA -->
+
+                        <div class="form-group">
+
+                            <label for="category">
+                                Categoria
+                            </label>
+
+                            <select
+                                id="category"
+                                name="category"
+                            >
+
+                                <option value="">
+                                    Sem categoria
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- DATA -->
+
+                        <div class="form-group">
+
+                            <label for="transaction-date">
+                                Data
+                            </label>
+
+                            <input
+                                type="date"
+                                id="transaction-date"
+                                name="transactionDate"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            id="submit-button"
+                            class="primary-button"
+                        >
+                            Adicionar transação
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 LISTA DE TRANSAÇÕES
+            ================================================== -->
+
+            <section class="transactions-card">
+
+
+                <div class="section-heading transactions-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            Histórico
+                        </p>
+
+                        <h2>
+                            Suas transações
+                        </h2>
+
+                    </div>
+
+
+                    <span
+                        id="transaction-count"
+                        class="transaction-count"
+                    >
+                        0 transações
+                    </span>
+
+                </div>
+
+
+
+                <!-- LOADING -->
+
+                <div
+                    id="transactions-loading"
+                    class="loading"
+                >
+                    Carregando transações...
+                </div>
+
+
+
+                <!-- VAZIO -->
+
+                <div
+                    id="transactions-empty"
+                    class="empty-state hidden"
+                >
+
+                    <div class="empty-icon">
+                        ◌
+                    </div>
+
+                    <h3>
+                        Nenhuma transação encontrada
+                    </h3>
+
+                    <p>
+                        Adicione sua primeira transação para começar.
+                    </p>
+
+                </div>
+
+
+
+                <!-- LISTA -->
+
+                <div
+                    id="transactions-list"
+                    class="transactions-list"
+                >
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+
+    <script src="/js/transactions.js"></script>
+    <script src="/js/page-transitions.js"></script>
+</body>
+</html>

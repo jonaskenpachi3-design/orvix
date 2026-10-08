@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Orçamentos | Orvix</title>
+    <link rel="icon" type="image/svg+xml" href="/images/orvix-favicon.svg" />
+    <link rel="stylesheet" href="/css/orvix-design-system.css">
+
+    <link
+        rel="stylesheet"
+        href="/css/budgets.css"
+    >
+    <link rel="stylesheet" href="/css/app-shell.css">
+</head>
+
+<body>
+
+    <div class="app-layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="brand">
+                <img class="brand-logo" src="/images/orvix-logo.svg" alt="Orvix" />
+                <span class="brand-wordmark">ORVIX</span>
+            </div>
+
+
+            <nav class="navigation">
+
+                <a
+                    href="/dashboard.html"
+                    class="nav-item"
+                >
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+
+                <a
+                    href="/transactions.html"
+                    class="nav-item"
+                >
+                    <span>↕</span>
+                    Transações
+                </a>
+
+
+                <a
+                    href="/goals.html"
+                    class="nav-item"
+                >
+                    <span>◎</span>
+                    Metas
+                </a>
+
+
+                <a
+                    href="/budgets.html"
+                    class="nav-item active"
+                >
+                    <span>◫</span>
+                    Orçamentos
+                </a>
+
+                <a
+                    href="/categories.html"
+                    class="nav-item"
+                >
+                    <span>◇</span>
+                    Categorias
+                </a>
+
+                <a
+                    href="/reports.html"
+                    class="nav-item"
+                >
+                    <span>▤</span>
+                    Relatórios
+                </a>
+
+                <a
+                    href="/insights.html"
+                    class="nav-item"
+                >
+                    <span>✦</span>
+                    Insights
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-footer">
+
+                <div class="user-card">
+                    <div id="user-avatar" class="user-avatar">U</div>
+                    <div class="user-info">
+                        <strong id="user-name">Usuário</strong>
+                        <span>Conta pessoal</span>
+                    </div>
+                </div>
+
+                <button
+                    id="logout-button"
+                    class="logout-button"
+                >
+                    <span>↪</span>
+                    Sair
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- CONTEÚDO PRINCIPAL -->
+
+        <main class="main-content">
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
+                <div class="topbar-title">
+
+                    <span class="topbar-eyebrow">
+                        FINANCIAL INTELLIGENCE PLATFORM
+                    </span>
+
+                    <h1>Orçamentos</h1>
+
+                    <p>
+                        Controle seus limites de gastos por categoria.
+                    </p>
+
+                </div>
+
+
+                <div class="topbar-user">
+
+                    <div
+                        data-user-initial
+                        class="user-avatar"
+                    >
+                        U
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong data-user-name>
+                            Usuário
+                        </strong>
+
+                        <span>
+                            Minha conta
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- CONTEÚDO -->
+
+            <section class="budgets-page">
+
+                <div class="budgets-header">
+
+                    <div>
+
+                        <h2>
+                            Orçamentos mensais
+                        </h2>
+
+                        <p>
+                            Defina quanto pretende gastar em cada categoria.
+                        </p>
+
+                    </div>
+
+
+                    <div class="budget-month">
+
+                        <label for="budget-month">
+                            Mês
+                        </label>
+
+                        <input
+                            type="month"
+                            id="budget-month"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- RESUMO -->
+
+                <section class="budget-summary">
+
+                    <div class="budget-summary-card">
+
+                        <span class="summary-label">
+                            Orçamento total
+                        </span>
+
+                        <strong id="total-budget">
+                            R$ 0,00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="budget-summary-card">
+
+                        <span class="summary-label">
+                            Total gasto
+                        </span>
+
+                        <strong id="total-spent">
+                            R$ 0,00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="budget-summary-card">
+
+                        <span class="summary-label">
+                            Disponível
+                        </span>
+
+                        <strong id="total-remaining">
+                            R$ 0,00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="budget-summary-card">
+
+                        <span class="summary-label">
+                            Utilização
+                        </span>
+
+                        <strong id="total-percentage">
+                            0%
+                        </strong>
+
+                    </div>
+
+                </section>
+
+
+                <!-- AÇÕES -->
+
+                <div class="budgets-actions">
+
+                    <button
+                        id="add-budget-button"
+                        class="primary-button"
+                    >
+                        + Novo orçamento
+                    </button>
+
+                </div>
+
+
+                <!-- LISTA -->
+
+                <section class="budgets-list-section">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <h2>
+                                Seus orçamentos
+                            </h2>
+
+                            <p>
+                                Acompanhe seus gastos em relação aos limites definidos.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="budgets-list"
+                        class="budgets-list"
+                    >
+
+                        <div class="budgets-loading">
+                            Carregando orçamentos...
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- MODAL -->
+
+    <div
+        id="budget-modal"
+        class="modal hidden"
+    >
+
+        <div class="modal-overlay"></div>
+
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        ORÇAMENTO
+                    </span>
+
+                    <h2 id="modal-title">
+                        Novo orçamento
+                    </h2>
+
+                </div>
+
+
+                <button
+                    id="close-modal-button"
+                    class="modal-close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="budget-form">
+
+                <input
+                    type="hidden"
+                    id="budget-id"
+                >
+
+
+                <div class="form-group">
+
+                    <label for="category">
+                        Categoria
+                    </label>
+
+                    <select
+                        id="category"
+                        required
+                    >
+
+                        <option value="">
+                            Selecione uma categoria
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="amount">
+                        Valor do orçamento
+                    </label>
+
+                    <input
+                        type="number"
+                        id="amount"
+                        min="0.01"
+                        step="0.01"
+                        placeholder="Ex.: 800"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="month">
+                        Mês
+                    </label>
+
+                    <input
+                        type="month"
+                        id="month"
+                        required
+                    >
+
+                </div>
+
+
+                <div
+                    id="form-error"
+                    class="form-error hidden"
+                >
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancel-button"
+                        class="secondary-button"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                    >
+                        Salvar orçamento
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="/js/budgets.js"></script>
+    <script src="/js/page-transitions.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar | Orvix</title>
+    <link rel="icon" type="image/svg+xml" href="/images/orvix-favicon.svg" />
+    <link rel="stylesheet" href="/css/orvix-design-system.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <main class="auth-shell">
+        <section class="auth-visual">
+            <div class="auth-visual-inner">
+                <span class="auth-badge">FINANCIAL INTELLIGENCE PLATFORM</span>
+                <h2>Organize sua vida financeira com clareza.</h2>
+                <p>Monitore receitas, despesas, metas e orçamento em um só lugar.</p>
+                <div class="auth-highlight-list">
+                    <span>• Controle de gastos</span>
+                    <span>• Metas financeiras</span>
+                    <span>• Relatórios em tempo real</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="auth-card">
+            <div class="brand">
+                <img class="brand-logo" src="/images/orvix-logo.svg" alt="Orvix" />
+                <span class="brand-wordmark">ORVIX</span>
+            </div>
+
+            <div class="auth-header">
+                <h1 class="auth-title">Entrar na sua conta</h1>
+                <p class="auth-description">Acesse seu painel financeiro e acompanhe sua evolução.</p>
+            </div>
+
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="Sua senha" autocomplete="current-password" required>
+                </div>
+
+                <button type="submit" id="login-button" class="auth-button">Entrar</button>
+            </form>
+
+            <div id="message" class="message"></div>
+
+            <p class="auth-footer">
+                Ainda não possui uma conta?
+                <a href="/register.html">Criar cadastro</a>
+            </p>
+        </section>
+    </main>
+
+    <script src="/js/auth.js"></script>
+</body>
+</html>

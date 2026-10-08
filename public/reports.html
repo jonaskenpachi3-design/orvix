@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Relatórios | Orvix</title>
+    <link rel="icon" type="image/svg+xml" href="/images/orvix-favicon.svg" />
+    <link rel="stylesheet" href="/css/orvix-design-system.css">
+
+    <link
+        rel="stylesheet"
+        href="/css/dashboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/reports.css"
+    >
+    <link rel="stylesheet" href="/css/app-shell.css">
+</head>
+
+<body>
+
+    <div class="app-layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="brand">
+                <img class="brand-logo" src="/images/orvix-logo.svg" alt="Orvix" />
+                <span class="brand-wordmark">ORVIX</span>
+            </div>
+
+
+            <nav class="navigation">
+
+                <a
+                    href="/dashboard.html"
+                    class="nav-item"
+                >
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+
+                <a
+                    href="/transactions.html"
+                    class="nav-item"
+                >
+                    <span>↕</span>
+                    Transações
+                </a>
+
+
+                <a
+                    href="/goals.html"
+                    class="nav-item"
+                >
+                    <span>◎</span>
+                    Metas
+                </a>
+
+
+                <a
+                    href="/budgets.html"
+                    class="nav-item"
+                >
+                    <span>◫</span>
+                    Orçamentos
+                </a>
+
+
+                <a
+                    href="/categories.html"
+                    class="nav-item"
+                >
+                    <span>◇</span>
+                    Categorias
+                </a>
+
+
+                <a
+                    href="/reports.html"
+                    class="nav-item active"
+                >
+                    <span>▤</span>
+                    Relatórios
+                </a>
+
+                <a
+                    href="/insights.html"
+                    class="nav-item"
+                >
+                    <span>✦</span>
+                    Insights
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-footer">
+
+                <div class="user-card">
+                    <div id="user-avatar" class="user-avatar">U</div>
+                    <div class="user-info">
+                        <strong id="user-name">Usuário</strong>
+                        <span>Conta pessoal</span>
+                    </div>
+                </div>
+
+                <button
+                    id="logout-button"
+                    class="logout-button"
+                >
+                    <span>↪</span>
+                    Sair
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- CONTEÚDO PRINCIPAL -->
+
+        <main class="main-content">
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
+                <div class="topbar-title">
+
+                    <span class="topbar-eyebrow">
+                        FINANCIAL INTELLIGENCE PLATFORM
+                    </span>
+
+                    <h1>
+                        Relatórios
+                    </h1>
+
+                    <p>
+                        Analise sua evolução financeira por período.
+                    </p>
+
+                </div>
+
+
+                <div class="topbar-user">
+
+                    <div
+                        data-user-initial
+                        class="user-avatar"
+                    >
+                        U
+                    </div>
+
+
+                    <div class="user-info">
+
+                        <strong data-user-name>
+                            Usuário
+                        </strong>
+
+                        <span>
+                            Minha conta
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- PÁGINA -->
+
+            <section class="reports-page">
+
+                <!-- FILTRO -->
+
+                <section class="report-filter-card">
+
+                    <div class="filter-title">
+
+                        <span class="section-eyebrow">
+                            PERÍODO
+                        </span>
+
+                        <h2>
+                            Análise financeira
+                        </h2>
+
+                        <p>
+                            Escolha o período que deseja analisar.
+                        </p>
+
+                    </div>
+
+
+                    <div class="filter-controls">
+
+                        <div class="filter-group">
+
+                            <label for="start-date">
+                                Data inicial
+                            </label>
+
+                            <input
+                                type="date"
+                                id="start-date"
+                            >
+
+                        </div>
+
+
+                        <div class="filter-group">
+
+                            <label for="end-date">
+                                Data final
+                            </label>
+
+                            <input
+                                type="date"
+                                id="end-date"
+                            >
+
+                        </div>
+
+
+                        <button
+                            id="generate-report-button"
+                            class="primary-button"
+                        >
+                            Gerar relatório
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="report-error"
+                        class="report-error hidden"
+                    >
+                    </div>
+
+                </section>
+
+
+                <!-- LOADING -->
+
+                <div
+                    id="report-loading"
+                    class="report-loading hidden"
+                >
+
+                    <div class="report-spinner"></div>
+
+                    <p>
+                        Gerando relatório...
+                    </p>
+
+                </div>
+
+
+                <!-- CONTEÚDO -->
+
+                <div
+                    id="report-content"
+                    class="hidden"
+                >
+
+                    <!-- RESUMO -->
+
+                    <section class="report-summary">
+
+                        <div class="report-summary-card">
+
+                            <div class="summary-card-top">
+
+                                <span>
+                                    Receitas
+                                </span>
+
+                                <span class="summary-icon income">
+                                    ↑
+                                </span>
+
+                            </div>
+
+                            <strong
+                                id="report-income"
+                                class="income-value"
+                            >
+                                R$ 0,00
+                            </strong>
+
+                            <p>
+                                Total recebido no período
+                            </p>
+
+                        </div>
+
+
+                        <div class="report-summary-card">
+
+                            <div class="summary-card-top">
+
+                                <span>
+                                    Despesas
+                                </span>
+
+                                <span class="summary-icon expense">
+                                    ↓
+                                </span>
+
+                            </div>
+
+                            <strong
+                                id="report-expense"
+                                class="expense-value"
+                            >
+                                R$ 0,00
+                            </strong>
+
+                            <p>
+                                Total gasto no período
+                            </p>
+
+                        </div>
+
+
+                        <div class="report-summary-card">
+
+                            <div class="summary-card-top">
+
+                                <span>
+                                    Saldo
+                                </span>
+
+                                <span class="summary-icon balance">
+                                    ◈
+                                </span>
+
+                            </div>
+
+                            <strong
+                                id="report-balance"
+                                class="balance-value"
+                            >
+                                R$ 0,00
+                            </strong>
+
+                            <p>
+                                Resultado financeiro
+                            </p>
+
+                        </div>
+
+
+                        <div class="report-summary-card">
+
+                            <div class="summary-card-top">
+
+                                <span>
+                                    Transações
+                                </span>
+
+                                <span class="summary-icon transactions">
+                                    #
+                                </span>
+
+                            </div>
+
+                            <strong
+                                id="report-transactions"
+                            >
+                                0
+                            </strong>
+
+                            <p>
+                                Movimentações no período
+                            </p>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- GRÁFICOS -->
+
+                    <section class="reports-grid">
+
+                        <!-- EVOLUÇÃO -->
+
+                        <div class="report-card evolution-card">
+
+                            <div class="report-card-header">
+
+                                <div>
+
+                                    <span class="section-eyebrow">
+                                        EVOLUÇÃO
+                                    </span>
+
+                                    <h2>
+                                        Receitas x despesas
+                                    </h2>
+
+                                    <p>
+                                        Comparação mensal durante o período selecionado.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="chart-container">
+
+                                <canvas
+                                    id="evolution-chart"
+                                ></canvas>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CATEGORIAS -->
+
+                        <div class="report-card category-chart-card">
+
+                            <div class="report-card-header">
+
+                                <div>
+
+                                    <span class="section-eyebrow">
+                                        DESPESAS
+                                    </span>
+
+                                    <h2>
+                                        Gastos por categoria
+                                    </h2>
+
+                                    <p>
+                                        Distribuição das despesas no período.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="chart-container category-chart">
+
+                                <canvas
+                                    id="category-chart"
+                                ></canvas>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- DETALHAMENTO -->
+
+                    <section class="report-card">
+
+                        <div class="report-card-header">
+
+                            <div>
+
+                                <span class="section-eyebrow">
+                                    DETALHAMENTO
+                                </span>
+
+                                <h2>
+                                    Despesas por categoria
+                                </h2>
+
+                                <p>
+                                    Veja quanto cada categoria representou no período.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="category-breakdown"
+                            class="category-breakdown"
+                        >
+                        </div>
+
+                    </section>
+
+
+                    <!-- PERÍODO -->
+
+                    <div class="report-period">
+
+                        <span>
+                            Período analisado
+                        </span>
+
+                        <strong id="report-period">
+                            -
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js"
+    ></script>
+
+    <script src="/js/reports.js"></script>
+    <script src="/js/page-transitions.js"></script>
+</body>
+</html>

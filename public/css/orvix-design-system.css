@@ -1,0 +1,698 @@
+/* =========================================================
+   ORVIX — DESIGN SYSTEM
+   Base visual compartilhada por todas as páginas.
+========================================================= */
+
+:root {
+    /* Cores principais */
+    --orvix-bg: #0B0F14;
+    --orvix-surface: #121820;
+    --orvix-surface-hover: #17212C;
+    --orvix-surface-elevated: #151D27;
+
+    --orvix-border: #1E293B;
+    --orvix-border-light: #263244;
+
+    --orvix-primary: #6C63FF;
+    --orvix-primary-hover: #5B54E8;
+    --orvix-primary-light: #A5A1FF;
+
+    --orvix-positive: #22C55E;
+    --orvix-negative: #EF4444;
+    --orvix-warning: #F59E0B;
+
+    --orvix-text: #F8FAFC;
+    --orvix-text-secondary: #94A3B8;
+    --orvix-text-muted: #64748B;
+
+    /* Compatibilidade com os CSS existentes */
+    --bg-primary: var(--orvix-bg);
+    --bg-secondary: var(--orvix-surface);
+    --bg-tertiary: var(--orvix-surface-elevated);
+
+    --background: var(--orvix-bg);
+    --card: var(--orvix-surface);
+    --card-hover: var(--orvix-surface-hover);
+
+    --border: var(--orvix-border);
+    --border-light: var(--orvix-border-light);
+
+    --primary: var(--orvix-primary);
+    --primary-hover: var(--orvix-primary-hover);
+    --primary-light: var(--orvix-primary-light);
+
+    --positive: var(--orvix-positive);
+    --negative: var(--orvix-negative);
+    --warning: var(--orvix-warning);
+
+    --text: var(--orvix-text);
+    --text-primary: var(--orvix-text);
+    --text-secondary: var(--orvix-text-secondary);
+    --secondary: var(--orvix-text-secondary);
+    --text-muted: var(--orvix-text-muted);
+    --muted: var(--orvix-text-muted);
+
+    /* Espaçamento */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+
+    /* Raios */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+
+    /* Sombras */
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.18);
+    --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.24);
+
+    /* Tipografia */
+    --font-sans:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+html {
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--orvix-bg);
+    color: var(--orvix-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+}
+
+input,
+select,
+textarea {
+    color: var(--orvix-text);
+}
+
+::selection {
+    background: rgba(108, 99, 255, 0.35);
+    color: var(--orvix-text);
+}
+
+:focus-visible {
+    outline: 2px solid var(--orvix-primary);
+    outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--orvix-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--orvix-border-light);
+    border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--orvix-text-muted);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================================
+   ORVIX — LAYOUT E NAVEGAÇÃO PADRONIZADA
+========================================================= */
+
+.app,
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    min-width: 250px;
+    height: 100vh;
+    padding: 28px 18px;
+    background: rgba(18, 24, 32, 0.96);
+    border-right: 1px solid var(--orvix-border);
+    box-shadow: var(--shadow-sm);
+    z-index: 10;
+}
+
+.brand,
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 42px;
+    padding: 0 10px;
+}
+
+.brand-symbol,
+.logo-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    background: rgba(108, 99, 255, 0.12);
+    color: var(--orvix-primary);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.brand-name,
+.sidebar-logo span:last-child,
+.brand strong,
+.brand-name strong {
+    color: var(--orvix-text);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+}
+
+.navigation,
+.sidebar-nav,
+.sidebar-nav.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nav-item,
+.sidebar .nav-item,
+.sidebar-nav .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 12px 13px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    color: var(--orvix-text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition:
+        background .18s ease,
+        color .18s ease,
+        border-color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease;
+}
+
+.nav-item span:first-child,
+.sidebar-nav .nav-item span:first-child,
+.sidebar .nav-item span:first-child,
+.nav-item .nav-icon,
+.sidebar-nav .nav-item .nav-icon,
+.sidebar .nav-item .nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 17px;
+    line-height: 1;
+    color: currentColor;
+}
+
+.nav-icon {
+    flex-shrink: 0;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.nav-item:hover,
+.sidebar .nav-item:hover,
+.sidebar-nav .nav-item:hover {
+    color: var(--orvix-text);
+    background: rgba(108, 99, 255, 0.08);
+    border-color: rgba(108, 99, 255, 0.14);
+    transform: translateX(2px);
+    box-shadow: inset 0 0 0 1px rgba(108, 99, 255, 0.06);
+}
+
+.nav-item.active,
+.sidebar .nav-item.active,
+.sidebar-nav .nav-item.active {
+    color: var(--orvix-text);
+    background: rgba(108, 99, 255, 0.14);
+    border-color: rgba(108, 99, 255, 0.24);
+    box-shadow: inset 0 0 0 1px rgba(108, 99, 255, 0.18);
+}
+
+.sidebar-bottom,
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.user-card,
+.user-area,
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background: rgba(108, 99, 255, 0.05);
+    border: 1px solid rgba(108, 99, 255, 0.14);
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
+}
+
+.user-card:hover,
+.user-area:hover,
+.topbar-user:hover {
+    border-color: rgba(108, 99, 255, 0.2);
+    background: rgba(108, 99, 255, 0.07);
+}
+
+.logout-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 13px;
+    background: rgba(15, 18, 23, 0.9);
+    border: 1px solid rgba(239, 68, 68, 0.16);
+    border-radius: var(--radius-md);
+    color: var(--orvix-text-muted);
+    font-size: 14px;
+    font-weight: 600;
+    transition:
+        background .18s ease,
+        color .18s ease,
+        border-color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease;
+}
+
+.logout-button:hover {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.22);
+    color: #F87171;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(239, 68, 68, 0.08);
+}
+
+.logout-button span:first-child,
+.logout-button .logout-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    min-width: 20px;
+    font-size: 17px;
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+    padding: 38px 42px 50px;
+}
+
+.topbar,
+.page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 34px;
+}
+
+.topbar-title,
+.page-header > div:first-child {
+    min-width: 0;
+}
+
+.eyebrow,
+.topbar-eyebrow,
+.section-eyebrow {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--orvix-primary-light);
+    letter-spacing: .14em;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.topbar h1,
+.page-header h1 {
+    margin: 0;
+    color: var(--orvix-text);
+    font-size: clamp(28px, 3vw, 36px);
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+}
+
+.subtitle,
+.topbar-title p,
+.page-header p {
+    margin-top: 8px;
+    color: var(--orvix-text-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.topbar-user,
+.user-area,
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(108, 99, 255, 0.25);
+    border-radius: 50%;
+    background: rgba(108, 99, 255, 0.12);
+    color: var(--orvix-primary-light);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.user-info strong,
+.user-info > strong {
+    color: var(--orvix-text);
+    font-size: 13px;
+}
+
+.user-info span,
+.user-info > span {
+    color: var(--orvix-text-muted);
+    font-size: 11px;
+}
+
+#page-transition-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(11, 15, 20, 0.7), rgba(108, 99, 255, 0.28));
+    opacity: 0;
+    transition: opacity .22s ease;
+}
+
+#page-transition-overlay.visible {
+    opacity: 1;
+}
+
+body.transitioning {
+    overflow: hidden;
+}
+
+/* =========================================================
+   ORVIX — COMPONENTES COMPARTILHADOS V1
+========================================================= */
+
+body {
+    background:
+        radial-gradient(circle at top right, rgba(108, 99, 255, 0.06), transparent 28%),
+        var(--orvix-bg);
+}
+
+.app {
+    min-height: 100vh;
+}
+
+.sidebar {
+    background: rgba(18, 24, 32, 0.96);
+    border-right: 1px solid var(--orvix-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.brand,
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--orvix-text);
+}
+
+.brand-logo {
+    display: block;
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 10px 20px rgba(108, 99, 255, 0.18));
+}
+
+.brand-wordmark,
+.sidebar-logo span:last-child {
+    color: var(--orvix-text);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.brand-symbol {
+    color: var(--orvix-primary);
+}
+
+.navigation,
+.sidebar-nav {
+    gap: 6px;
+}
+
+.nav-item {
+    color: var(--orvix-text-secondary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    transition:
+        background .18s ease,
+        color .18s ease,
+        border-color .18s ease,
+        transform .18s ease;
+}
+
+.nav-item:hover {
+    color: var(--orvix-text);
+    background: rgba(108, 99, 255, 0.08);
+    border-color: rgba(108, 99, 255, 0.14);
+}
+
+.nav-item.active {
+    color: var(--orvix-text);
+    background: rgba(108, 99, 255, 0.14);
+    border-color: rgba(108, 99, 255, 0.24);
+}
+
+.main-content {
+    color: var(--orvix-text);
+}
+
+.topbar {
+    border-bottom-color: var(--orvix-border);
+}
+
+.eyebrow {
+    color: var(--orvix-primary-light);
+    letter-spacing: .12em;
+}
+
+.subtitle,
+.card-description,
+.section-heading p,
+.chart-header p {
+    color: var(--orvix-text-secondary);
+}
+
+.summary-card,
+.chart-card,
+.insight-card,
+.main-insight-card,
+.goal-card,
+.table-card,
+.form-card,
+.modal-content,
+.panel,
+.stat-card {
+    background: var(--orvix-surface);
+    border: 1px solid var(--orvix-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.summary-card:hover,
+.chart-card:hover,
+.insight-card:hover,
+.goal-card:hover,
+.stat-card:hover {
+    border-color: var(--orvix-border-light);
+}
+
+button,
+.button,
+.btn {
+    border-radius: var(--radius-md);
+    transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease;
+}
+
+button:hover,
+.button:hover,
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+input,
+select,
+textarea {
+    background: var(--orvix-surface);
+    border: 1px solid var(--orvix-border);
+    border-radius: var(--radius-md);
+    color: var(--orvix-text);
+    transition:
+        border-color .18s ease,
+        box-shadow .18s ease,
+        background .18s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--orvix-primary);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.12);
+    outline: none;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+th {
+    color: var(--orvix-text-secondary);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+td,
+th {
+    border-color: var(--orvix-border);
+}
+
+tr:hover td {
+    background: rgba(108, 99, 255, 0.035);
+}
+
+a {
+    transition: color .18s ease;
+}
+
+a:hover {
+    color: var(--orvix-primary-light);
+}
+
+.error-message,
+.alert-error {
+    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.08);
+}
+
+.success-message,
+.alert-success {
+    border-color: rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.08);
+}
+
+.loading,
+.empty-state {
+    color: var(--orvix-text-secondary);
+}
+
+/* Navegação completa em todas as telas */
+.sidebar .navigation .nav-item,
+.sidebar .sidebar-nav .nav-item {
+    min-height: 44px;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+    .sidebar {
+        box-shadow: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .main-content {
+        padding-left: var(--space-4);
+        padding-right: var(--space-4);
+    }
+
+    .summary-grid,
+    .charts-grid,
+    .insight-grid {
+        gap: var(--space-4);
+    }
+}

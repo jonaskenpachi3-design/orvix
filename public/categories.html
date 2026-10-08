@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Categorias | Orvix</title>
+    <link rel="icon" type="image/svg+xml" href="/images/orvix-favicon.svg" />
+    <link rel="stylesheet" href="/css/orvix-design-system.css">
+
+    <link
+        rel="stylesheet"
+        href="/css/dashboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/categories.css"
+    >
+    <link rel="stylesheet" href="/css/app-shell.css">
+</head>
+
+<body>
+
+    <div class="app-layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="brand">
+                <img class="brand-logo" src="/images/orvix-logo.svg" alt="Orvix" />
+                <span class="brand-wordmark">ORVIX</span>
+            </div>
+
+
+            <nav class="navigation">
+
+                <a
+                    href="/dashboard.html"
+                    class="nav-item"
+                >
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+
+                <a
+                    href="/transactions.html"
+                    class="nav-item"
+                >
+                    <span>↕</span>
+                    Transações
+                </a>
+
+
+                <a
+                    href="/goals.html"
+                    class="nav-item"
+                >
+                    <span>◎</span>
+                    Metas
+                </a>
+
+
+                <a
+                    href="/budgets.html"
+                    class="nav-item"
+                >
+                    <span>◫</span>
+                    Orçamentos
+                </a>
+
+
+                <a
+                    href="/categories.html"
+                    class="nav-item active"
+                >
+                    <span>◇</span>
+                    Categorias
+                </a>
+
+                <a
+                    href="/reports.html"
+                    class="nav-item"
+                >
+                    <span>▤</span>
+                    Relatórios
+                </a>
+
+                <a
+                    href="/insights.html"
+                    class="nav-item"
+                >
+                    <span>✦</span>
+                    Insights
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-footer">
+
+                <div class="user-card">
+                    <div id="user-avatar" class="user-avatar">U</div>
+                    <div class="user-info">
+                        <strong id="user-name">Usuário</strong>
+                        <span>Conta pessoal</span>
+                    </div>
+                </div>
+
+                <button
+                    id="logout-button"
+                    class="logout-button"
+                >
+                    <span>↪</span>
+                    Sair
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- CONTEÚDO PRINCIPAL -->
+
+        <main class="main-content">
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
+                <div class="topbar-title">
+
+                    <span class="topbar-eyebrow">
+                        FINANCIAL INTELLIGENCE PLATFORM
+                    </span>
+
+                    <h1>
+                        Categorias
+                    </h1>
+
+                    <p>
+                        Organize suas receitas e despesas.
+                    </p>
+
+                </div>
+
+
+                <div class="topbar-user">
+
+                    <div
+                        data-user-initial
+                        class="user-avatar"
+                    >
+                        U
+                    </div>
+
+
+                    <div class="user-info">
+
+                        <strong data-user-name>
+                            Usuário
+                        </strong>
+
+                        <span>
+                            Minha conta
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- PÁGINA -->
+
+            <section class="categories-page">
+
+                <div class="categories-header">
+
+                    <div>
+
+                        <h2>
+                            Suas categorias
+                        </h2>
+
+                        <p>
+                            Crie categorias personalizadas para organizar melhor sua vida financeira.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="add-category-button"
+                        class="primary-button"
+                    >
+                        + Nova categoria
+                    </button>
+
+                </div>
+
+
+                <!-- RESUMO -->
+
+                <section class="categories-summary">
+
+                    <div class="summary-card">
+
+                        <span>
+                            Total de categorias
+                        </span>
+
+                        <strong id="total-categories">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-card">
+
+                        <span>
+                            Receitas
+                        </span>
+
+                        <strong id="total-income">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-card">
+
+                        <span>
+                            Despesas
+                        </span>
+
+                        <strong id="total-expense">
+                            0
+                        </strong>
+
+                    </div>
+
+                </section>
+
+
+                <!-- LISTAS -->
+
+                <div class="categories-grid">
+
+                    <!-- RECEITAS -->
+
+                    <section class="categories-section">
+
+                        <div class="section-heading">
+
+                            <div>
+
+                                <span class="section-eyebrow income">
+                                    ENTRADAS
+                                </span>
+
+                                <h2>
+                                    Categorias de receitas
+                                </h2>
+
+                                <p>
+                                    Categorias usadas para registrar dinheiro recebido.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="income-categories"
+                            class="category-list"
+                        >
+
+                            <div class="categories-loading">
+                                Carregando categorias...
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- DESPESAS -->
+
+                    <section class="categories-section">
+
+                        <div class="section-heading">
+
+                            <div>
+
+                                <span class="section-eyebrow expense">
+                                    SAÍDAS
+                                </span>
+
+                                <h2>
+                                    Categorias de despesas
+                                </h2>
+
+                                <p>
+                                    Categorias usadas para controlar seus gastos.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="expense-categories"
+                            class="category-list"
+                        >
+
+                            <div class="categories-loading">
+                                Carregando categorias...
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- MODAL -->
+
+    <div
+        id="category-modal"
+        class="modal hidden"
+    >
+
+        <div class="modal-overlay"></div>
+
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        CATEGORIA
+                    </span>
+
+                    <h2 id="modal-title">
+                        Nova categoria
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="close-modal-button"
+                    class="modal-close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="category-form">
+
+                <input
+                    type="hidden"
+                    id="category-id"
+                >
+
+
+                <div class="form-group">
+
+                    <label for="category-name">
+                        Nome
+                    </label>
+
+                    <input
+                        type="text"
+                        id="category-name"
+                        placeholder="Ex.: Alimentação"
+                        maxlength="100"
+                        autocomplete="off"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="category-type">
+                        Tipo
+                    </label>
+
+                    <select
+                        id="category-type"
+                        required
+                    >
+
+                        <option value="">
+                            Selecione o tipo
+                        </option>
+
+                        <option value="income">
+                            Receita
+                        </option>
+
+                        <option value="expense">
+                            Despesa
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div
+                    id="form-error"
+                    class="form-error hidden"
+                >
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancel-button"
+                        class="secondary-button"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                    >
+                        Salvar categoria
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="/js/categories.js"></script>
+    <script src="/js/page-transitions.js"></script>
+</body>
+</html>

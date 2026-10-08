@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Orvix — Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="/images/orvix-favicon.svg" />
+    <link rel="stylesheet" href="/css/orvix-design-system.css">
+
+    <link
+        rel="stylesheet"
+        href="/css/dashboard.css"
+    >
+    <link rel="stylesheet" href="/css/app-shell.css">
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js"
+    ></script>
+
+</head>
+
+
+<body>
+
+    <div class="app">
+
+
+        <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
+
+        <aside class="sidebar">
+
+            <div class="brand">
+                <img class="brand-logo" src="/images/orvix-logo.svg" alt="Orvix" />
+                <span class="brand-wordmark">ORVIX</span>
+            </div>
+
+
+            <nav class="navigation">
+
+                <a
+                    href="/dashboard.html"
+                    class="nav-item active"
+                >
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+
+                <a
+                    href="/transactions.html"
+                    class="nav-item"
+                >
+                    <span>↕</span>
+                    Transações
+                </a>
+
+
+                <a
+                    href="/goals.html"
+                    class="nav-item"
+                >
+                    <span>◎</span>
+                    Metas
+                </a>
+
+
+                <a
+                    href="/budgets.html"
+                    class="nav-item"
+                >
+                    <span>◫</span>
+                    Orçamentos
+                </a>
+
+
+                <a
+                    href="/categories.html"
+                    class="nav-item"
+                >
+                    <span>◇</span>
+                    Categorias
+                </a>
+
+
+                <a
+                    href="/reports.html"
+                    class="nav-item"
+                >
+                    <span>▤</span>
+                    Relatórios
+                </a>
+
+
+                <a
+                    href="/insights.html"
+                    class="nav-item"
+                >
+                    <span>✦</span>
+                    Insights
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-footer">
+
+                <div class="user-card">
+                    <div class="user-avatar" data-user-initial>U</div>
+                    <div class="user-info">
+                        <strong data-user-name>Usuário</strong>
+                        <span>Conta pessoal</span>
+                    </div>
+                </div>
+
+                <button
+                    id="logout-button"
+                    class="logout-button"
+                >
+                    <span>↪</span>
+                    Sair
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =====================================================
+             CONTEÚDO PRINCIPAL
+        ====================================================== -->
+
+        <main class="main-content">
+
+
+            <!-- =================================================
+                 TOPBAR
+            ================================================== -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <p class="eyebrow">
+                        FINANCIAL INTELLIGENCE PLATFORM
+                    </p>
+
+                    <h1>
+                        Dashboard
+                    </h1>
+
+                    <p class="subtitle">
+                        Visão geral da sua vida financeira.
+                    </p>
+
+                </div>
+
+
+                <div class="topbar-actions">
+
+
+                    <div class="dashboard-filter">
+
+                        <label for="period-select">
+                            Período
+                        </label>
+
+                        <select id="period-select">
+
+                            <option value="this_month">
+                                Este mês
+                            </option>
+
+                            <option value="previous_month">
+                                Mês anterior
+                            </option>
+
+                            <option value="last_3_months">
+                                Últimos 3 meses
+                            </option>
+
+                            <option value="last_6_months">
+                                Últimos 6 meses
+                            </option>
+
+                            <option value="this_year">
+                                Este ano
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="user-area">
+
+                        <div
+                            class="user-avatar"
+                            data-user-initial
+                        >
+                            U
+                        </div>
+
+
+                        <div class="user-info">
+
+                            <strong data-user-name>
+                                Usuário
+                            </strong>
+
+                            <span>
+                                Minha conta
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 LOADING
+            ================================================== -->
+
+            <div
+                id="loading"
+                class="loading"
+            >
+                Carregando seu dashboard...
+            </div>
+
+
+            <!-- =================================================
+                 ERRO
+            ================================================== -->
+
+            <div
+                id="error-message"
+                class="error-message hidden"
+            ></div>
+
+
+            <!-- =================================================
+                 DASHBOARD
+            ================================================== -->
+
+            <section
+                id="dashboard-content"
+                class="hidden"
+            >
+
+
+                <!-- =================================================
+                     RESUMO FINANCEIRO
+                ================================================== -->
+
+                <section class="summary-grid">
+
+
+                    <!-- RECEITAS -->
+
+                    <article class="summary-card">
+
+                        <div class="card-header">
+
+                            <span class="card-label">
+                                Receitas
+                            </span>
+
+                            <span class="card-icon income">
+                                ↑
+                            </span>
+
+                        </div>
+
+
+                        <strong
+                            id="total-income"
+                            class="card-value"
+                        >
+                            R$ 0,00
+                        </strong>
+
+
+                        <span class="card-description">
+                            Total de entradas
+                        </span>
+
+
+                        <span
+                            id="income-comparison"
+                            class="card-comparison"
+                        >
+                            —
+                        </span>
+
+                    </article>
+
+
+                    <!-- DESPESAS -->
+
+                    <article class="summary-card">
+
+                        <div class="card-header">
+
+                            <span class="card-label">
+                                Despesas
+                            </span>
+
+                            <span class="card-icon expense">
+                                ↓
+                            </span>
+
+                        </div>
+
+
+                        <strong
+                            id="total-expense"
+                            class="card-value"
+                        >
+                            R$ 0,00
+                        </strong>
+
+
+                        <span class="card-description">
+                            Total de saídas
+                        </span>
+
+
+                        <span
+                            id="expense-comparison"
+                            class="card-comparison"
+                        >
+                            —
+                        </span>
+
+                    </article>
+
+
+                    <!-- SALDO -->
+
+                    <article class="summary-card">
+
+                        <div class="card-header">
+
+                            <span class="card-label">
+                                Saldo
+                            </span>
+
+                            <span class="card-icon balance">
+                                ◈
+                            </span>
+
+                        </div>
+
+
+                        <strong
+                            id="balance"
+                            class="card-value"
+                        >
+                            R$ 0,00
+                        </strong>
+
+
+                        <span class="card-description">
+                            Receitas menos despesas
+                        </span>
+
+
+                        <span
+                            id="balance-comparison"
+                            class="card-comparison"
+                        >
+                            —
+                        </span>
+
+                    </article>
+
+                </section>
+
+
+                <!-- =================================================
+                     GRÁFICOS
+                ================================================== -->
+
+                <section class="charts-grid">
+
+
+                    <!-- EVOLUÇÃO -->
+
+                    <article class="chart-card">
+
+                        <div class="chart-header">
+
+                            <h2>
+                                Evolução financeira
+                            </h2>
+
+                            <p>
+                                Receitas e despesas por mês
+                            </p>
+
+                        </div>
+
+
+                        <div class="chart-container">
+
+                            <canvas
+                                id="evolution-chart"
+                            ></canvas>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- CATEGORIAS -->
+
+                    <article class="chart-card">
+
+                        <div class="chart-header">
+
+                            <h2>
+                                Despesas por categoria
+                            </h2>
+
+                            <p>
+                                Distribuição das suas despesas
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            class="chart-container category-chart"
+                        >
+
+                            <canvas
+                                id="category-chart"
+                            ></canvas>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+                <!-- =================================================
+                     METAS FINANCEIRAS
+                ================================================== -->
+
+                <section class="goals-dashboard-section">
+
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <h2>
+                                Metas financeiras
+                            </h2>
+
+                            <p>
+                                Acompanhe seu progresso financeiro.
+                            </p>
+
+                        </div>
+
+
+                        <a
+                            href="/goals.html"
+                            class="goals-link"
+                        >
+                            Ver todas
+                        </a>
+
+                    </div>
+
+
+                    <div
+                        id="dashboard-goals"
+                        class="dashboard-goals"
+                    >
+
+                        <div class="goals-loading">
+                            Carregando metas...
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     INTELIGÊNCIA FINANCEIRA
+                ================================================== -->
+
+                <section class="insights">
+
+
+                    <div class="section-heading">
+
+                        <h2>
+                            Inteligência financeira
+                        </h2>
+
+                        <p>
+                            Indicadores que ajudam você a tomar decisões melhores.
+                        </p>
+
+                    </div>
+
+
+                    <!-- INSIGHT PRINCIPAL -->
+
+                    <article class="main-insight-card">
+
+                        <div class="main-insight-icon">
+                            ✦
+                        </div>
+
+
+                        <div class="main-insight-content">
+
+                            <span>
+                                INSIGHT PRINCIPAL
+                            </span>
+
+                            <strong id="main-insight">
+                                Analisando sua vida financeira...
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- INDICADORES -->
+
+                    <div class="insight-grid">
+
+
+                        <!-- TAXA DE POUPANÇA -->
+
+                        <article class="insight-card">
+
+                            <span class="insight-icon">
+                                %
+                            </span>
+
+
+                            <div>
+
+                                <span>
+                                    Taxa de poupança
+                                </span>
+
+                                <strong id="saving-rate">
+                                    0%
+                                </strong>
+
+                            </div>
+
+                        </article>
+
+
+                        <!-- MAIOR CATEGORIA -->
+
+                        <article class="insight-card">
+
+                            <span class="insight-icon">
+                                ◆
+                            </span>
+
+
+                            <div>
+
+                                <span>
+                                    Maior categoria
+                                </span>
+
+                                <strong id="top-category">
+                                    Nenhuma
+                                </strong>
+
+                            </div>
+
+                        </article>
+
+
+                        <!-- STATUS FINANCEIRO -->
+
+                        <article class="insight-card">
+
+                            <span class="insight-icon">
+                                ✓
+                            </span>
+
+
+                            <div>
+
+                                <span>
+                                    Status financeiro
+                                </span>
+
+                                <strong id="financial-status">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </article>
+
+
+                    </div>
+
+                </section>
+
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/page-transitions.js"></script>
+
+</body>
+
+</html>

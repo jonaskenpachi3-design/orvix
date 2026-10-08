@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Metas | Orvix</title>
+    <link rel="icon" type="image/svg+xml" href="/images/orvix-favicon.svg" />
+    <link rel="stylesheet" href="/css/orvix-design-system.css">
+
+    <link
+        rel="stylesheet"
+        href="/css/goals.css"
+    >
+    <link rel="stylesheet" href="/css/app-shell.css">
+
+</head>
+
+
+<body>
+
+    <div class="app-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="brand">
+                <img class="brand-logo" src="/images/orvix-logo.svg" alt="Orvix" />
+                <span class="brand-wordmark">ORVIX</span>
+            </div>
+
+
+            <nav class="navigation">
+
+                <a
+                    href="/dashboard.html"
+                    class="nav-item"
+                >
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+
+                <a
+                    href="/transactions.html"
+                    class="nav-item"
+                >
+                    <span>↕</span>
+                    Transações
+                </a>
+
+
+                <a
+                    href="/goals.html"
+                    class="nav-item active"
+                >
+                    <span>◎</span>
+                    Metas
+                </a>
+
+            
+                <a href="/budgets.html" class="nav-item">
+                    <span>◫</span>
+                    Orçamentos
+                </a>
+
+                <a href="/categories.html" class="nav-item">
+                    <span>◇</span>
+                    Categorias
+                </a>
+
+                <a href="/reports.html" class="nav-item">
+                    <span>▤</span>
+                    Relatórios
+                </a>
+
+                <a href="/insights.html" class="nav-item">
+                    <span>✦</span>
+                    Insights
+                </a>
+</nav>
+
+
+            <div class="sidebar-footer">
+
+                <div class="user-card">
+
+                    <div
+                        id="user-initial"
+                        class="user-avatar"
+                    >
+                        U
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong id="user-name">
+                            Usuário
+                        </strong>
+
+                        <span>
+                            Conta pessoal
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="logout-button"
+                    class="logout-button"
+                >
+                    <span>↪</span>
+                    Sair
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- CONTEÚDO -->
+
+        <main class="main-content">
+
+
+            <!-- HEADER -->
+
+            <header class="page-header">
+
+                <div>
+
+                    <span class="eyebrow">
+                        PLANEJAMENTO
+                    </span>
+
+                    <h1>
+                        Metas financeiras
+                    </h1>
+
+                    <p>
+                        Transforme seus objetivos em planos financeiros.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="new-goal-button"
+                    class="primary-button"
+                >
+                    + Nova meta
+                </button>
+
+            </header>
+
+
+            <!-- MENSAGEM -->
+
+            <div
+                id="message"
+                class="message hidden"
+            ></div>
+
+
+            <!-- RESUMO -->
+
+            <section class="summary-grid">
+
+
+                <div class="summary-card">
+
+                    <div class="summary-icon">
+                        ◎
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total de metas
+                        </span>
+
+                        <strong id="total-goals">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="summary-icon">
+                        ◈
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Valor acumulado
+                        </span>
+
+                        <strong id="total-current">
+                            R$ 0,00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="summary-icon">
+                        ◇
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Valor dos objetivos
+                        </span>
+
+                        <strong id="total-target">
+                            R$ 0,00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- FORMULÁRIO -->
+
+            <section
+                id="goal-form-section"
+                class="goal-form-section hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            NOVA META
+                        </span>
+
+                        <h2 id="form-title">
+                            Criar meta
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <form id="goal-form">
+
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group full">
+
+                            <label for="goal-name">
+                                Nome da meta
+                            </label>
+
+                            <input
+                                type="text"
+                                id="goal-name"
+                                placeholder="Ex: Reserva de emergência"
+                                maxlength="150"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="target-amount">
+                                Valor objetivo
+                            </label>
+
+                            <input
+                                type="number"
+                                id="target-amount"
+                                placeholder="10000"
+                                min="0.01"
+                                step="0.01"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="current-amount">
+                                Valor atual
+                            </label>
+
+                            <input
+                                type="number"
+                                id="current-amount"
+                                placeholder="0"
+                                min="0"
+                                step="0.01"
+                                value="0"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="deadline">
+                                Prazo
+                            </label>
+
+                            <input
+                                type="date"
+                                id="deadline"
+                            >
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            id="cancel-button"
+                            class="secondary-button"
+                        >
+                            Cancelar
+                        </button>
+
+                        <button
+                            type="submit"
+                            id="submit-button"
+                            class="primary-button"
+                        >
+                            Criar meta
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+            </section>
+
+
+            <!-- METAS -->
+
+            <section class="goals-section">
+
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            SEUS OBJETIVOS
+                        </span>
+
+                        <h2>
+                            Metas
+                        </h2>
+
+                    </div>
+
+                    <span
+                        id="goal-count"
+                        class="count"
+                    >
+                        0 metas
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="goals-loading"
+                    class="state-message"
+                >
+                    <div class="spinner"></div>
+
+                    <p>
+                        Carregando metas...
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="goals-empty"
+                    class="empty-state hidden"
+                >
+
+                    <div class="empty-icon">
+                        ◎
+                    </div>
+
+                    <h3>
+                        Nenhuma meta criada
+                    </h3>
+
+                    <p>
+                        Crie sua primeira meta financeira
+                        e acompanhe seu progresso.
+                    </p>
+
+                    <button
+                        id="empty-new-button"
+                        class="primary-button"
+                    >
+                        Criar primeira meta
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="goals-list"
+                    class="goals-grid"
+                ></div>
+
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+    <script src="/js/goals.js"></script>
+    <script src="/js/page-transitions.js"></script>
+</body>
+</html>

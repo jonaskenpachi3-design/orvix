@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="190 30 300 300" width="512" height="512" role="img" aria-label="Logo Orvix">
+  <title>Orvix</title>
+  <rect x="190" y="30" width="300" height="300" rx="56" fill="#0F172A"/>
+  <circle cx="340" cy="180" r="95.5" fill="none" stroke="#22D3EE" stroke-width="6" stroke-dasharray="42 18" transform="rotate(-90 340 180)"/>
+  <path d="M286 124 L340 232 L392 104" fill="none" stroke="#34D399" stroke-width="20" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M270 214 L412 134" fill="none" stroke="#F59E0B" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="270" cy="214" r="8" fill="#0F172A" stroke="#F59E0B" stroke-width="4"/>
+  <circle cx="412" cy="134" r="8" fill="#0F172A" stroke="#F59E0B" stroke-width="4"/>
+  <path d="M286 124 H256 V148" fill="none" stroke="#22D3EE" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="256" cy="148" r="6" fill="#22D3EE"/>
+  <path d="M340 232 V262" fill="none" stroke="#22D3EE" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="340" cy="266" r="6" fill="#22D3EE"/>
+  <circle cx="392" cy="104" r="10" fill="#FBBF24"/>
+</svg>
