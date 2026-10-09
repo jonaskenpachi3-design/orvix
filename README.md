@@ -107,6 +107,8 @@ orvix/
 │   │   └── authMiddleware.js   # Validação do token JWT
 │   ├── routes/                 # Definição dos endpoints
 │   └── services/               # Regras de negócio e SQL
+├── scripts/
+│   └── test-db.js              # Teste de conexão com o banco
 ├── .env.example
 ├── package.json
 └── server.js                   # Ponto de entrada
@@ -144,8 +146,6 @@ createdb orvix
 psql "$DATABASE_URL" -f db/schema.sql
 ```
 
-> **Atenção:** o `db/schema.sql` atual não contém a tabela `budgets`, usada pelos orçamentos. Veja [Banco de dados](#banco-de-dados) para o SQL necessário.
-
 ### Executando
 
 ```bash
@@ -153,6 +153,14 @@ npm start
 ```
 
 A aplicação sobe em `http://localhost:3000` (ou na porta definida em `PORT`). Abra essa URL no navegador para acessar o login e crie uma conta em `/register.html`.
+
+Scripts disponíveis:
+
+| Comando | O que faz |
+| --- | --- |
+| `npm start` | Inicia o servidor. |
+| `npm run dev` | Inicia o servidor reiniciando a cada alteração (`node --watch`). |
+| `npm run test:db` | Testa a conexão com o banco usando o `DATABASE_URL`. |
 
 Para conferir se o servidor e o banco estão funcionando:
 
@@ -188,28 +196,9 @@ O arquivo `db/schema.sql` usa a extensão `pgcrypto` (para `gen_random_uuid()`) 
 | `categories` | `id`, `user_id`, `name`, `type`, `created_at` | `type` é `income` ou `expense`. Combinação `user_id` + `name` + `type` é única. |
 | `transactions` | `id`, `user_id`, `category_id`, `description`, `amount`, `type`, `transaction_date`, `created_at`, `updated_at` | `amount` > 0, `NUMERIC(12,2)`. Ao excluir a categoria, `category_id` vira `NULL`. |
 | `goals` | `id`, `user_id`, `name`, `target_amount`, `current_amount`, `deadline`, `created_at`, `updated_at` | `target_amount` > 0 e `0 <= current_amount <= target_amount`. |
-| `budgets` | `id`, `user_id`, `category_id`, `amount`, `month` | **Não está no `schema.sql`.** Veja abaixo. |
+| `budgets` | `id`, `user_id`, `category_id`, `amount`, `month`, `created_at`, `updated_at` | `amount` > 0. Um orçamento por categoria em cada mês (`user_id` + `category_id` + `month` é único). `month` guarda o primeiro dia do mês. |
 
 Os dados de cada usuário são removidos em cascata quando a conta é excluída.
-
-### Tabela `budgets`
-
-O código dos orçamentos (`src/services/budgetService.js`) lê e grava na tabela `budgets`, mas ela ainda não existe no `schema.sql`. Sem ela, as rotas `/api/budgets` retornam erro 500. Uma definição compatível com as consultas do código, deduzida delas, é:
-
-```sql
-CREATE TABLE IF NOT EXISTS budgets (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    category_id UUID NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
-    amount NUMERIC(12, 2) NOT NULL CHECK (amount > 0),
-    month DATE NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (user_id, category_id, month)
-);
-```
-
-`month` guarda a data do primeiro dia do mês (por exemplo, `2026-10-01`).
 
 ## Autenticação
 
@@ -334,7 +323,7 @@ Valida o token. `200`: `{ "message": "Token válido.", "user": { "id": "...", "e
 }
 ```
 
-- `description`, `amount`, `type` e `transactionDate` são obrigatórios; `categoryId` é opcional.
+- `description`, `amount`, `type` e `transactionDate` são obrigatórios; `categoryId` é opcional e, se informado, precisa ser de uma categoria do próprio usuário (`400` com `Categoria não encontrada.` caso contrário).
 - `type` deve ser `income` ou `expense`; `amount` deve ser maior que zero.
 - `201`: `{ "message": "Transação criada com sucesso.", "transaction": { ... } }`
 
@@ -567,7 +556,7 @@ O estilo é compartilhado por um design system (`public/css/orvix-design-system.
 
 O projeto está preparado para o [Render](https://render.com/):
 
-1. Crie um banco PostgreSQL e aplique o `db/schema.sql` (mais a tabela `budgets`).
+1. Crie um banco PostgreSQL e aplique o `db/schema.sql`.
 2. Crie um *Web Service* apontando para este repositório.
 3. Comando de build: `npm install`. Comando de start: `npm start`.
 4. Defina `NODE_ENV=production`, `DATABASE_URL`, `JWT_SECRET` e, opcionalmente, `CORS_ORIGIN`.
@@ -576,9 +565,8 @@ A conexão com o banco usa SSL em produção (com `rejectUnauthorized: false`, c
 
 ## Limitações conhecidas
 
-- A tabela `budgets` não está no `db/schema.sql` (veja [Banco de dados](#banco-de-dados)).
 - O comentário final do `schema.sql` diz que categorias padrão são criadas no cadastro, mas o código atual não faz isso. Cada usuário precisa criar suas categorias antes de lançar transações categorizadas ou orçamentos.
-- O projeto não possui testes automatizados; o único script é `npm start`.
+- O projeto não possui testes automatizados; `npm run test:db` apenas confere a conexão com o banco.
 - O token JWT fica no `localStorage` do navegador.
 
 ## Autor e licença

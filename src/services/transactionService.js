@@ -1,5 +1,29 @@
 const pool = require("../config/database");
 
+const CATEGORY_NOT_FOUND = "Categoria não encontrada.";
+
+// Garante que a categoria informada pertence ao usuário autenticado.
+// Sem categoria (null/undefined) é permitido.
+async function assertCategoryBelongsToUser(userId, categoryId) {
+    if (!categoryId) {
+        return;
+    }
+
+    const result = await pool.query(
+        `
+        SELECT id
+        FROM categories
+        WHERE id = $1
+          AND user_id = $2
+        `,
+        [categoryId, userId]
+    );
+
+    if (result.rows.length === 0) {
+        throw new Error(CATEGORY_NOT_FOUND);
+    }
+}
+
 async function createTransaction(
     userId,
     categoryId,
@@ -8,6 +32,8 @@ async function createTransaction(
     type,
     transactionDate
 ) {
+    await assertCategoryBelongsToUser(userId, categoryId);
+
     const result = await pool.query(
         `
         INSERT INTO transactions (
@@ -87,6 +113,8 @@ async function updateTransaction(
     type,
     transactionDate
 ) {
+    await assertCategoryBelongsToUser(userId, categoryId);
+
     const result = await pool.query(
         `
         UPDATE transactions
@@ -123,6 +151,7 @@ async function updateTransaction(
 }
 
 module.exports = {
+    CATEGORY_NOT_FOUND,
     createTransaction,
     getTransactionsByUser,
     deleteTransaction,
