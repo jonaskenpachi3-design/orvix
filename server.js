@@ -327,10 +327,11 @@ app.use(
 // SERVIDOR
 // ========================================
 
+
 app.listen(
     PORT,
+    "0.0.0.0",
     () => {
-
         console.log(
             `Servidor Orvix rodando na porta ${PORT}`
         );
