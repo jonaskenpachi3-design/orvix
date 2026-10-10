@@ -17,7 +17,7 @@
     "postgresql"
   ],
   "author": "Jonas Sousa",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "engines": {
     "node": ">=20"

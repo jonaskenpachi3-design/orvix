@@ -573,4 +573,4 @@ A conexão com o banco usa SSL em produção (com `rejectUnauthorized: false`, c
 
 Desenvolvido por **Jonas Sousa**.
 
-Distribuído sob a licença **ISC**.
+Distribuído sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE).
