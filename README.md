@@ -1,10 +1,8 @@
 # ◈ ORVIX
 
-🚀 Demonstração
-
-Aplicação online: https://orvix-oxuw.onrender.com/
-
 ### Financial Intelligence Platform
+
+🚀 **Demo:** https://orvix-oxuw.onrender.com/
 
 Plataforma web de controle e inteligência financeira pessoal. Reúne receitas, despesas, categorias, metas e orçamentos em uma interface escura e responsiva, com dashboard, relatórios e insights gerados a partir das movimentações do usuário.
 
