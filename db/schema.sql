@@ -137,6 +137,45 @@ CREATE TABLE IF NOT EXISTS goals (
 
 
 -- =========================================================
+-- BUDGETS
+-- =========================================================
+-- Limite mensal por categoria de despesa.
+-- "month" guarda o primeiro dia do mês (ex.: 2026-10-01).
+
+CREATE TABLE IF NOT EXISTS budgets (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    user_id UUID NOT NULL,
+
+    category_id UUID NOT NULL,
+
+    amount NUMERIC(12, 2) NOT NULL,
+
+    month DATE NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_budgets_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_budgets_category
+        FOREIGN KEY (category_id)
+        REFERENCES categories(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT budgets_amount_check
+        CHECK (amount > 0),
+
+    CONSTRAINT budgets_user_category_month_unique
+        UNIQUE (user_id, category_id, month)
+);
+
+
+-- =========================================================
 -- INDEXES
 -- =========================================================
 
@@ -158,10 +197,13 @@ CREATE INDEX IF NOT EXISTS idx_transactions_user_date
 CREATE INDEX IF NOT EXISTS idx_goals_user_id
     ON goals(user_id);
 
+CREATE INDEX IF NOT EXISTS idx_budgets_user_month
+    ON budgets(user_id, month);
+
 
 -- =========================================================
--- DEFAULT CATEGORIES
+-- OBSERVAÇÃO
 -- =========================================================
--- As categorias padrão serão criadas pela aplicação
--- para cada novo usuário durante o cadastro.
+-- Este schema não cria categorias padrão: cada usuário
+-- cria as próprias categorias depois do cadastro.
 -- =========================================================
