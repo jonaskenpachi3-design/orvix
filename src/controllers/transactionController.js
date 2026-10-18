@@ -48,6 +48,12 @@ async function createTransaction(req, res) {
     } catch (error) {
         console.error("Erro ao criar transação:", error);
 
+        if (error.message === transactionService.CATEGORY_NOT_FOUND) {
+            return res.status(400).json({
+                error: error.message
+            });
+        }
+
         return res.status(500).json({
             error: "Erro interno do servidor."
         });
@@ -159,75 +165,17 @@ async function updateTransaction(req, res) {
     } catch (error) {
         console.error("Erro ao atualizar transação:", error);
 
-        return res.status(500).json({
-            error: "Erro interno do servidor."
-        });
-    }
-}
-
-async function updateTransaction(req, res) {
-    try {
-        const { id } = req.params;
-
-        const {
-            categoryId,
-            description,
-            amount,
-            type,
-            transactionDate
-        } = req.body;
-
-        if (!description || !amount || !type || !transactionDate) {
+        if (error.message === transactionService.CATEGORY_NOT_FOUND) {
             return res.status(400).json({
-                error: "Descrição, valor, tipo e data são obrigatórios."
+                error: error.message
             });
         }
-
-        if (!["income", "expense"].includes(type)) {
-            return res.status(400).json({
-                error: "O tipo deve ser income ou expense."
-            });
-        }
-
-        const numericAmount = Number(amount);
-
-        if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
-            return res.status(400).json({
-                error: "O valor deve ser maior que zero."
-            });
-        }
-
-        const transaction =
-            await transactionService.updateTransaction(
-                req.user.id,
-                id,
-                categoryId,
-                description.trim(),
-                numericAmount,
-                type,
-                transactionDate
-            );
-
-        if (!transaction) {
-            return res.status(404).json({
-                error: "Transação não encontrada."
-            });
-        }
-
-        return res.status(200).json({
-            message: "Transação atualizada com sucesso.",
-            transaction
-        });
-
-    } catch (error) {
-        console.error("Erro ao atualizar transação:", error);
 
         return res.status(500).json({
             error: "Erro interno do servidor."
         });
     }
 }
-
 
 module.exports = {
     createTransaction,
