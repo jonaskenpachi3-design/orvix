@@ -569,6 +569,10 @@ O projeto está preparado para o [Render](https://render.com/):
 
 A conexão com o banco usa SSL em produção (com `rejectUnauthorized: false`, comum em bancos gerenciados) e o Express confia no proxy do Render para identificar HTTPS corretamente.
 
+## Progressive Web App (PWA)
+
+O Orvix pode ser instalado pelo navegador em dispositivos compatíveis. Após acessar a aplicação por HTTPS (ou `localhost` durante o desenvolvimento), use **Instalar Orvix** quando o navegador oferecer essa opção. O service worker mantém as páginas e arquivos da interface disponíveis para abrir sem conexão; os dados financeiros e as chamadas da API não são armazenados em cache e continuam exigindo internet.
+
 ## Limitações conhecidas
 
 - A tabela `budgets` não está no `db/schema.sql` (veja [Banco de dados](#banco-de-dados)).
