@@ -85,12 +85,6 @@ app.use(
     })
 );
 
-// Debug: log ALL requests
-app.use((req, res, next) => {
-    console.log(`ALL request: ${req.method} ${req.path}`);
-    next();
-});
-
 
 // ========================================
 // CORS
@@ -145,13 +139,7 @@ app.use(
 
 // Serve Angular build in production
 if (NODE_ENV === "production") {
-    // Debug: log static file requests
-    app.use((req, res, next) => {
-        console.log(`Static request: ${req.path}`);
-        next();
-    });
     app.use(express.static(FRONTEND_DIST, { maxAge: "1y", etag: true }));
-    console.log(`Serving static files from: ${FRONTEND_DIST}`);
 } else {
     // In development, serve public/ for any legacy files
     app.use(express.static(path.join(__dirname, "public")));
