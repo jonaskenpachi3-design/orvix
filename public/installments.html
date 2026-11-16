@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Orvix — Parcelamentos</title>
+    <link rel="icon" type="image/svg+xml" href="/images/orvix-favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="stylesheet" href="/css/orvix-design-system.css">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+        crossorigin
+    >
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/installments.css"
+    >
+    <link rel="stylesheet" href="/css/app-shell.css">
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js"
+    ></script>
+
+</head>
+
+
+<body>
+
+    <div class="app">
+
+
+        <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
+
+        <aside class="sidebar">
+
+            <div class="brand">
+                <img class="brand-logo" src="/images/orvix-logo.svg" alt="Orvix" />
+                <span class="brand-wordmark">ORVIX</span>
+            </div>
+
+
+            <nav class="navigation">
+
+                <a
+                    href="/dashboard.html"
+                    class="nav-item"
+                >
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+
+                <a
+                    href="/transactions.html"
+                    class="nav-item"
+                >
+                    <span>↕</span>
+                    Transações
+                </a>
+
+
+                <a
+                    href="/installments.html"
+                    class="nav-item active"
+                >
+                    <span>≡</span>
+                    Parcelamentos
+                </a>
+
+
+                <a
+                    href="/goals.html"
+                    class="nav-item"
+                >
+                    <span>◎</span>
+                    Metas
+                </a>
+
+
+                <a
+                    href="/budgets.html"
+                    class="nav-item"
+                >
+                    <span>◫</span>
+                    Orçamentos
+                </a>
+
+
+                <a
+                    href="/categories.html"
+                    class="nav-item"
+                >
+                    <span>◇</span>
+                    Categorias
+                </a>
+
+
+                <a
+                    href="/reports.html"
+                    class="nav-item"
+                >
+                    <span>▤</span>
+                    Relatórios
+                </a>
+
+
+                <a
+                    href="/insights.html"
+                    class="nav-item"
+                >
+                    <span>✦</span>
+                    Insights
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-footer">
+
+                <div class="user-card">
+                    <div class="user-avatar" data-user-initial>U</div>
+                    <div class="user-info">
+                        <strong data-user-name>Usuário</strong>
+                        <span>Conta pessoal</span>
+                    </div>
+                </div>
+
+                <button
+                    id="logout-button"
+                    class="logout-button"
+                >
+                    <span>↪</span>
+                    Sair
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =====================================================
+             CONTEÚDO PRINCIPAL
+        ====================================================== -->
+
+        <main class="main-content">
+
+
+            <!-- =================================================
+                 TOPBAR
+            ================================================== -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <p class="eyebrow">
+                        FINANCIAL INTELLIGENCE PLATFORM
+                    </p>
+
+                    <h1>
+                        Parcelamentos
+                    </h1>
+
+                    <p class="subtitle">
+                        Gerencie suas compras parceladas e visualize previsão de gastos.
+                    </p>
+
+                </div>
+
+
+                <div class="user-area">
+
+                    <div
+                        class="user-avatar"
+                        data-user-initial
+                    >
+                        U
+                    </div>
+
+
+                    <div class="user-info">
+
+                        <strong data-user-name>
+                            Usuário
+                        </strong>
+
+                        <span>
+                            Minha conta
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 MENSAGEM
+            ================================================== -->
+
+            <div
+                id="message"
+                class="message hidden"
+            >
+            </div>
+
+
+            <!-- =================================================
+                 FORMULÁRIO DE PARCELAMENTO
+            ================================================== -->
+
+            <section class="installment-form-card">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            Novo parcelamento
+                        </p>
+
+                        <h2>
+                            Cadastrar compra parcelada
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <form id="installment-form">
+
+                    <div class="form-grid">
+
+                        <!-- DESCRIÇÃO -->
+                        <div class="form-group">
+
+                            <label for="description">
+                                Descrição
+                            </label>
+
+                            <input
+                                type="text"
+                                id="description"
+                                name="description"
+                                placeholder="Ex: TV 55\", iPhone, Curso..."
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- VALOR TOTAL -->
+                        <div class="form-group">
+
+                            <label for="total-amount">
+                                Valor total
+                            </label>
+
+                            <input
+                                type="number"
+                                id="total-amount"
+                                name="totalAmount"
+                                placeholder="0,00"
+                                min="0.01"
+                                step="0.01"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- NÚMERO DE PARCELAS -->
+                        <div class="form-group">
+
+                            <label for="installments-total">
+                                Parcelas
+                            </label>
+
+                            <input
+                                type="number"
+                                id="installments-total"
+                                name="installmentsTotal"
+                                placeholder="10"
+                                min="1"
+                                max="60"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- PRIMEIRO VENCIMENTO -->
+                        <div class="form-group">
+
+                            <label for="first-due-date">
+                                1º vencimento
+                            </label>
+
+                            <input
+                                type="date"
+                                id="first-due-date"
+                                name="firstDueDate"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- CATEGORIA -->
+                        <div class="form-group">
+
+                            <label for="category">
+                                Categoria
+                            </label>
+
+                            <select
+                                id="category"
+                                name="categoryId"
+                            >
+
+                                <option value="">
+                                    Sem categoria
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            id="submit-button"
+                            class="primary-button"
+                        >
+                            Criar parcelamento
+                        </button>
+
+                    </div>
+
+                </form>
+
+                <!-- PREVISÃO DE PARCELAS -->
+                <div
+                    id="installment-preview"
+                    class="installment-preview hidden"
+                >
+                    <h3>Prévia das parcelas</h3>
+                    <div id="preview-list" class="preview-list"></div>
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 PREVISÃO DE GASTOS (GRÁFICO)
+            ================================================== -->
+
+            <section class="forecast-chart-card">
+
+                <div class="chart-header">
+
+                    <h2>
+                        Previsão de gastos futuros
+                    </h2>
+
+                    <p>
+                        Parcelas agendadas agrupadas por mês
+                    </p>
+
+                </div>
+
+
+                <div class="chart-container">
+
+                    <canvas
+                        id="forecast-chart"
+                    ></canvas>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 LISTA DE PLANOS DE PARCELAMENTO
+            ================================================== -->
+
+            <section class="installments-card">
+
+                <div class="section-heading installments-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            Seus planos
+                        </p>
+
+                        <h2>
+                            Parcelamentos ativos
+                        </h2>
+
+                    </div>
+
+                    <span
+                        id="installments-count"
+                        class="installments-count"
+                    >
+                        0 planos
+                    </span>
+
+                </div>
+
+
+                <!-- LOADING -->
+                <div
+                    id="installments-loading"
+                    class="loading"
+                >
+                    Carregando parcelamentos...
+                </div>
+
+
+                <!-- VAZIO -->
+                <div
+                    id="installments-empty"
+                    class="empty-state hidden"
+                >
+
+                    <div class="empty-icon">
+                        ≡
+                    </div>
+
+                    <h3>
+                        Nenhum parcelamento cadastrado
+                    </h3>
+
+                    <p>
+                        Crie seu primeiro parcelamento acima para começar a acompanhar.
+                    </p>
+
+                </div>
+
+
+                <!-- LISTA -->
+                <div
+                    id="installments-list"
+                    class="installments-list"
+                >
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="/js/installments.js"></script>
+    <script src="/js/page-transitions.js"></script>
+    <script src="/js/pwa.js"></script>
+
+</body>
+
+</html>

@@ -810,6 +810,148 @@ logoutButton.addEventListener(
 
 
 // ========================================
+// AGENTE DE IA CONTÁBIL
+// ========================================
+
+const aiChatForm =
+    document.getElementById(
+        "ai-chat-form"
+    );
+
+const aiChatInput =
+    document.getElementById(
+        "ai-chat-input"
+    );
+
+const aiChatSubmit =
+    document.getElementById(
+        "ai-chat-submit"
+    );
+
+const aiChatMessages =
+    document.getElementById(
+        "ai-chat-messages"
+    );
+
+
+async function sendAIMessage(
+    message
+) {
+    if (!message.trim()) {
+        return;
+    }
+
+    // Adiciona mensagem do usuário
+    appendAIMessage(
+        message,
+        "user"
+    );
+
+    // Limpa input
+    aiChatInput.value = "";
+    aiChatInput.disabled = true;
+    aiChatSubmit.disabled = true;
+    aiChatSubmit.textContent = "Pensando...";
+
+    try {
+        const response =
+            await fetch(
+                "/api/ai/chat",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+                        "Authorization":
+                            `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        message: message.trim()
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error ||
+                "Erro ao processar mensagem."
+            );
+        }
+
+        // Adiciona resposta da IA
+        appendAIMessage(
+            data.response,
+            "ai"
+        );
+
+    } catch (error) {
+        console.error(
+            "Erro no chat IA:",
+            error
+        );
+        appendAIMessage(
+            `Desculpe, ocorreu um erro: ${error.message}`,
+            "ai"
+        );
+    } finally {
+        aiChatInput.disabled = false;
+        aiChatSubmit.disabled = false;
+        aiChatSubmit.textContent = "Enviar";
+        aiChatInput.focus();
+    }
+}
+
+
+function appendAIMessage(
+    text,
+    type
+) {
+    const messageDiv =
+        document.createElement("div");
+
+    messageDiv.className = `ai-message ${type}`;
+
+    const avatar =
+        type === "user"
+            ? "👤"
+            : "🤖";
+
+    const avatarBg =
+        type === "user"
+            ? "success"
+            : "primary";
+
+    messageDiv.innerHTML = `
+        <div class="ai-message-avatar">${avatar}</div>
+        <div class="ai-message-content">
+            <p>${escapeHtml(text)}</p>
+        </div>
+    `;
+
+    aiChatMessages.appendChild(
+        messageDiv
+    );
+
+    // Scroll para baixo
+    aiChatMessages.scrollTop =
+        aiChatMessages.scrollHeight;
+}
+
+
+aiChatForm.addEventListener(
+    "submit",
+    function (event) {
+        event.preventDefault();
+        const message = aiChatInput.value;
+        sendAIMessage(message);
+    }
+);
+
+
+// ========================================
 // INICIALIZAÇÃO
 // ========================================
 
