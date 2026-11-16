@@ -23,21 +23,29 @@ function calculateInstallmentAmounts(totalAmount, installmentsTotal) {
 }
 
 /**
- * Calcula a data de vencimento da parcela.
+ * Calcula a data de vencimento da parcela usando UTC para evitar problemas de fuso horário.
  * Se o dia não existir no mês (ex: 31 em fevereiro), usa o último dia do mês.
  */
 function calculateDueDate(firstDueDate, installmentIndex) {
-    const date = new Date(firstDueDate);
-    date.setMonth(date.getMonth() + (installmentIndex - 1));
+    // Parse da data de entrada como UTC (evita problemas de fuso)
+    const [year, month, day] = firstDueDate.split("-").map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    // Adiciona meses usando UTC
+    date.setUTCMonth(date.getUTCMonth() + (installmentIndex - 1));
 
     // Se o dia original não existe no mês resultante, ajusta para o último dia do mês
-    const originalDay = new Date(firstDueDate).getDate();
-    if (date.getDate() !== originalDay) {
-        // Volta para o último dia do mês anterior
-        date.setDate(0);
+    const originalDay = day;
+    if (date.getUTCDate() !== originalDay) {
+        // Volta para o último dia do mês anterior (setUTCDate(0) = último dia do mês anterior)
+        date.setUTCDate(0);
     }
 
-    return date.toISOString().split("T")[0];
+    // Retorna no formato YYYY-MM-DD usando UTC
+    const y = date.getUTCFullYear();
+    const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const d = String(date.getUTCDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
 }
 
 /**

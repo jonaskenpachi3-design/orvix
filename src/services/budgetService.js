@@ -268,6 +268,7 @@ async function getBudgetUsage(
             AND t.transaction_date < (
                 b.month + INTERVAL '1 month'
             )
+            AND (t.status = 'paid' OR t.status IS NULL)
 
         WHERE b.user_id = $1
           AND b.month = $2

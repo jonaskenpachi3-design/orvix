@@ -415,5 +415,7 @@ async function getFinancialInsights(
 // ========================================
 
 module.exports = {
-    getFinancialInsights
+    getFinancialInsights,
+    getPeriodSummary,
+    getCategoryExpenses
 };

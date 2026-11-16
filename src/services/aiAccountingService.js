@@ -4,6 +4,10 @@ const insightService = require("./insightService");
 const installmentService = require("./installmentService");
 const transactionService = require("./transactionService");
 
+// Modelo de IA configurável via variável de ambiente
+// Modelos atuais: claude-sonnet-5-5, claude-opus-5-5, claude-haiku-5-5
+const AI_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
+
 const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY
 });
@@ -124,12 +128,17 @@ async function executeTool(userId, toolName, input) {
             const options = { includeScheduled: include_scheduled || false };
             const transactions = await transactionService.getTransactionsByUser(userId, options);
 
+            // Helper para formatar data consistentemente
+            const formatDate = (dateValue) => {
+                if (dateValue instanceof Date) {
+                    return dateValue.toISOString().split("T")[0];
+                }
+                return String(dateValue).split("T")[0];
+            };
+
             // Filtrar por data e tipo na aplicação (mais flexível)
             const filtered = transactions.filter(t => {
-                const txDate = t.transaction_date instanceof Date
-                    ? t.transaction_date.toISOString().split("T")[0]
-                    : String(t.transaction_date).split("T")[0];
-
+                const txDate = formatDate(t.transaction_date);
                 const dateOk = txDate >= start_date && txDate <= end_date;
                 const typeOk = type ? t.type === type : true;
                 return dateOk && typeOk;
@@ -140,7 +149,7 @@ async function executeTool(userId, toolName, input) {
                 description: t.description,
                 amount: Number(t.amount),
                 type: t.type,
-                transaction_date: txDate,
+                transaction_date: formatDate(t.transaction_date),
                 category_id: t.category_id,
                 plan_id: t.plan_id,
                 installment_number: t.installment_number,
@@ -207,7 +216,7 @@ async function chatWithAI(userId, userMessage) {
         ];
 
         let response = await anthropic.messages.create({
-            model: "claude-3-5-sonnet-20241022",
+            model: AI_MODEL,
             max_tokens: 4000,
             system: SYSTEM_PROMPT,
             tools: TOOLS,
@@ -246,7 +255,7 @@ async function chatWithAI(userId, userMessage) {
 
             // Próxima chamada para a IA processar os resultados
             response = await anthropic.messages.create({
-                model: "claude-3-5-sonnet-20241022",
+                model: AI_MODEL,
                 max_tokens: 4000,
                 system: SYSTEM_PROMPT,
                 tools: TOOLS,
