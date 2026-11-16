@@ -139,10 +139,17 @@ app.use(
 
 // Serve Angular build in production
 if (NODE_ENV === "production") {
+    // Disable cache for files that must always be fresh (no hash in name)
+    app.use((req, res, next) => {
+        const noCachePaths = ['/', '/index.html', '/ngsw.json', '/ngsw-worker.js', '/manifest.webmanifest'];
+        console.log(`Cache middleware: ${req.path}`);
+        if (noCachePaths.includes(req.path)) {
+            console.log(`Setting no-cache for ${req.path}`);
+            res.setHeader('Cache-Control', 'no-cache');
+        }
+        next();
+    });
     app.use(express.static(FRONTEND_DIST, { maxAge: "1y", etag: true }));
-} else {
-    // In development, serve public/ for any legacy files
-    app.use(express.static(path.join(__dirname, "public")));
 }
 
 

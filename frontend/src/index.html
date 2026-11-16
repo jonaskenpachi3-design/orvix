@@ -15,12 +15,11 @@
     // Inline theme script to prevent flash of wrong theme
     (function() {
       try {
-        var theme = localStorage.getItem('theme');
+        var p = localStorage.getItem('orvix_theme');
         var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var effectiveTheme = theme || (systemDark ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-bs-theme', effectiveTheme);
+        var isDark = p === 'dark' || ((p === null || p === 'auto') && systemDark);
+        document.documentElement.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
       } catch (e) {
-        // Fallback to light if localStorage unavailable
         document.documentElement.setAttribute('data-bs-theme', 'light');
       }
     })();
