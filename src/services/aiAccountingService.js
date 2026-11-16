@@ -4,13 +4,31 @@ const insightService = require("./insightService");
 const installmentService = require("./installmentService");
 const transactionService = require("./transactionService");
 
+// ========================================
+// CONFIGURAÇÕES DE PROTEÇÃO DA IA
+// ========================================
+
 // Modelo de IA configurável via variável de ambiente
 // Modelos atuais: claude-sonnet-5-5, claude-opus-5-5, claude-haiku-5-5
 const AI_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
 
-const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY
-});
+// Limites de proteção
+const MAX_TOOL_CYCLES = 6;           // Teto de ciclos de ferramenta
+const MAX_MESSAGE_LENGTH = 1000;     // Limite de caracteres da mensagem do usuário
+
+// Cliente Anthropic criado de forma preguiçosa (lazy)
+let anthropicClient = null;
+
+function getAnthropicClient() {
+    if (!anthropicClient) {
+        const apiKey = process.env.ANTHROPIC_API_KEY;
+        if (!apiKey) {
+            throw new Error("ANTHROPIC_API_KEY não configurada no servidor.");
+        }
+        anthropicClient = new Anthropic({ apiKey });
+    }
+    return anthropicClient;
+}
 
 // ========================================
 // TOOLS DISPONÍVEIS PARA A IA
@@ -209,13 +227,29 @@ FORMATO DE RESPOSTA:
 // ========================================
 
 async function chatWithAI(userId, userMessage) {
+    // Validação de tamanho da mensagem
+    if (!userMessage || typeof userMessage !== "string") {
+        throw new Error("Mensagem inválida.");
+    }
+
+    const trimmedMessage = userMessage.trim();
+    if (trimmedMessage.length === 0) {
+        throw new Error("Mensagem não pode ser vazia.");
+    }
+
+    if (trimmedMessage.length > MAX_MESSAGE_LENGTH) {
+        throw new Error(`Mensagem muito longa. Máximo de ${MAX_MESSAGE_LENGTH} caracteres.`);
+    }
+
     try {
         // Primeira chamada: usuário faz a pergunta
         let messages = [
-            { role: "user", content: userMessage }
+            { role: "user", content: trimmedMessage }
         ];
 
-        let response = await anthropic.messages.create({
+        let toolCycles = 0;
+
+        let response = await getAnthropicClient().messages.create({
             model: AI_MODEL,
             max_tokens: 4000,
             system: SYSTEM_PROMPT,
@@ -225,6 +259,12 @@ async function chatWithAI(userId, userMessage) {
 
         // Processa tool calls se houver
         while (response.stop_reason === "tool_use") {
+            // Proteção: limite de ciclos de ferramenta
+            toolCycles++;
+            if (toolCycles > MAX_TOOL_CYCLES) {
+                throw new Error(`Limite de ${MAX_TOOL_CYCLES} ciclos de ferramenta excedido.`);
+            }
+
             const toolUses = response.content.filter(block => block.type === "tool_use");
 
             // Adiciona a resposta do assistente com tool_use ao histórico
@@ -254,7 +294,7 @@ async function chatWithAI(userId, userMessage) {
             messages.push({ role: "user", content: toolResults });
 
             // Próxima chamada para a IA processar os resultados
-            response = await anthropic.messages.create({
+            response = await getAnthropicClient().messages.create({
                 model: AI_MODEL,
                 max_tokens: 4000,
                 system: SYSTEM_PROMPT,
@@ -273,11 +313,22 @@ async function chatWithAI(userId, userMessage) {
 
     } catch (error) {
         console.error("Erro no AI Accounting Agent:", error);
+        // Não vaza detalhes internos para o usuário
+        if (error.message.includes("ANTHROPIC_API_KEY") ||
+            error.message.includes("Limite de") ||
+            error.message.includes("Mensagem") ||
+            error.message.includes("Máximo de")) {
+            throw error;
+        }
         throw new Error("Erro ao processar pergunta com IA.");
     }
 }
 
 module.exports = {
     chatWithAI,
-    TOOLS
+    TOOLS,
+    // Exporta constantes para testes/debug se necessário
+    MAX_TOOL_CYCLES,
+    MAX_MESSAGE_LENGTH,
+    AI_MODEL
 };
