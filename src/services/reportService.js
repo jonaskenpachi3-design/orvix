@@ -42,6 +42,7 @@ async function getFinancialSummary(
         WHERE user_id = $1
           AND transaction_date >= $2
           AND transaction_date <= $3
+          AND (status = 'paid' OR status IS NULL)
         `,
         [
             userId,
@@ -134,6 +135,7 @@ async function getMonthlyEvolution(
         WHERE user_id = $1
           AND transaction_date >= $2
           AND transaction_date <= $3
+          AND (status = 'paid' OR status IS NULL)
 
         GROUP BY
             DATE_TRUNC(
@@ -206,6 +208,8 @@ async function getExpensesByCategory(
           AND t.transaction_date >= $2
 
           AND t.transaction_date <= $3
+
+          AND (t.status = 'paid' OR t.status IS NULL)
 
         GROUP BY
             c.id,

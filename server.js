@@ -36,6 +36,12 @@ const reportRoutes =
 const insightRoutes =
     require("./src/routes/insightRoutes");
 
+const installmentRoutes =
+    require("./src/routes/installmentRoutes");
+
+const aiRoutes =
+    require("./src/routes/aiRoutes");
+
 
 // ========================================
 // APLICAÇÃO
@@ -187,6 +193,18 @@ app.use(
 app.use(
     "/api/insights",
     insightRoutes
+);
+
+
+app.use(
+    "/api/installments",
+    installmentRoutes
+);
+
+
+app.use(
+    "/api/ai",
+    aiRoutes
 );
 
 

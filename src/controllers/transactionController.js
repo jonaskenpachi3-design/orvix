@@ -8,7 +8,10 @@ async function createTransaction(req, res) {
             description,
             amount,
             type,
-            transactionDate
+            transactionDate,
+            planId,
+            installmentNumber,
+            status
         } = req.body;
 
         if (!description || !amount || !type || !transactionDate) {
@@ -31,13 +34,23 @@ async function createTransaction(req, res) {
             });
         }
 
+        // Valida status se fornecido
+        if (status && !["scheduled", "paid"].includes(status)) {
+            return res.status(400).json({
+                error: "Status deve ser 'scheduled' ou 'paid'."
+            });
+        }
+
         const transaction = await transactionService.createTransaction(
             req.user.id,
             categoryId,
             description.trim(),
             numericAmount,
             type,
-            transactionDate
+            transactionDate,
+            planId || null,
+            installmentNumber || null,
+            status || 'paid'
         );
 
         return res.status(201).json({
@@ -63,8 +76,12 @@ async function createTransaction(req, res) {
 
 async function getTransactions(req, res) {
     try {
+        const { includeScheduled } = req.query;
+
         const transactions =
-            await transactionService.getTransactionsByUser(req.user.id);
+            await transactionService.getTransactionsByUser(req.user.id, {
+                includeScheduled: includeScheduled === 'true'
+            });
 
         return res.status(200).json({
             transactions
@@ -117,7 +134,10 @@ async function updateTransaction(req, res) {
             description,
             amount,
             type,
-            transactionDate
+            transactionDate,
+            planId,
+            installmentNumber,
+            status
         } = req.body;
 
         if (!description || !amount || !type || !transactionDate) {
@@ -140,6 +160,13 @@ async function updateTransaction(req, res) {
             });
         }
 
+        // Valida status se fornecido
+        if (status !== undefined && !["scheduled", "paid"].includes(status)) {
+            return res.status(400).json({
+                error: "Status deve ser 'scheduled' ou 'paid'."
+            });
+        }
+
         const transaction =
             await transactionService.updateTransaction(
                 req.user.id,
@@ -148,7 +175,10 @@ async function updateTransaction(req, res) {
                 description.trim(),
                 numericAmount,
                 type,
-                transactionDate
+                transactionDate,
+                planId !== undefined ? planId : null,
+                installmentNumber !== undefined ? installmentNumber : null,
+                status !== undefined ? status : null
             );
 
         if (!transaction) {

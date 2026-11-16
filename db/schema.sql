@@ -59,6 +59,50 @@ CREATE TABLE IF NOT EXISTS categories (
 
 
 -- =========================================================
+-- INSTALLMENT PLANS (PLANOS DE PARCELAMENTO)
+-- =========================================================
+-- Criada antes de transactions para permitir FK forward reference
+
+CREATE TABLE IF NOT EXISTS installment_plans (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    user_id UUID NOT NULL,
+
+    description VARCHAR(255) NOT NULL,
+
+    total_amount NUMERIC(12, 2) NOT NULL,
+
+    installments_total INT NOT NULL,
+
+    first_due_date DATE NOT NULL,
+
+    category_id UUID,
+
+    card_id UUID,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_installment_plans_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_installment_plans_category
+        FOREIGN KEY (category_id)
+        REFERENCES categories(id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT installment_plans_total_amount_check
+        CHECK (total_amount > 0),
+
+    CONSTRAINT installment_plans_installments_check
+        CHECK (installments_total > 0)
+);
+
+
+-- =========================================================
 -- TRANSACTIONS
 -- =========================================================
 
@@ -77,6 +121,11 @@ CREATE TABLE IF NOT EXISTS transactions (
 
     transaction_date DATE NOT NULL,
 
+    -- Parcelamento
+    plan_id UUID,
+    installment_number INT,
+    status VARCHAR(20) NOT NULL DEFAULT 'paid',
+
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -91,11 +140,22 @@ CREATE TABLE IF NOT EXISTS transactions (
         REFERENCES categories(id)
         ON DELETE SET NULL,
 
+    CONSTRAINT fk_transactions_plan
+        FOREIGN KEY (plan_id)
+        REFERENCES installment_plans(id)
+        ON DELETE SET NULL,
+
     CONSTRAINT transactions_amount_check
         CHECK (amount > 0),
 
     CONSTRAINT transactions_type_check
-        CHECK (type IN ('income', 'expense'))
+        CHECK (type IN ('income', 'expense')),
+
+    CONSTRAINT transactions_status_check
+        CHECK (status IN ('scheduled', 'paid')),
+
+    CONSTRAINT transactions_installment_number_check
+        CHECK (installment_number IS NULL OR installment_number > 0)
 );
 
 
@@ -194,11 +254,20 @@ CREATE INDEX IF NOT EXISTS idx_transactions_date
 CREATE INDEX IF NOT EXISTS idx_transactions_user_date
     ON transactions(user_id, transaction_date);
 
+CREATE INDEX IF NOT EXISTS idx_transactions_plan_id
+    ON transactions(plan_id);
+
+CREATE INDEX IF NOT EXISTS idx_transactions_status
+    ON transactions(status);
+
 CREATE INDEX IF NOT EXISTS idx_goals_user_id
     ON goals(user_id);
 
 CREATE INDEX IF NOT EXISTS idx_budgets_user_month
     ON budgets(user_id, month);
+
+CREATE INDEX IF NOT EXISTS idx_installment_plans_user_id
+    ON installment_plans(user_id);
 
 
 -- =========================================================

@@ -30,7 +30,10 @@ async function createTransaction(
     description,
     amount,
     type,
-    transactionDate
+    transactionDate,
+    planId = null,
+    installmentNumber = null,
+    status = 'paid'
 ) {
     await assertCategoryBelongsToUser(userId, categoryId);
 
@@ -42,9 +45,12 @@ async function createTransaction(
             description,
             amount,
             type,
-            transaction_date
+            transaction_date,
+            plan_id,
+            installment_number,
+            status
         )
-        VALUES ($1, $2, $3, $4, $5, $6)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING
             id,
             user_id,
@@ -53,6 +59,9 @@ async function createTransaction(
             amount,
             type,
             transaction_date,
+            plan_id,
+            installment_number,
+            status,
             created_at
         `,
         [
@@ -61,7 +70,10 @@ async function createTransaction(
             description,
             amount,
             type,
-            transactionDate
+            transactionDate,
+            planId,
+            installmentNumber,
+            status
         ]
     );
 
@@ -69,7 +81,13 @@ async function createTransaction(
 }
 
 
-async function getTransactionsByUser(userId) {
+async function getTransactionsByUser(userId, options = {}) {
+    const { includeScheduled = false } = options;
+
+    const statusFilter = includeScheduled
+        ? ""
+        : "AND (status = 'paid' OR status IS NULL)";
+
     const result = await pool.query(
         `
         SELECT
@@ -79,9 +97,13 @@ async function getTransactionsByUser(userId) {
             amount,
             type,
             transaction_date,
+            plan_id,
+            installment_number,
+            status,
             created_at
         FROM transactions
         WHERE user_id = $1
+        ${statusFilter}
         ORDER BY transaction_date DESC, created_at DESC
         `,
         [userId]
@@ -111,22 +133,58 @@ async function updateTransaction(
     description,
     amount,
     type,
-    transactionDate
+    transactionDate,
+    planId = null,
+    installmentNumber = null,
+    status = null
 ) {
     await assertCategoryBelongsToUser(userId, categoryId);
+
+    // Constrói query dinamicamente para campos opcionais
+    const updates = [];
+    const values = [];
+    let paramIndex = 1;
+
+    updates.push(`category_id = $${paramIndex++}`);
+    values.push(categoryId || null);
+
+    updates.push(`description = $${paramIndex++}`);
+    values.push(description);
+
+    updates.push(`amount = $${paramIndex++}`);
+    values.push(amount);
+
+    updates.push(`type = $${paramIndex++}`);
+    values.push(type);
+
+    updates.push(`transaction_date = $${paramIndex++}`);
+    values.push(transactionDate);
+
+    if (planId !== null) {
+        updates.push(`plan_id = $${paramIndex++}`);
+        values.push(planId);
+    }
+
+    if (installmentNumber !== null) {
+        updates.push(`installment_number = $${paramIndex++}`);
+        values.push(installmentNumber);
+    }
+
+    if (status !== null) {
+        updates.push(`status = $${paramIndex++}`);
+        values.push(status);
+    }
+
+    updates.push(`updated_at = CURRENT_TIMESTAMP`);
+
+    values.push(transactionId, userId);
 
     const result = await pool.query(
         `
         UPDATE transactions
-        SET
-            category_id = $1,
-            description = $2,
-            amount = $3,
-            type = $4,
-            transaction_date = $5,
-            updated_at = CURRENT_TIMESTAMP
-        WHERE id = $6
-          AND user_id = $7
+        SET ${updates.join(", ")}
+        WHERE id = $${paramIndex++}
+          AND user_id = $${paramIndex}
         RETURNING
             id,
             category_id,
@@ -134,17 +192,12 @@ async function updateTransaction(
             amount,
             type,
             transaction_date,
+            plan_id,
+            installment_number,
+            status,
             updated_at
         `,
-        [
-            categoryId || null,
-            description,
-            amount,
-            type,
-            transactionDate,
-            transactionId,
-            userId
-        ]
+        values
     );
 
     return result.rows[0];

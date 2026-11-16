@@ -135,6 +135,8 @@ async function getDashboard(userId, period = "month") {
 
         AND transaction_date
         BETWEEN $2 AND $3
+
+        AND (status = 'paid' OR status IS NULL)
         `,
         [
             userId,
@@ -246,6 +248,8 @@ async function getDashboard(userId, period = "month") {
 
             AND t.transaction_date
                 BETWEEN $2 AND $3
+
+            AND (t.status = 'paid' OR t.status IS NULL)
 
             GROUP BY c.name
 
@@ -433,6 +437,8 @@ async function getDashboard(userId, period = "month") {
                     'month',
                     CURRENT_DATE
                 )
+
+            AND (status = 'paid' OR status IS NULL)
             `,
             [userId]
         );
@@ -476,6 +482,8 @@ async function getDashboard(userId, period = "month") {
                     'month',
                     CURRENT_DATE - INTERVAL '1 month'
                 )
+
+            AND (status = 'paid' OR status IS NULL)
             `,
             [userId]
         );
@@ -582,6 +590,8 @@ async function getDashboard(userId, period = "month") {
             AND t.transaction_date
                 BETWEEN $2 AND $3
 
+            AND (t.status = 'paid' OR t.status IS NULL)
+
             GROUP BY c.name
 
             ORDER BY total DESC
@@ -650,6 +660,8 @@ async function getDashboard(userId, period = "month") {
 
             AND transaction_date
                 BETWEEN $2 AND $3
+
+            AND (status = 'paid' OR status IS NULL)
 
             GROUP BY
                 TO_CHAR(
