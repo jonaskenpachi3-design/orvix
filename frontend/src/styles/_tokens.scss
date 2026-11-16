@@ -1,0 +1,227 @@
+// ============================================================================
+// ORVIX — DESIGN TOKENS
+// Tokens de design para tema claro e escuro
+// ============================================================================
+
+// --- Fonte ---
+$font-family-base: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif !default;
+$font-family-mono: 'JetBrains Mono', 'Fira Code', monospace !default;
+
+// --- Pesos ---
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+
+// --- Escala tipográfica ---
+$font-size-display: 2.25rem;   // 36px - Saldo/valor principal
+$font-size-h1: 1.75rem;        // 28px - Título da página
+$font-size-h2: 1.25rem;        // 20px - Título de card
+$font-size-h3: 1.125rem;       // 18px - Subtítulos
+$font-size-h4: 1rem;           // 16px - Subtítulos menores
+$font-size-body: 1rem;         // 16px - Texto base
+$font-size-small: 0.875rem;    // 14px - Rótulos, legendas
+$font-size-caption: 0.75rem;   // 12px - Metadados
+
+$line-height-tight: 1.2;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.6;
+
+// --- Espaçamento (base 4px) ---
+$space-1: 0.25rem;   // 4px
+$space-2: 0.5rem;    // 8px
+$space-3: 0.75rem;   // 12px
+$space-4: 1rem;      // 16px
+$space-5: 1.5rem;    // 24px
+$space-6: 2rem;      // 32px
+$space-7: 3rem;      // 48px
+$space-8: 4rem;      // 64px
+
+// --- Bordas ---
+$border-radius-sm: 10px;      // inputs, botões pequenos
+$border-radius-md: 14px;      // botões, cards pequenos
+$border-radius-lg: 18px;      // cards principais, modais
+$border-radius-pill: 999px;   // badges, chips
+$border-width: 1px;
+
+// --- Sombras ---
+$shadow-floating-light: 0 12px 32px rgba(15, 20, 36, 0.12);
+$shadow-floating-dark: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+$shadow-sm: 0 1px 2px rgba(15, 20, 36, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(15, 20, 36, 0.1), 0 2px 4px -1px rgba(15, 20, 36, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(15, 20, 36, 0.1), 0 4px 6px -2px rgba(15, 20, 36, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(15, 20, 36, 0.1), 0 10px 10px -5px rgba(15, 20, 36, 0.04);
+
+// Dark theme shadows
+$shadow-sm-dark: 0 1px 2px rgba(0, 0, 0, 0.3);
+$shadow-md-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+$shadow-lg-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+$shadow-xl-dark: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+
+// --- Transições ---
+$transition-fast: 150ms ease;
+$transition-normal: 250ms ease;
+
+// ============================================================================
+// TEMA CLARO
+// ============================================================================
+:root,
+[data-bs-theme='light'] {
+  // Cores base
+  --orvix-bg: #F6F7FB;
+  --orvix-surface: #FFFFFF;
+  --orvix-surface-2: #F0F2F8;
+  --orvix-border: #E4E7EF;
+
+  // Texto
+  --orvix-text: #0F1424;
+  --orvix-text-secondary: #5A6278;
+  --orvix-text-muted: #8A91A6;
+
+  // Brand (Roxo - não verde/vermelho para não confundir com financeiro)
+  --orvix-primary: #5B4BFF;
+  --orvix-primary-hover: #4A3BE6;
+  --orvix-primary-soft: #ECEAFF;
+
+  // Semânticas financeiras
+  --orvix-positive: #12A150;   // Receita/Sucesso
+  --orvix-negative: #E5384F;   // Despesa/Erro
+  --orvix-warning: #E8890C;    // Atenção
+
+  // Sombras
+  --orvix-shadow-floating: #{$shadow-floating-light};
+  --orvix-shadow-sm: #{$shadow-sm};
+  --orvix-shadow-md: #{$shadow-md};
+  --orvix-shadow-lg: #{$shadow-lg};
+  --orvix-shadow-xl: #{$shadow-xl};
+
+  // Tipografia e bordas (Bootstrap 5.3 CSS variables)
+  --bs-font-family-base: #{$font-family-base};
+  --bs-font-family-monospace: #{$font-family-mono};
+  --bs-border-radius: #{$border-radius-md};
+  --bs-border-radius-sm: #{$border-radius-sm};
+  --bs-border-radius-lg: #{$border-radius-lg};
+  --bs-border-radius-pill: #{$border-radius-pill};
+
+  // Bootstrap overrides para mapear para nossos tokens
+  --bs-body-bg: var(--orvix-bg);
+  --bs-body-color: var(--orvix-text);
+  --bs-primary: var(--orvix-primary);
+  --bs-primary-rgb: 91, 75, 255;
+  --bs-success: var(--orvix-positive);
+  --bs-danger: var(--orvix-negative);
+  --bs-warning: var(--orvix-warning);
+  --bs-border-color: var(--orvix-border);
+  --bs-card-bg: var(--orvix-surface);
+  --bs-card-border-color: var(--orvix-border);
+  --bs-input-bg: var(--orvix-surface);
+  --bs-input-border-color: var(--orvix-border);
+  --bs-input-color: var(--orvix-text);
+  --bs-btn-primary-bg: var(--orvix-primary);
+  --bs-btn-primary-border: var(--orvix-primary);
+  --bs-btn-primary-hover-bg: var(--orvix-primary-hover);
+  --bs-btn-primary-hover-border: var(--orvix-primary-hover);
+}
+
+// ============================================================================
+// TEMA ESCURO
+// ============================================================================
+[data-bs-theme='dark'] {
+  // Cores base
+  --orvix-bg: #0B0F14;
+  --orvix-surface: #121820;
+  --orvix-surface-2: #18212B;
+  --orvix-border: #222D3A;
+
+  // Texto
+  --orvix-text: #F5F7FA;
+  --orvix-text-secondary: #A3ADBF;
+  --orvix-text-muted: #6F7A8E;
+
+  // Brand
+  --orvix-primary: #8B80FF;
+  --orvix-primary-hover: #9C93FF;
+  --orvix-primary-soft: #1E1B3D;
+
+  // Semânticas financeiras (mais vibrantes no escuro)
+  --orvix-positive: #2FD07A;
+  --orvix-negative: #FF6B7D;
+  --orvix-warning: #F5A524;
+
+  // Sombras
+  --orvix-shadow-floating: #{$shadow-floating-dark};
+  --orvix-shadow-sm: #{$shadow-sm-dark};
+  --orvix-shadow-md: #{$shadow-md-dark};
+  --orvix-shadow-lg: #{$shadow-lg-dark};
+  --orvix-shadow-xl: #{$shadow-xl-dark};
+
+  // Tipografia e bordas (Bootstrap 5.3 CSS variables)
+  --bs-font-family-base: #{$font-family-base};
+  --bs-font-family-monospace: #{$font-family-mono};
+  --bs-border-radius: #{$border-radius-md};
+  --bs-border-radius-sm: #{$border-radius-sm};
+  --bs-border-radius-lg: #{$border-radius-lg};
+  --bs-border-radius-pill: #{$border-radius-pill};
+
+  // Bootstrap overrides
+  --bs-body-bg: var(--orvix-bg);
+  --bs-body-color: var(--orvix-text);
+  --bs-primary: var(--orvix-primary);
+  --bs-primary-rgb: 139, 128, 255;
+  --bs-success: var(--orvix-positive);
+  --bs-danger: var(--orvix-negative);
+  --bs-warning: var(--orvix-warning);
+  --bs-border-color: var(--orvix-border);
+  --bs-card-bg: var(--orvix-surface);
+  --bs-card-border-color: var(--orvix-border);
+  --bs-input-bg: var(--orvix-surface);
+  --bs-input-border-color: var(--orvix-border);
+  --bs-input-color: var(--orvix-text);
+  --bs-btn-primary-bg: var(--orvix-primary);
+  --bs-btn-primary-border: var(--orvix-primary);
+  --bs-btn-primary-hover-bg: var(--orvix-primary-hover);
+  --bs-btn-primary-hover-border: var(--orvix-primary-hover);
+}
+
+// ============================================================================
+// UTILITÁRIOS GLOBAIS
+// ============================================================================
+
+// Tabular numbers para valores monetários
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-family: $font-family-mono, $font-family-base;
+}
+
+// Focus visible acessível
+:focus-visible {
+  outline: 2px solid var(--orvix-primary);
+  outline-offset: 2px;
+}
+
+// Scrollbar estilizada
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--orvix-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--orvix-text-muted);
+}
+
+// Seleção de texto
+::selection {
+  background-color: var(--orvix-primary-soft);
+  color: var(--orvix-primary);
+}
