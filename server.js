@@ -139,17 +139,26 @@ app.use(
 
 // Serve Angular build in production
 if (NODE_ENV === "production") {
-    // Disable cache for files that must always be fresh (no hash in name)
-    app.use((req, res, next) => {
-        const noCachePaths = ['/', '/index.html', '/ngsw.json', '/ngsw-worker.js', '/manifest.webmanifest'];
-        console.log(`Cache middleware: ${req.path}`);
-        if (noCachePaths.includes(req.path)) {
-            console.log(`Setting no-cache for ${req.path}`);
-            res.setHeader('Cache-Control', 'no-cache');
-        }
-        next();
+    // Explicit route for root to serve index.html with no-cache
+    app.get('/', (req, res) => {
+        res.setHeader('Cache-Control', 'no-cache');
+        res.sendFile(path.join(FRONTEND_DIST, 'index.html'));
     });
-    app.use(express.static(FRONTEND_DIST, { maxAge: "1y", etag: true }));
+    // Explicit routes for other no-cache files
+    app.get(['/index.html', '/ngsw.json', '/ngsw-worker.js', '/manifest.webmanifest'], (req, res) => {
+        res.setHeader('Cache-Control', 'no-cache');
+        res.sendFile(path.join(FRONTEND_DIST, req.path));
+    });
+    // Static files for everything else (hashed assets get long cache)
+    app.use(express.static(FRONTEND_DIST, {
+        etag: true,
+        setHeaders: (res, file) => {
+            const filename = file.split(/[\\/]/).pop();
+            if (/\.[a-f0-9]{8,}\.(js|css|woff2?|png|jpg|jpeg|gif|svg|ico)$/.test(filename)) {
+                res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+            }
+        }
+    }));
 }
 
 
