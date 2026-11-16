@@ -6,12 +6,13 @@ import { importProvidersFrom } from '@angular/core';
 import { NgbModule, NgbModalModule, NgbToastModule, NgbDatepickerModule, NgbDropdownModule, NgbTooltipModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
-import { LOCALE_ID } from '@angular/core';
+import { LOCALE_ID, isDevMode } from '@angular/core';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { authInterceptor } from './app/core/auth/auth.interceptor';
 import { ThemeService } from './app/core/theme/theme.service';
+import { provideServiceWorker } from '@angular/service-worker';
 
 // Registrar locale pt-BR para pipes de moeda/data
 registerLocaleData(localePt);
@@ -42,6 +43,9 @@ bootstrapApplication(AppComponent, {
     { provide: LOCALE_ID, useValue: 'pt-BR' },
 
     // Theme service (inicializa o tema antes do app renderizar)
-    ThemeService,
+    ThemeService, provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }),
   ],
 }).catch((err) => console.error(err));

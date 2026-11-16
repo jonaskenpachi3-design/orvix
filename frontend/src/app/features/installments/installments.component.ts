@@ -287,8 +287,8 @@ interface InstallmentPreviewItem {
                       <div class="min-w-0">
                         <h5 class="mb-1 text-truncate">{{ plan.description }}</h5>
                         <div class="d-flex align-items-center gap-3 text-muted small">
-                          @if (plan.category) {
-                            <span><i class="bi bi-tag me-1" aria-hidden="true"></i>{{ plan.category.name }}</span>
+                          @if (plan.category?.name || plan.category_name) {
+                            <span><i class="bi bi-tag me-1" aria-hidden="true"></i>{{ plan.category?.name || plan.category_name }}</span>
                           }
                           <span>{{ formatCurrency(plan.total_amount) }} total</span>
                         </div>
@@ -848,7 +848,7 @@ export class InstallmentsComponent implements OnInit, OnDestroy {
         const response = await this.installmentApi.getById(planId).toPromise();
         this.planTransactions.update(current => ({
           ...current,
-          [planId]: response?.transactions || [],
+          [planId]: response?.plan?.transactions || [],
         }));
       } catch (err) {
         console.error('Erro ao carregar parcelas:', err);

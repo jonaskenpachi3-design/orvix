@@ -7,6 +7,9 @@ const path = require("path");
 
 const pool = require("./src/config/database");
 
+// Frontend build path (Angular output)
+const FRONTEND_DIST = path.join(__dirname, "frontend", "dist", "orvix-frontend");
+
 
 // ========================================
 // ROTAS
@@ -82,6 +85,12 @@ app.use(
     })
 );
 
+// Debug: log ALL requests
+app.use((req, res, next) => {
+    console.log(`ALL request: ${req.method} ${req.path}`);
+    next();
+});
+
 
 // ========================================
 // CORS
@@ -131,17 +140,22 @@ app.use(
 
 
 // ========================================
-// ARQUIVOS ESTÁTICOS
+// ARQUIVOS ESTÁTICOS (Frontend Angular)
 // ========================================
 
-app.use(
-    express.static(
-        path.join(
-            __dirname,
-            "public"
-        )
-    )
-);
+// Serve Angular build in production
+if (NODE_ENV === "production") {
+    // Debug: log static file requests
+    app.use((req, res, next) => {
+        console.log(`Static request: ${req.path}`);
+        next();
+    });
+    app.use(express.static(FRONTEND_DIST, { maxAge: "1y", etag: true }));
+    console.log(`Serving static files from: ${FRONTEND_DIST}`);
+} else {
+    // In development, serve public/ for any legacy files
+    app.use(express.static(path.join(__dirname, "public")));
+}
 
 
 // ========================================
@@ -262,22 +276,25 @@ app.get(
 
 
 // ========================================
-// PÁGINA INICIAL
+// PÁGINA INICIAL & SPA FALLBACK
 // ========================================
 
-app.get(
-    "/",
-    (req, res) => {
-
-        res.sendFile(
-            path.join(
-                __dirname,
-                "public",
-                "login.html"
-            )
-        );
-    }
-);
+// In production, serve Angular index.html for all non-API routes
+if (NODE_ENV === "production") {
+    // Use middleware to serve SPA for non-API routes
+    app.use((req, res, next) => {
+        // Skip API routes
+        if (req.path.startsWith("/api")) {
+            return next();
+        }
+        res.sendFile(path.join(FRONTEND_DIST, "index.html"));
+    });
+} else {
+    // Development: serve login.html for root
+    app.get("/", (req, res) => {
+        res.sendFile(path.join(__dirname, "public", "login.html"));
+    });
+}
 
 
 // ========================================

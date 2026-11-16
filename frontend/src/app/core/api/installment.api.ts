@@ -11,6 +11,7 @@ export interface InstallmentPlan {
   installments_pending: number;
   first_due_date: string;
   category_id: string | null;
+  category_name?: string; // From backend join
   category?: {
     id: string;
     name: string;
@@ -62,8 +63,8 @@ export class InstallmentApi extends ApiService {
     return this.get<InstallmentPlansResponse>('/installments');
   }
 
-  getById(id: string): Observable<InstallmentPlan> {
-    return this.get<InstallmentPlan>(`/installments/${id}`);
+  getById(id: string): Observable<{ plan: InstallmentPlan }> {
+    return this.get<{ plan: InstallmentPlan }>(`/installments/${id}`);
   }
 
   getUpcoming(startDate: string, endDate: string): Observable<UpcomingInstallmentsResponse> {

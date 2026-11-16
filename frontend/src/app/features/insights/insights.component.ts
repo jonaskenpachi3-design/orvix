@@ -613,13 +613,26 @@ export class InsightsComponent implements OnInit, AfterViewChecked {
       },
       error: (err) => {
         console.error('Erro no chat IA:', err);
+        let errorMsg = 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.';
+
+        // Handle specific error codes
+        if (err?.status === 429) {
+          errorMsg = 'Muitas requisições. Aguarde um momento antes de tentar novamente.';
+        } else if (err?.status === 401) {
+          errorMsg = 'Sessão expirada. Por favor, faça login novamente.';
+        } else if (err?.status === 503) {
+          errorMsg = 'Serviço de IA temporariamente indisponível. Tente novamente mais tarde.';
+        } else if (err?.status === 0) {
+          errorMsg = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
+        }
+
         this.chatMessages.update(msgs => {
           const newMsgs = [...msgs];
           const loadingIndex = newMsgs.findIndex(m => m.isLoading);
           if (loadingIndex !== -1) {
             newMsgs[loadingIndex] = {
               role: 'assistant',
-              content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.',
+              content: errorMsg,
               timestamp: new Date(),
             };
           }
@@ -658,9 +671,21 @@ export class InsightsComponent implements OnInit, AfterViewChecked {
     return colors[type] || 'info';
   }
 
+  private escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, '&')
+      .replace(/</g, '<')
+      .replace(/>/g, '>')
+      .replace(/"/g, '"')
+      .replace(/'/g, '&apos;');
+  }
+
   formatMessage(content: string): string {
+    // Escape HTML first to prevent XSS
+    const escaped = this.escapeHtml(content);
+
     // Simple markdown-like formatting
-    return content
+    return escaped
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       .replace(/`(.*?)`/g, '<code class="bg-light px-1 rounded">$1</code>')
