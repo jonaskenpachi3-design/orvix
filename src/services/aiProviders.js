@@ -19,9 +19,10 @@
  */
 
 const GROQ_BASE_URL = "https://api.groq.com/openai/v1";
-const GROQ_DEFAULT_MODEL = "llama-3.3-70b-versatile";
+// llama-3.3-70b-versatile foi desligado pela Groq em 16/08/2026 (plano gratuito); ver console.groq.com/docs/deprecations
+const GROQ_DEFAULT_MODEL = "openai/gpt-oss-120b";
 const ANTHROPIC_DEFAULT_MODEL = "claude-sonnet-5-5";
-const DEFAULT_MAX_TOKENS = 1500;
+const DEFAULT_MAX_TOKENS = 3000; // modelos de raciocínio (gpt-oss) gastam tokens "pensando"
 const DEFAULT_TIMEOUT_MS = 30000;
 
 class ProviderError extends Error {
@@ -204,6 +205,11 @@ function createOpenAICompatibleProvider(config, deps = {}) {
                 temperature: 0.2,
                 max_tokens: config.maxTokens
             };
+
+            // gpt-oss é um modelo de raciocínio: esforço baixo = respostas mais rápidas e menos tokens
+            if (config.name === "groq" && config.model.startsWith("openai/gpt-oss")) {
+                body.reasoning_effort = "low";
+            }
 
             let response;
 
