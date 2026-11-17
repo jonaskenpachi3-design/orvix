@@ -175,6 +175,7 @@ interface NavItem {
     :host {
       display: block;
       height: 100vh;
+      height: 100dvh;
     }
   `]
 })

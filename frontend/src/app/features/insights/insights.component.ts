@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModule, NgbAlertModule, NgbTooltipModule, NgbDatepickerModule, NgbInputDatepicker, NgbAccordionModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
@@ -739,6 +739,10 @@ interface ChatMessage {
     }
 
     @media (max-width: 767.98px) {
+      .insights-page {
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+      }
+
       .page-header {
         flex-direction: column;
         align-items: stretch;
@@ -747,6 +751,11 @@ interface ChatMessage {
 
       .page-header > div {
         text-align: center;
+      }
+
+      .ai-chat-card {
+        border-radius: var(--border-radius-lg);
+        scroll-margin-bottom: 1rem;
       }
 
       .ai-chat-header {
@@ -770,8 +779,10 @@ interface ChatMessage {
       }
 
       .chat-container {
-        height: 380px;
+        height: clamp(220px, calc(var(--orvix-mobile-vh, 100dvh) - 320px), 420px);
         padding: 0.75rem;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
       }
 
       .message-column {
@@ -786,10 +797,43 @@ interface ChatMessage {
         margin-right: -0.75rem;
         padding-right: 0.75rem;
       }
+
+      .chat-composer {
+        position: sticky;
+        bottom: env(safe-area-inset-bottom, 0px);
+        z-index: 2;
+      }
+
+      .chat-input {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 359.98px) {
+      .ai-status {
+        width: 32px;
+        padding: 0;
+        justify-content: center;
+        font-size: 0;
+      }
+
+      .ai-status .status-dot {
+        width: 8px;
+        height: 8px;
+      }
+
+      .message-avatar,
+      .ai-avatar {
+        display: none;
+      }
+
+      .message-column {
+        max-width: 92%;
+      }
     }
   `]
 })
-export class InsightsComponent implements OnInit, AfterViewChecked {
+export class InsightsComponent implements OnInit, AfterViewChecked, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly insightApi = inject(InsightApi);
   private readonly aiApi = inject(AiApi);
@@ -805,6 +849,7 @@ export class InsightsComponent implements OnInit, AfterViewChecked {
   readonly scrollToBottom = signal(false);
 
   @ViewChild('chatContainer') chatContainerRef!: ElementRef<HTMLDivElement>;
+  private viewportCleanup?: () => void;
 
   readonly periodForm = this.fb.nonNullable.group({
     startDate: ['' as string | { year: number; month: number; day: number }],
@@ -827,6 +872,32 @@ export class InsightsComponent implements OnInit, AfterViewChecked {
     this.setDefaultPeriod();
     this.loadInsights();
     this.loadAiTools();
+    this.setupMobileViewport();
+  }
+
+  ngOnDestroy(): void {
+    this.viewportCleanup?.();
+  }
+
+  private setupMobileViewport(): void {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+
+    const updateViewport = () => {
+      document.documentElement.style.setProperty(
+        '--orvix-mobile-vh',
+        `${Math.round(viewport.height)}px`
+      );
+    };
+
+    updateViewport();
+    viewport.addEventListener('resize', updateViewport);
+    viewport.addEventListener('scroll', updateViewport);
+    this.viewportCleanup = () => {
+      viewport.removeEventListener('resize', updateViewport);
+      viewport.removeEventListener('scroll', updateViewport);
+      document.documentElement.style.removeProperty('--orvix-mobile-vh');
+    };
   }
 
   ngAfterViewChecked(): void {
