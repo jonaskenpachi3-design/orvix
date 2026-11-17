@@ -616,10 +616,15 @@ export class InsightsComponent implements OnInit, AfterViewChecked {
         let errorMsg = 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.';
 
         // Handle specific error codes
-        if (err?.status === 429) {
-          errorMsg = 'Muitas requisições. Aguarde um momento antes de tentar novamente.';
-        } else if (err?.status === 401) {
+        // O backend envia mensagens seguras e específicas (chave inválida, limite do provedor etc.)
+        const serverMsg = typeof err?.error?.error === 'string' ? err.error.error : '';
+
+        if (err?.status === 401) {
           errorMsg = 'Sessão expirada. Por favor, faça login novamente.';
+        } else if ([400, 422, 429, 502, 503, 504].includes(err?.status) && serverMsg) {
+          errorMsg = serverMsg;
+        } else if (err?.status === 429) {
+          errorMsg = 'Muitas requisições. Aguarde um momento antes de tentar novamente.';
         } else if (err?.status === 503) {
           errorMsg = 'Serviço de IA temporariamente indisponível. Tente novamente mais tarde.';
         } else if (err?.status === 0) {
