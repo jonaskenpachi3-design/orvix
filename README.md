@@ -182,7 +182,7 @@ curl http://localhost:3000/api/health
 | `NODE_ENV` | Não | `development` (padrão) ou `production`. | `development` |
 | `CORS_ORIGIN` | Não | Origem permitida quando o frontend está em outro domínio. Sem ela em produção, somente chamadas same-origin são permitidas. | `https://meu-orvix.onrender.com` |
 | `GROQ_API_KEY` | Não | Habilita o chat contábil com IA **gratuita** (Groq). Sem nenhuma chave de IA, o chat responde `503`; configure no provedor, nunca no Git. | Configure no provedor, nunca no Git. |
-| `AI_MODEL` | Não | Modelo do provedor; padrão `llama-3.3-70b-versatile` (Groq) ou `claude-sonnet-5-5` (Anthropic). | `llama-3.3-70b-versatile` |
+| `AI_MODEL` | Não | Modelo do provedor; padrão `openai/gpt-oss-120b` (Groq) ou `claude-sonnet-5-5` (Anthropic). | `openai/gpt-oss-120b` |
 | `AI_PROVIDER` | Não | `groq`, `anthropic` ou `openai-compatible`. Se omitido, é detectado pela chave presente. | `groq` |
 | `ANTHROPIC_API_KEY` | Não | Alternativa paga (Claude). | Configure no provedor, nunca no Git. |
 | `AI_API_KEY`, `AI_BASE_URL` | Não | Para `openai-compatible` (OpenRouter, Cerebras etc.). | — |
