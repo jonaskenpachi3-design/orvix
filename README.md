@@ -562,7 +562,7 @@ O projeto pode ser publicado como um único serviço Node no [Render](https://re
 
 1. Crie um banco PostgreSQL e configure `DATABASE_URL` com a URL interna do banco.
 2. Crie um *Web Service* apontando para a raiz do repositório.
-3. Configure o comando de build: `npm ci && npm ci --prefix frontend && npm run build`.
+3. Configure o comando de build: `npm ci && npm ci --include=dev --prefix frontend && npm run build`. O `--include=dev` é necessário porque o Angular CLI (`ng`) está nas dependências de desenvolvimento e o Render pode omiti-las em produção.
 4. Configure o comando de start: `npm start`.
 5. Configure `NODE_ENV=production` e `JWT_SECRET` (pelo menos 32 caracteres aleatórios). Opcionalmente, defina `CORS_ORIGIN` se o frontend estiver em outra origem e `ANTHROPIC_API_KEY` para habilitar o chat com IA.
 6. Configure `npm run migrate` como comando de pre-deploy após criar o banco. Ele aplica o schema base e as migrações pendentes; faça backup antes de migrações em um banco com dados.
