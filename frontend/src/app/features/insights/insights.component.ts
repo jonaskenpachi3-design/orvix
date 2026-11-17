@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModule, NgbAlertModule, NgbTooltipModule, NgbDatepickerModule, NgbInputDatepicker, NgbAccordionModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { InsightApi, InsightsResponse, Insight, TopCategory } from '@core/api/insight.api';
-import { AiApi, AIChatResponse, AITool, AIToolsResponse } from '@core/api/ai.api';
+import { AiApi, AIChatResponse } from '@core/api/ai.api';
 import { ToastService } from '@shared/services/toast.service';
 
 interface ChatMessage {
@@ -313,29 +313,6 @@ interface ChatMessage {
           </form>
         </div>
       </section>
-
-      <!-- AI Tools Info -->
-      @if (aiTools().length > 0) {
-        <section class="card">
-          <div class="card-header">
-            <h5 class="mb-0"><i class="bi bi-tools me-2" aria-hidden="true"></i> Ferramentas disponíveis para a IA</h5>
-          </div>
-          <div class="card-body">
-            <div class="row g-3">
-              @for (tool of aiTools(); track tool.name) {
-                <div class="col-12 col-md-6 col-lg-4">
-                  <div class="card h-100 tool-card">
-                    <div class="card-body">
-                      <h6 class="mb-2">{{ tool.name }}</h6>
-                      <p class="text-muted small mb-0">{{ tool.description }}</p>
-                    </div>
-                  </div>
-                </div>
-              }
-            </div>
-          </div>
-        </section>
-      }
     </div>
   `,
   styles: [`
@@ -755,16 +732,6 @@ interface ChatMessage {
       cursor: not-allowed;
     }
 
-    .tool-card {
-      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-      border: 1px solid var(--orvix-border);
-    }
-
-    .tool-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--orvix-shadow-md);
-    }
-
     .spinner-sm {
       width: 1rem;
       height: 1rem;
@@ -833,7 +800,6 @@ export class InsightsComponent implements OnInit, AfterViewChecked {
   readonly loadingInsights = signal(false);
   readonly chatMessages = signal<ChatMessage[]>([]);
   readonly sendingMessage = signal(false);
-  readonly aiTools = signal<AITool[]>([]);
   readonly aiReady = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly scrollToBottom = signal(false);
@@ -923,8 +889,7 @@ export class InsightsComponent implements OnInit, AfterViewChecked {
 
   private loadAiTools(): void {
     this.aiApi.getTools().subscribe({
-      next: (response: AIToolsResponse) => {
-        this.aiTools.set(response.tools ?? []);
+      next: () => {
         this.aiReady.set(true);
       },
       error: (err) => {
