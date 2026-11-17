@@ -179,10 +179,11 @@ async function getMonthlyEvolution(
 // DESPESAS POR CATEGORIA
 // ========================================
 
-async function getExpensesByCategory(
+async function getCategoryTotals(
     userId,
     startDate,
-    endDate
+    endDate,
+    type
 ) {
     const result = await pool.query(
         `
@@ -203,7 +204,7 @@ async function getExpensesByCategory(
 
         WHERE t.user_id = $1
 
-          AND t.type = 'expense'
+          AND t.type = $4
 
           AND t.transaction_date >= $2
 
@@ -221,7 +222,8 @@ async function getExpensesByCategory(
         [
             userId,
             startDate,
-            endDate
+            endDate,
+            type
         ]
     );
 
@@ -243,6 +245,16 @@ async function getExpensesByCategory(
 }
 
 
+function getExpensesByCategory(userId, startDate, endDate) {
+    return getCategoryTotals(userId, startDate, endDate, "expense");
+}
+
+
+function getIncomesByCategory(userId, startDate, endDate) {
+    return getCategoryTotals(userId, startDate, endDate, "income");
+}
+
+
 // ========================================
 // RELATÓRIO COMPLETO
 // ========================================
@@ -255,7 +267,8 @@ async function getFinancialReport(
     const [
         summary,
         monthlyEvolution,
-        expensesByCategory
+        expensesByCategory,
+        incomesByCategory
     ] = await Promise.all([
         getFinancialSummary(
             userId,
@@ -270,6 +283,11 @@ async function getFinancialReport(
         ),
 
         getExpensesByCategory(
+            userId,
+            startDate,
+            endDate
+        ),
+        getIncomesByCategory(
             userId,
             startDate,
             endDate
@@ -289,7 +307,10 @@ async function getFinancialReport(
             monthlyEvolution,
 
         expenses_by_category:
-            expensesByCategory
+            expensesByCategory,
+
+        incomes_by_category:
+            incomesByCategory
     };
 }
 
@@ -298,5 +319,6 @@ module.exports = {
     getFinancialSummary,
     getMonthlyEvolution,
     getExpensesByCategory,
+    getIncomesByCategory,
     getFinancialReport
 };

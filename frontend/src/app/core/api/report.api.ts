@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ApiService } from './api.service';
+import { mapReport, RawReport } from './api-mappers';
 
 export interface ReportSummary {
   income: number;
@@ -37,9 +38,9 @@ export interface ReportResponse {
 @Injectable({ providedIn: 'root' })
 export class ReportApi extends ApiService {
   getFinancialReport(startDate: string, endDate: string): Observable<ReportResponse> {
-    return this.get<ReportResponse>('/reports/financial', {
+    return this.get<RawReport>('/reports/financial', {
       start_date: startDate,
       end_date: endDate,
-    });
+    }).pipe(map(mapReport));
   }
 }

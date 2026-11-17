@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ApiService } from './api.service';
+import { mapBudgets, mapBudgetUsage } from './api-mappers';
 
 export interface Budget {
   id: string;
@@ -43,19 +44,19 @@ export interface BudgetUsageResponse {
 @Injectable({ providedIn: 'root' })
 export class BudgetApi extends ApiService {
   getAll(month: string): Observable<BudgetsResponse> {
-    return this.get<BudgetsResponse>('/budgets', { month });
+    return this.get<unknown>('/budgets', { month }).pipe(map((raw) => ({ budgets: mapBudgets(raw) })));
   }
 
   getUsage(month: string): Observable<BudgetUsageResponse> {
-    return this.get<BudgetUsageResponse>('/budgets/usage', { month });
+    return this.get<unknown>('/budgets/usage', { month }).pipe(map((raw) => ({ usage: mapBudgetUsage(raw) })));
   }
 
   create(dto: CreateBudgetDto): Observable<Budget> {
-    return this.post<Budget>('/budgets', dto);
+    return this.post<{ budget: Budget }>('/budgets', dto).pipe(map((r) => r.budget));
   }
 
   update(id: string, dto: Partial<CreateBudgetDto>): Observable<Budget> {
-    return this.put<Budget>(`/budgets/${id}`, dto);
+    return this.put<{ budget: Budget }>(`/budgets/${id}`, dto).pipe(map((r) => r.budget));
   }
 
   deleteBudget(id: string): Observable<void> {

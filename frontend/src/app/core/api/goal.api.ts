@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ApiService } from './api.service';
+import { mapGoal, RawGoal } from './api-mappers';
 
 export interface Goal {
   id: string;
@@ -26,19 +27,19 @@ export interface GoalsResponse {
 @Injectable({ providedIn: 'root' })
 export class GoalApi extends ApiService {
   getAll(): Observable<GoalsResponse> {
-    return this.get<GoalsResponse>('/goals');
+    return this.get<{ goals: RawGoal[] }>('/goals').pipe(map((r) => ({ goals: (r.goals ?? []).map(mapGoal) })));
   }
 
   getById(id: string): Observable<Goal> {
-    return this.get<Goal>(`/goals/${id}`);
+    return this.get<{ goal: RawGoal }>(`/goals/${id}`).pipe(map((r) => mapGoal(r.goal)));
   }
 
   create(dto: CreateGoalDto): Observable<Goal> {
-    return this.post<Goal>('/goals', dto);
+    return this.post<{ goal: RawGoal }>('/goals', dto).pipe(map((r) => mapGoal(r.goal)));
   }
 
   update(id: string, dto: Partial<CreateGoalDto>): Observable<Goal> {
-    return this.put<Goal>(`/goals/${id}`, dto);
+    return this.put<{ goal: RawGoal }>(`/goals/${id}`, dto).pipe(map((r) => mapGoal(r.goal)));
   }
 
   deleteGoal(id: string): Observable<void> {

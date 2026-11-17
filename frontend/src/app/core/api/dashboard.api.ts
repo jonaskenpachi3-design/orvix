@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ApiService } from './api.service';
+import { mapDashboard, RawDashboard } from './api-mappers';
 
 export type DashboardPeriod = 'month' | 'previous_month' | '3_months' | '6_months' | 'year';
 
@@ -46,6 +47,6 @@ export interface DashboardResponse {
 @Injectable({ providedIn: 'root' })
 export class DashboardApi extends ApiService {
   getDashboard(period: DashboardPeriod = 'month'): Observable<DashboardResponse> {
-    return this.get<DashboardResponse>('/dashboard', { period });
+    return this.get<RawDashboard>('/dashboard', { period }).pipe(map(mapDashboard));
   }
 }

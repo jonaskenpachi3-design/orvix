@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ApiService } from './api.service';
+import { mapTransaction, RawTransaction } from './api-mappers';
 
 export interface Transaction {
   id: string;
@@ -36,19 +37,17 @@ export interface TransactionsResponse {
 @Injectable({ providedIn: 'root' })
 export class TransactionApi extends ApiService {
   getAll(params?: { startDate?: string; endDate?: string; type?: string; categoryId?: string }): Observable<TransactionsResponse> {
-    return this.get<TransactionsResponse>('/transactions', params);
-  }
-
-  getById(id: string): Observable<Transaction> {
-    return this.get<Transaction>(`/transactions/${id}`);
+    return this.get<{ transactions: RawTransaction[] }>('/transactions', params).pipe(
+      map((r) => ({ transactions: (r.transactions ?? []).map(mapTransaction) })),
+    );
   }
 
   create(dto: CreateTransactionDto): Observable<Transaction> {
-    return this.post<Transaction>('/transactions', dto);
+    return this.post<{ transaction: RawTransaction }>('/transactions', dto).pipe(map((r) => mapTransaction(r.transaction)));
   }
 
   update(id: string, dto: UpdateTransactionDto): Observable<Transaction> {
-    return this.put<Transaction>(`/transactions/${id}`, dto);
+    return this.put<{ transaction: RawTransaction }>(`/transactions/${id}`, dto).pipe(map((r) => mapTransaction(r.transaction)));
   }
 
   deleteTransaction(id: string): Observable<void> {

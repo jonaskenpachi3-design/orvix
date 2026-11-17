@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ApiService } from './api.service';
+import { mapInsights, RawInsights } from './api-mappers';
 
 export interface InsightSummary {
   income: number;
@@ -36,9 +37,9 @@ export interface InsightsResponse {
 @Injectable({ providedIn: 'root' })
 export class InsightApi extends ApiService {
   getFinancialInsights(startDate: string, endDate: string): Observable<InsightsResponse> {
-    return this.get<InsightsResponse>('/insights/financial', {
+    return this.get<RawInsights>('/insights/financial', {
       start_date: startDate,
       end_date: endDate,
-    });
+    }).pipe(map(mapInsights));
   }
 }

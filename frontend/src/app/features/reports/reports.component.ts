@@ -731,8 +731,9 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
+    if (!dateString) return '—';
+    const [year, month, day] = dateString.split('T')[0].split('-');
+    return `${day}/${month}/${year}`;
   }
 
   formatCurrency(value: number): string {

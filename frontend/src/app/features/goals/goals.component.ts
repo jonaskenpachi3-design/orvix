@@ -523,8 +523,9 @@ export class GoalsComponent implements OnInit {
   }
 
   formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
+    if (!dateString) return '—';
+    const [year, month, day] = dateString.split('T')[0].split('-');
+    return `${day}/${month}/${year}`;
   }
 
   formatCurrency(value: number): string {
@@ -633,7 +634,14 @@ export class GoalsComponent implements OnInit {
       const amount = this.contributionAmount.value;
       const newCurrentAmount = goal.current_amount + amount;
 
-      await this.goalApi.update(goal.id, { currentAmount: newCurrentAmount }).toPromise();
+      await this.goalApi
+        .update(goal.id, {
+          name: goal.name,
+          targetAmount: goal.target_amount,
+          currentAmount: newCurrentAmount,
+          deadline: goal.deadline ?? undefined,
+        })
+        .toPromise();
       this.toastService.success('Contribuição adicionada com sucesso.');
       modal.close();
       await this.loadGoals();

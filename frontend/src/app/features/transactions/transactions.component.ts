@@ -196,7 +196,7 @@ import { ToastService } from '@shared/services/toast.service';
                   </tr>
                 </thead>
                 <tbody>
-                  @for (tx of transactions(); track tx.id) {
+                  @for (tx of pagedTransactions(); track tx.id) {
                     <tr [class.opacity-50]="tx.status === 'scheduled'">
                       <td>{{ formatDate(tx.transaction_date) }}</td>
                       <td>
@@ -586,6 +586,10 @@ export class TransactionsComponent implements OnInit {
   readonly pageSize = 20;
   readonly totalItems = signal(0);
   readonly totalPages = computed(() => Math.ceil(this.totalItems() / this.pageSize));
+  readonly pagedTransactions = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.transactions().slice(start, start + this.pageSize);
+  });
 
   @ViewChild('transactionModal', { static: false }) transactionModalRef!: any;
   @ViewChild('deleteModal', { static: false }) deleteModalRef!: any;
@@ -811,8 +815,9 @@ export class TransactionsComponent implements OnInit {
   }
 
   formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
+    if (!dateString) return '—';
+    const [year, month, day] = dateString.split('T')[0].split('-');
+    return `${day}/${month}/${year}`;
   }
 
   formatCurrency(value: number): string {

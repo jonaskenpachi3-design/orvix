@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ApiService } from './api.service';
 
 export interface Category {
@@ -24,16 +24,12 @@ export class CategoryApi extends ApiService {
     return this.get<CategoriesResponse>('/categories');
   }
 
-  getById(id: string): Observable<Category> {
-    return this.get<Category>(`/categories/${id}`);
-  }
-
   create(dto: CreateCategoryDto): Observable<Category> {
-    return this.post<Category>('/categories', dto);
+    return this.post<{ category: Category }>('/categories', dto).pipe(map((r) => r.category));
   }
 
   update(id: string, dto: Partial<CreateCategoryDto>): Observable<Category> {
-    return this.put<Category>(`/categories/${id}`, dto);
+    return this.put<{ category: Category }>(`/categories/${id}`, dto).pipe(map((r) => r.category));
   }
 
   deleteCategory(id: string): Observable<void> {

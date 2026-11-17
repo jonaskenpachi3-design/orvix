@@ -76,11 +76,53 @@ async function createTransaction(req, res) {
 
 async function getTransactions(req, res) {
     try {
-        const { includeScheduled } = req.query;
+        const {
+            includeScheduled,
+            startDate,
+            endDate,
+            type,
+            categoryId
+        } = req.query;
+
+        const isDate = (value) =>
+            typeof value === "string" &&
+            /^\d{4}-\d{2}-\d{2}$/.test(value);
+
+        const isUuid = (value) =>
+            typeof value === "string" &&
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+
+        if (startDate && !isDate(startDate)) {
+            return res.status(400).json({
+                error: "startDate deve estar no formato YYYY-MM-DD."
+            });
+        }
+
+        if (endDate && !isDate(endDate)) {
+            return res.status(400).json({
+                error: "endDate deve estar no formato YYYY-MM-DD."
+            });
+        }
+
+        if (type && !["income", "expense"].includes(type)) {
+            return res.status(400).json({
+                error: "Tipo inválido."
+            });
+        }
+
+        if (categoryId && !isUuid(categoryId)) {
+            return res.status(400).json({
+                error: "Categoria inválida."
+            });
+        }
 
         const transactions =
             await transactionService.getTransactionsByUser(req.user.id, {
-                includeScheduled: includeScheduled === 'true'
+                includeScheduled: includeScheduled === 'true',
+                startDate: startDate || undefined,
+                endDate: endDate || undefined,
+                type: type || undefined,
+                categoryId: categoryId || undefined
             });
 
         return res.status(200).json({

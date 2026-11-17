@@ -27,13 +27,18 @@ async function getCategoriesByUser(userId) {
     const result = await pool.query(
         `
         SELECT
-            id,
-            name,
-            type,
-            created_at
-        FROM categories
-        WHERE user_id = $1
-        ORDER BY type, name
+            c.id,
+            c.name,
+            c.type,
+            c.created_at,
+            COUNT(t.id)::int AS transaction_count
+        FROM categories c
+        LEFT JOIN transactions t
+            ON t.category_id = c.id
+            AND t.user_id = c.user_id
+        WHERE c.user_id = $1
+        GROUP BY c.id
+        ORDER BY c.type, c.name
         `,
         [userId]
     );

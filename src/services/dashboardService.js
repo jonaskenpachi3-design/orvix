@@ -127,7 +127,9 @@ async function getDashboard(userId, period = "month") {
                     END
                 ),
                 0
-            ) AS total_expense
+            ) AS total_expense,
+
+            COUNT(*) AS total_transactions
 
         FROM transactions
 
@@ -717,6 +719,12 @@ async function getDashboard(userId, period = "month") {
             totalExpense,
 
             balance,
+
+            totalTransactions:
+                Number(
+                    summaryResult.rows[0]
+                        .total_transactions
+                ),
 
             savingsRate,
 

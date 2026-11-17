@@ -82,31 +82,63 @@ async function createTransaction(
 
 
 async function getTransactionsByUser(userId, options = {}) {
-    const { includeScheduled = false } = options;
+    const {
+        includeScheduled = false,
+        startDate,
+        endDate,
+        type,
+        categoryId
+    } = options;
 
-    const statusFilter = includeScheduled
-        ? ""
-        : "AND (status = 'paid' OR status IS NULL)";
+    const conditions = ["t.user_id = $1"];
+    const values = [userId];
+
+    if (!includeScheduled) {
+        conditions.push("(t.status = 'paid' OR t.status IS NULL)");
+    }
+
+    if (startDate) {
+        values.push(startDate);
+        conditions.push(`t.transaction_date >= $${values.length}`);
+    }
+
+    if (endDate) {
+        values.push(endDate);
+        conditions.push(`t.transaction_date <= $${values.length}`);
+    }
+
+    if (type) {
+        values.push(type);
+        conditions.push(`t.type = $${values.length}`);
+    }
+
+    if (categoryId) {
+        values.push(categoryId);
+        conditions.push(`t.category_id = $${values.length}`);
+    }
 
     const result = await pool.query(
         `
         SELECT
-            id,
-            category_id,
-            description,
-            amount,
-            type,
-            transaction_date,
-            plan_id,
-            installment_number,
-            status,
-            created_at
-        FROM transactions
-        WHERE user_id = $1
-        ${statusFilter}
-        ORDER BY transaction_date DESC, created_at DESC
+            t.id,
+            t.category_id,
+            c.name AS category_name,
+            c.type AS category_type,
+            t.description,
+            t.amount,
+            t.type,
+            t.transaction_date,
+            t.plan_id,
+            t.installment_number,
+            t.status,
+            t.created_at
+        FROM transactions t
+        LEFT JOIN categories c
+            ON c.id = t.category_id
+        WHERE ${conditions.join(" AND ")}
+        ORDER BY t.transaction_date DESC, t.created_at DESC
         `,
-        [userId]
+        values
     );
 
     return result.rows;
