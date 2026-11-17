@@ -1,37 +1,40 @@
-const { Anthropic } = require("@anthropic-ai/sdk");
-const pool = require("../config/database");
 const insightService = require("./insightService");
 const installmentService = require("./installmentService");
 const transactionService = require("./transactionService");
+const { ProviderError, resolveConfig, createProvider } = require("./aiProviders");
 
 // ========================================
 // CONFIGURAÇÕES DE PROTEÇÃO DA IA
 // ========================================
 
-// Modelo de IA configurável via variável de ambiente
-// Modelos atuais: claude-sonnet-5-5, claude-opus-5-5, claude-haiku-5-5
-const AI_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
-
-// Limites de proteção
+// Provedor e modelo vêm de variáveis de ambiente (ver aiProviders.js):
+//   GROQ_API_KEY (gratuito, padrão) | ANTHROPIC_API_KEY (pago) | AI_PROVIDER/AI_API_KEY/AI_BASE_URL/AI_MODEL
 const MAX_TOOL_CYCLES = 6;           // Teto de ciclos de ferramenta
 const MAX_MESSAGE_LENGTH = 1000;     // Limite de caracteres da mensagem do usuário
+const APP_TIME_ZONE = "America/Sao_Paulo";
 
-// Cliente Anthropic criado de forma preguiçosa (lazy)
-let anthropicClient = null;
-
-function isConfigured() {
-    return Boolean(process.env.ANTHROPIC_API_KEY?.trim());
+// Erro "seguro": a mensagem pode ser mostrada ao usuário
+class AIError extends Error {
+    constructor(message, { status = 500, retryAfter = null } = {}) {
+        super(message);
+        this.name = "AIError";
+        this.status = status;
+        this.retryAfter = retryAfter;
+    }
 }
 
-function getAnthropicClient() {
-    if (!anthropicClient) {
-        const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
-        if (!apiKey) {
-            throw new Error("ANTHROPIC_API_KEY não configurada no servidor.");
-        }
-        anthropicClient = new Anthropic({ apiKey });
-    }
-    return anthropicClient;
+function isConfigured() {
+    return resolveConfig().configured;
+}
+
+// Informações não sensíveis (para /health)
+function getProviderInfo() {
+    const config = resolveConfig();
+    return {
+        configured: config.configured,
+        provider: config.configured ? config.name : null,
+        model: config.configured ? config.model : null
+    };
 }
 
 // ========================================
@@ -138,19 +141,58 @@ const TOOLS = [
         }
     }
 ];
+// ========================================
+// VALIDAÇÃO DAS ENTRADAS DAS TOOLS
+// (modelos gratuitos erram argumentos com mais frequência)
+// ========================================
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function todayISO(now = new Date()) {
+    // en-CA formata como YYYY-MM-DD
+    return now.toLocaleDateString("en-CA", { timeZone: APP_TIME_ZONE });
+}
+
+function isValidDate(value) {
+    if (typeof value !== "string" || !DATE_RE.test(value)) return false;
+    const d = new Date(`${value}T00:00:00Z`);
+    return !Number.isNaN(d.getTime()) && d.toISOString().startsWith(value);
+}
+
+// Sem datas informadas, assume o mês corrente
+function resolveRange(input, now = new Date()) {
+    const today = todayISO(now);
+    const start = input?.start_date ?? `${today.slice(0, 7)}-01`;
+    const end = input?.end_date ?? today;
+
+    if (!isValidDate(start) || !isValidDate(end)) {
+        throw new Error("Datas devem estar no formato YYYY-MM-DD.");
+    }
+    if (start > end) {
+        throw new Error("start_date não pode ser posterior a end_date.");
+    }
+    return { start, end };
+}
+
+function toBoolean(value) {
+    return value === true || value === "true";
+}
 
 // ========================================
 // EXECUÇÃO DAS TOOLS (SEMPRE FILTRADO POR USER_ID)
 // ========================================
 
-async function executeTool(userId, toolName, input) {
+async function executeTool(userId, toolName, rawInput) {
+    const input = rawInput && typeof rawInput === "object" ? rawInput : {};
+
     switch (toolName) {
         case "listar_transacoes": {
-            const { start_date, end_date, type, include_scheduled } = input;
+            const { start, end } = resolveRange(input);
+            const type = input.type === "income" || input.type === "expense" ? input.type : undefined;
             const options = {
-                includeScheduled: include_scheduled || false,
-                startDate: start_date,
-                endDate: end_date,
+                includeScheduled: toBoolean(input.include_scheduled),
+                startDate: start,
+                endDate: end,
                 type
             };
             const transactions = await transactionService.getTransactionsByUser(userId, options);
@@ -176,13 +218,13 @@ async function executeTool(userId, toolName, input) {
         }
 
         case "resumo_por_categoria": {
-            const { start_date, end_date } = input;
-            return await insightService.getCategoryExpenses(userId, start_date, end_date);
+            const { start, end } = resolveRange(input);
+            return await insightService.getCategoryExpenses(userId, start, end);
         }
 
         case "projetar_parcelas": {
-            const { start_date, end_date } = input;
-            return await installmentService.getUpcomingInstallments(userId, start_date, end_date);
+            const { start, end } = resolveRange(input);
+            return await installmentService.getUpcomingInstallments(userId, start, end);
         }
 
         case "listar_planos_parcelamento": {
@@ -190,8 +232,8 @@ async function executeTool(userId, toolName, input) {
         }
 
         case "resumo_financeiro_periodo": {
-            const { start_date, end_date } = input;
-            return await insightService.getPeriodSummary(userId, start_date, end_date);
+            const { start, end } = resolveRange(input);
+            return await insightService.getPeriodSummary(userId, start, end);
         }
 
         default:
@@ -203,8 +245,11 @@ async function executeTool(userId, toolName, input) {
 // PROMPT DO SISTEMA PARA O AGENTE
 // ========================================
 
-const SYSTEM_PROMPT = `Você é um assistente financeiro especializado em contabilidade pessoal.
+function buildSystemPrompt(now = new Date()) {
+    return `Você é um assistente financeiro especializado em contabilidade pessoal.
 Você tem acesso a ferramentas para consultar dados financeiros do usuário.
+
+DATA DE HOJE: ${todayISO(now)} (fuso America/Sao_Paulo). Use-a para interpretar "este mês", "mês passado", "próximos meses" etc. Datas nas ferramentas sempre no formato YYYY-MM-DD.
 
 REGRAS IMPORTANTES:
 1. SEMPRE use as ferramentas para obter dados reais - NUNCA invente números
@@ -215,121 +260,142 @@ REGRAS IMPORTANTES:
 6. Para listar transações específicas, use "listar_transacoes"
 7. Para visão geral do período, use "resumo_financeiro_periodo"
 8. Para ver planos de parcelamento ativos, use "listar_planos_parcelamento"
+9. Valores monetários estão em reais (R$)
 
 FORMATO DE RESPOSTA:
 - Responda em português
 - Seja conciso mas completo
 - Use formatação (bullet points, valores em destaque) quando apropriado
 - Se a pergunta não puder ser respondida com as ferramentas disponíveis, explique a limitação`;
+}
+
+// ========================================
+// TRADUÇÃO DE ERROS DO PROVEDOR PARA ERROS SEGUROS
+// ========================================
+
+function mapProviderError(error) {
+    if (!(error instanceof ProviderError)) {
+        return new AIError("Erro ao processar pergunta com IA.", { status: 500 });
+    }
+
+    if (error.code === "timeout") {
+        return new AIError("A IA demorou demais para responder. Tente novamente.", { status: 504 });
+    }
+    if (error.code === "network") {
+        return new AIError("Não foi possível falar com o provedor de IA. Tente novamente.", { status: 502 });
+    }
+    if (error.status === 401 || error.status === 403) {
+        console.error("[IA] Chave do provedor inválida ou sem permissão.");
+        return new AIError("Chat com IA indisponível: chave do provedor inválida.", { status: 503 });
+    }
+    if (error.status === 429) {
+        return new AIError("Limite de uso da IA atingido. Tente novamente em instantes.", {
+            status: 429,
+            retryAfter: error.retryAfter
+        });
+    }
+    if (error.status === 404) {
+        console.error("[IA] Modelo ou endpoint não encontrado. Confira AI_MODEL/AI_BASE_URL.");
+        return new AIError("Chat com IA indisponível: modelo não encontrado.", { status: 503 });
+    }
+    return new AIError("Erro ao processar pergunta com IA.", { status: 502 });
+}
+
+// Modelos menores às vezes geram uma chamada de ferramenta malformada; uma nova tentativa costuma resolver
+function isRetryable(error) {
+    return (
+        error instanceof ProviderError &&
+        (error.code === "tool_use_failed" || error.status === 500 || error.status === 502 || error.status === 503)
+    );
+}
+
+async function completeWithRetry(provider, params) {
+    try {
+        return await provider.complete(params);
+    } catch (error) {
+        if (!isRetryable(error)) throw error;
+        return await provider.complete(params);
+    }
+}
 
 // ========================================
 // FUNÇÃO PRINCIPAL: CHAT COM A IA
 // ========================================
 
-async function chatWithAI(userId, userMessage) {
-    // Validação de tamanho da mensagem
+async function chatWithAI(userId, userMessage, deps = {}) {
     if (!userMessage || typeof userMessage !== "string") {
-        throw new Error("Mensagem inválida.");
+        throw new AIError("Mensagem inválida.", { status: 400 });
     }
 
     const trimmedMessage = userMessage.trim();
     if (trimmedMessage.length === 0) {
-        throw new Error("Mensagem não pode ser vazia.");
+        throw new AIError("Mensagem não pode ser vazia.", { status: 400 });
+    }
+    if (trimmedMessage.length > MAX_MESSAGE_LENGTH) {
+        throw new AIError(`Mensagem muito longa. Máximo de ${MAX_MESSAGE_LENGTH} caracteres.`, { status: 400 });
     }
 
-    if (trimmedMessage.length > MAX_MESSAGE_LENGTH) {
-        throw new Error(`Mensagem muito longa. Máximo de ${MAX_MESSAGE_LENGTH} caracteres.`);
+    const provider = deps.provider || createProvider(resolveConfig());
+    if (!provider) {
+        throw new AIError("Chat com IA indisponível: provedor de IA não configurado.", { status: 503 });
     }
+
+    const system = buildSystemPrompt(deps.now);
+    const history = [{ role: "user", text: trimmedMessage }];
 
     try {
-        // Primeira chamada: usuário faz a pergunta
-        let messages = [
-            { role: "user", content: trimmedMessage }
-        ];
-
         let toolCycles = 0;
+        let reply = await completeWithRetry(provider, { system, history, tools: TOOLS });
 
-        let response = await getAnthropicClient().messages.create({
-            model: AI_MODEL,
-            max_tokens: 4000,
-            system: SYSTEM_PROMPT,
-            tools: TOOLS,
-            messages
-        });
-
-        // Processa tool calls se houver
-        while (response.stop_reason === "tool_use") {
-            // Proteção: limite de ciclos de ferramenta
+        while (reply.toolCalls.length > 0) {
             toolCycles++;
             if (toolCycles > MAX_TOOL_CYCLES) {
-                throw new Error(`Limite de ${MAX_TOOL_CYCLES} ciclos de ferramenta excedido.`);
+                throw new AIError("A IA precisou de consultas demais para responder. Tente uma pergunta mais específica.", {
+                    status: 422
+                });
             }
 
-            const toolUses = response.content.filter(block => block.type === "tool_use");
+            history.push({ role: "assistant", text: reply.text, toolCalls: reply.toolCalls });
 
-            // Adiciona a resposta do assistente com tool_use ao histórico
-            messages.push({ role: "assistant", content: response.content });
-
-            // Executa cada tool e coleta resultados
-            const toolResults = [];
-            for (const toolUse of toolUses) {
+            const results = [];
+            for (const call of reply.toolCalls) {
                 try {
-                    const result = await executeTool(userId, toolUse.name, toolUse.input);
-                    toolResults.push({
-                        type: "tool_result",
-                        tool_use_id: toolUse.id,
-                        content: JSON.stringify(result)
-                    });
+                    if (call.inputError) {
+                        throw new Error("Argumentos inválidos: envie um objeto JSON válido.");
+                    }
+                    const result = await executeTool(userId, call.name, call.input);
+                    results.push({ id: call.id, name: call.name, content: JSON.stringify(result), isError: false });
                 } catch (error) {
-                    toolResults.push({
-                        type: "tool_result",
-                        tool_use_id: toolUse.id,
+                    results.push({
+                        id: call.id,
+                        name: call.name,
                         content: JSON.stringify({ error: error.message }),
-                        is_error: true
+                        isError: true
                     });
                 }
             }
+            history.push({ role: "tool", results });
 
-            // Adiciona resultados das tools ao histórico
-            messages.push({ role: "user", content: toolResults });
-
-            // Próxima chamada para a IA processar os resultados
-            response = await getAnthropicClient().messages.create({
-                model: AI_MODEL,
-                max_tokens: 4000,
-                system: SYSTEM_PROMPT,
-                tools: TOOLS,
-                messages
-            });
+            reply = await completeWithRetry(provider, { system, history, tools: TOOLS });
         }
 
-        // Retorna a resposta final da IA
-        const finalText = response.content
-            .filter(block => block.type === "text")
-            .map(block => block.text)
-            .join("\n");
-
-        return finalText;
-
+        return reply.text.trim() || "Não consegui gerar uma resposta. Tente reformular a pergunta.";
     } catch (error) {
-        console.error("Erro no AI Accounting Agent:", error);
-        // Não vaza detalhes internos para o usuário
-        if (error.message.includes("ANTHROPIC_API_KEY") ||
-            error.message.includes("Limite de") ||
-            error.message.includes("Mensagem") ||
-            error.message.includes("Máximo de")) {
-            throw error;
-        }
-        throw new Error("Erro ao processar pergunta com IA.");
+        if (error instanceof AIError) throw error;
+        console.error("Erro no AI Accounting Agent:", error?.name, error?.status ?? "", error?.message);
+        throw mapProviderError(error);
     }
 }
 
 module.exports = {
     chatWithAI,
     isConfigured,
+    getProviderInfo,
+    AIError,
     TOOLS,
-    // Exporta constantes para testes/debug se necessário
+    // exportados para testes
+    executeTool,
+    buildSystemPrompt,
     MAX_TOOL_CYCLES,
-    MAX_MESSAGE_LENGTH,
-    AI_MODEL
+    MAX_MESSAGE_LENGTH
 };

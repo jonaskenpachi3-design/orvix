@@ -270,7 +270,7 @@ app.get(
                     "connected",
 
                 aiConfigured:
-                    Boolean(process.env.ANTHROPIC_API_KEY)
+                    require("./src/services/aiAccountingService").isConfigured()
             });
 
         } catch (error) {
@@ -294,7 +294,7 @@ app.get(
                     "disconnected",
 
                 aiConfigured:
-                    Boolean(process.env.ANTHROPIC_API_KEY)
+                    require("./src/services/aiAccountingService").isConfigured()
             });
         }
     }

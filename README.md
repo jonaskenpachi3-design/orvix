@@ -181,10 +181,13 @@ curl http://localhost:3000/api/health
 | `JWT_SECRET` | Sim | Chave usada para assinar e validar os tokens. Use um valor longo e aleatório. | `uma-chave-longa-e-aleatoria` |
 | `NODE_ENV` | Não | `development` (padrão) ou `production`. | `development` |
 | `CORS_ORIGIN` | Não | Origem permitida quando o frontend está em outro domínio. Sem ela em produção, somente chamadas same-origin são permitidas. | `https://meu-orvix.onrender.com` |
-| `ANTHROPIC_API_KEY` | Não | Habilita o chat contábil. Sem ela, o chat responde `503`; configure no provedor, nunca no Git. | Configure no provedor, nunca no Git. |
-| `ANTHROPIC_MODEL` | Não | Modelo Anthropic; padrão `claude-sonnet-5-5`. | `claude-sonnet-5-5` |
+| `GROQ_API_KEY` | Não | Habilita o chat contábil com IA **gratuita** (Groq). Sem nenhuma chave de IA, o chat responde `503`; configure no provedor, nunca no Git. | Configure no provedor, nunca no Git. |
+| `AI_MODEL` | Não | Modelo do provedor; padrão `llama-3.3-70b-versatile` (Groq) ou `claude-sonnet-5-5` (Anthropic). | `llama-3.3-70b-versatile` |
+| `AI_PROVIDER` | Não | `groq`, `anthropic` ou `openai-compatible`. Se omitido, é detectado pela chave presente. | `groq` |
+| `ANTHROPIC_API_KEY` | Não | Alternativa paga (Claude). | Configure no provedor, nunca no Git. |
+| `AI_API_KEY`, `AI_BASE_URL` | Não | Para `openai-compatible` (OpenRouter, Cerebras etc.). | — |
 
-Em `production`, o Orvix exige `DATABASE_URL` e `JWT_SECRET` (mínimo de 32 caracteres), ativa `trust proxy`, usa SSL na conexão com o banco e aumenta o pool de conexões de 5 para 10. `CORS_ORIGIN` é opcional e restringe chamadas cross-origin quando definida; `ANTHROPIC_API_KEY` é opcional e habilita o chat com IA. Gere um segredo forte, por exemplo, com `openssl rand -base64 48`; não reutilize o valor de exemplo.
+Em `production`, o Orvix exige `DATABASE_URL` e `JWT_SECRET` (mínimo de 32 caracteres), ativa `trust proxy`, usa SSL na conexão com o banco e aumenta o pool de conexões de 5 para 10. `CORS_ORIGIN` é opcional e restringe chamadas cross-origin quando definida; `GROQ_API_KEY` (gratuita) ou `ANTHROPIC_API_KEY` é opcional e habilita o chat com IA. Gere um segredo forte, por exemplo, com `openssl rand -base64 48`; não reutilize o valor de exemplo.
 
 ## Banco de dados
 
@@ -271,7 +274,7 @@ Convenções:
 
 `GET /api/health`
 
-Responde `200` com `database: "connected"` quando o banco responde, ou `500` com `status: "error"` e `database: "disconnected"` quando não responde. `aiConfigured` informa apenas se `ANTHROPIC_API_KEY` está configurada; não faz uma chamada faturável ao provedor.
+Responde `200` com `database: "connected"` quando o banco responde, ou `500` com `status: "error"` e `database: "disconnected"` quando não responde. `aiConfigured` informa apenas se há um provedor de IA configurado; não faz uma chamada faturável ao provedor.
 
 ### Auth
 
@@ -564,7 +567,7 @@ O projeto pode ser publicado como um único serviço Node no [Render](https://re
 2. Crie um *Web Service* apontando para a raiz do repositório.
 3. Configure o comando de build: `npm ci && npm ci --include=dev --prefix frontend && npm run build`. O `--include=dev` é necessário porque o Angular CLI (`ng`) está nas dependências de desenvolvimento e o Render pode omiti-las em produção.
 4. Configure o comando de start: `npm start`.
-5. Configure `NODE_ENV=production` e `JWT_SECRET` (pelo menos 32 caracteres aleatórios). Opcionalmente, defina `CORS_ORIGIN` se o frontend estiver em outra origem e `ANTHROPIC_API_KEY` para habilitar o chat com IA.
+5. Configure `NODE_ENV=production` e `JWT_SECRET` (pelo menos 32 caracteres aleatórios). Opcionalmente, defina `CORS_ORIGIN` se o frontend estiver em outra origem e `GROQ_API_KEY` (gratuita, em console.groq.com/keys) para habilitar o chat com IA.
 6. Configure `npm run migrate` como comando de pre-deploy após criar o banco. Ele aplica o schema base e as migrações pendentes; faça backup antes de migrações em um banco com dados.
 
 A aplicação encerra a inicialização com erro claro se faltar `DATABASE_URL`, `JWT_SECRET` ou o build Angular. O health check `/api/health` testa a conexão com PostgreSQL; `aiConfigured` confirma apenas a presença da chave, não a validade da credencial ou disponibilidade do modelo.
