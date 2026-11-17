@@ -23,7 +23,7 @@ async function chat(req, res) {
 
         if (!aiAccountingService.isConfigured()) {
             return res.status(503).json({
-                error: "Chat com IA indisponível: configure ANTHROPIC_API_KEY para ativá-lo."
+                error: "Chat com IA indisponível: configure GROQ_API_KEY (gratuito) para ativá-lo."
             });
         }
 
@@ -34,6 +34,13 @@ async function chat(req, res) {
         });
 
     } catch (error) {
+        if (error instanceof aiAccountingService.AIError) {
+            if (error.retryAfter) {
+                res.set("Retry-After", String(error.retryAfter));
+            }
+            return res.status(error.status).json({ error: error.message });
+        }
+
         console.error("Erro no chat com IA:", error);
         return res.status(500).json({
             error: "Erro interno do servidor ao processar pergunta."
