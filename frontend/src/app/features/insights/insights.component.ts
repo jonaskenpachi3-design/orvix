@@ -210,38 +210,55 @@ interface ChatMessage {
       }
 
       <!-- AI Chat Section -->
-      <section class="card mb-4">
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <h5 class="mb-0"><i class="bi bi-robot me-2" aria-hidden="true"></i> Assistente Financeiro (IA)</h5>
-          <span class="badge" [class.bg-success]="aiReady()" [class.bg-secondary]="!aiReady()">
-            <i class="bi" [class.bi-wifi]="aiReady()" [class.bi-wifi-off]="!aiReady()" aria-hidden="true"></i>
+      <section class="card ai-chat-card mb-4">
+        <div class="ai-chat-header">
+          <div class="ai-title-wrap">
+            <div class="ai-brand-icon" aria-hidden="true">
+              <i class="bi bi-stars"></i>
+            </div>
+            <div>
+              <span class="ai-overline">ORVIX IA</span>
+              <h5 class="mb-0">Assistente financeiro</h5>
+            </div>
+          </div>
+          <span class="ai-status" [class.is-online]="aiReady()" [class.is-offline]="!aiReady()">
+            <span class="status-dot"></span>
             {{ aiReady() ? 'Online' : 'Indisponível' }}
           </span>
         </div>
-        <div class="card-body">
-          <!-- Chat Messages -->
-          <div class="chat-container" #chatContainer style="height: 400px; overflow-y: auto; margin-bottom: 1rem;">
+
+        <div class="ai-chat-body">
+          <div class="chat-container" #chatContainer>
             @if (chatMessages().length === 0) {
-              <div class="text-center py-5 text-muted">
-                <i class="bi bi-chat-dots" style="font-size: 3rem; opacity: 0.3;" aria-hidden="true"></i>
-                <p class="mt-3 mb-1">Como posso ajudar?</p>
-                <p class="small">Pergunte sobre seus gastos, orçamentos, metas ou peça análises.</p>
+              <div class="chat-empty-state">
+                <div class="chat-empty-icon" aria-hidden="true">
+                  <i class="bi bi-stars"></i>
+                </div>
+                <h6>Como posso ajudar hoje?</h6>
+                <p>Analiso seus gastos, orçamentos e metas para tornar suas decisões financeiras mais simples.</p>
               </div>
             } @else {
               @for (msg of chatMessages(); track msg.timestamp) {
-                <div class="chat-message mb-3" [class.user-message]="msg.role === 'user'">
-                  <div class="d-flex" [class.flex-row-reverse]="msg.role === 'user'">
-                    <div class="avatar-circle me-2 ms-2 flex-shrink-0" [class.bg-primary]="msg.role === 'assistant'" [class.bg-secondary]="msg.role === 'user'" style="width: 32px; height: 32px; font-size: 0.875rem;">
-                      <i [class]="msg.role === 'assistant' ? 'bi bi-robot' : 'bi bi-person'" aria-hidden="true"></i>
-                    </div>
-                    <div class="message-bubble" [class.user-bubble]="msg.role === 'user'" [class.assistant-bubble]="msg.role === 'assistant'">
-                      <p class="mb-1" [innerHTML]="formatMessage(msg.content)"></p>
-                      <small class="text-muted">{{ msg.timestamp | date:'HH:mm' }}</small>
-                    </div>
-                  </div>
+                <div class="chat-message" [class.user-message]="msg.role === 'user'" [class.assistant-message]="msg.role === 'assistant'">
                   @if (msg.isLoading) {
-                    <div class="typing-indicator ms-5 me-2">
-                      <span></span><span></span><span></span>
+                    <div class="ai-avatar" aria-hidden="true"><i class="bi bi-stars"></i></div>
+                    <div class="typing-bubble" aria-label="O assistente está digitando">
+                      <div class="typing-indicator">
+                        <span></span><span></span><span></span>
+                      </div>
+                    </div>
+                  } @else {
+                    <div class="message-avatar" [class.ai-avatar]="msg.role === 'assistant'" [class.user-avatar]="msg.role === 'user'" aria-hidden="true">
+                      <i [class]="msg.role === 'assistant' ? 'bi bi-stars' : 'bi bi-person-fill'"></i>
+                    </div>
+                    <div class="message-column">
+                      <div class="message-meta">
+                        <span>{{ msg.role === 'assistant' ? 'Orvix IA' : 'Você' }}</span>
+                        <time>{{ msg.timestamp | date:'HH:mm' }}</time>
+                      </div>
+                      <div class="message-bubble" [class.user-bubble]="msg.role === 'user'" [class.assistant-bubble]="msg.role === 'assistant'">
+                        <p [innerHTML]="formatMessage(msg.content)"></p>
+                      </div>
                     </div>
                   }
                 </div>
@@ -249,53 +266,51 @@ interface ChatMessage {
             }
           </div>
 
-          <!-- Chat Input -->
-          <form [formGroup]="chatForm" (ngSubmit)="sendMessage()" class="input-group">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="message"
-              placeholder="Digite sua pergunta..."
-              [disabled]="sendingMessage() || !aiReady()"
-              (keydown.enter)="sendMessage()"
-              aria-label="Mensagem para o assistente"
-            />
-            <button
-              type="submit"
-              class="btn btn-primary"
-              [disabled]="chatForm.invalid || sendingMessage() || !aiReady()"
-              aria-label="Enviar mensagem"
-            >
-              @if (sendingMessage()) {
-                <span class="spinner spinner-sm" aria-hidden="true"></span>
-              } @else {
-                <i class="bi bi-send" aria-hidden="true"></i>
-              }
-            </button>
-          </form>
-
           @if (!aiReady()) {
-            <p class="text-muted small mt-2 text-center">
-              O assistente de IA não está disponível no momento. Verifique a configuração do backend.
-            </p>
+            <div class="ai-unavailable-note">
+              <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+              O assistente está indisponível no momento. Verifique a configuração do backend.
+            </div>
           }
 
-          <!-- Quick Actions -->
-          <div class="mt-3">
-            <p class="text-muted small mb-2">Sugestões:</p>
-            <div class="d-flex flex-wrap gap-2">
+          <div class="suggestions-block">
+            <span class="suggestions-label">Experimente perguntar</span>
+            <div class="suggestion-list" aria-label="Sugestões de perguntas">
               @for (suggestion of chatSuggestions; track suggestion) {
                 <button
                   type="button"
-                  class="btn btn-outline-secondary btn-sm"
+                  class="suggestion-chip"
                   (click)="useSuggestion(suggestion)"
-                  [disabled]="sendingMessage()"
+                  [disabled]="sendingMessage() || !aiReady()"
                 >
                   {{ suggestion }}
                 </button>
               }
             </div>
           </div>
+
+          <form [formGroup]="chatForm" (ngSubmit)="sendMessage()" class="chat-composer">
+            <input
+              type="text"
+              class="chat-input"
+              formControlName="message"
+              placeholder="Pergunte sobre suas finanças..."
+              [disabled]="sendingMessage() || !aiReady()"
+              aria-label="Mensagem para o assistente"
+            />
+            <button
+              type="submit"
+              class="chat-send"
+              [disabled]="chatForm.invalid || sendingMessage() || !aiReady()"
+              aria-label="Enviar mensagem"
+            >
+              @if (sendingMessage()) {
+                <span class="spinner spinner-sm" aria-hidden="true"></span>
+              } @else {
+                <i class="bi bi-arrow-up" aria-hidden="true"></i>
+              }
+            </button>
+          </form>
         </div>
       </section>
 
@@ -367,44 +382,242 @@ interface ChatMessage {
       height: 2.5rem;
     }
 
+    .ai-chat-card {
+      overflow: hidden;
+      border: 1px solid var(--orvix-border);
+      box-shadow: var(--orvix-shadow-md);
+    }
+
+    .ai-chat-header {
+      min-height: 76px;
+      padding: 0.875rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--orvix-border);
+      background:
+        radial-gradient(circle at 12% 50%, rgba(var(--bs-primary-rgb), 0.12), transparent 24%),
+        var(--orvix-surface);
+    }
+
+    .ai-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .ai-brand-icon,
+    .ai-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      background: linear-gradient(135deg, var(--orvix-primary), #A78BFA);
+      box-shadow: 0 8px 20px rgba(var(--bs-primary-rgb), 0.22);
+    }
+
+    .ai-overline {
+      display: block;
+      margin-bottom: 1px;
+      color: var(--orvix-primary);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+    }
+
+    .ai-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      height: 32px;
+      padding: 0 0.75rem;
+      border-radius: var(--border-radius-pill);
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: 1px solid var(--orvix-border);
+      background: var(--orvix-surface-2);
+      color: var(--orvix-text-secondary);
+    }
+
+    .ai-status.is-online {
+      color: var(--orvix-positive);
+      border-color: rgba(var(--orvix-success-rgb), 0.25);
+      background: rgba(var(--orvix-success-rgb), 0.08);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 3px rgba(var(--orvix-success-rgb), 0.10);
+    }
+
+    .ai-status.is-offline .status-dot {
+      box-shadow: none;
+      background: var(--orvix-text-muted);
+    }
+
+    .ai-chat-body {
+      padding: 1rem;
+      background: var(--orvix-surface);
+    }
+
     .chat-container {
+      height: 420px;
+      overflow-y: auto;
+      padding: 1.25rem;
       border: 1px solid var(--orvix-border);
       border-radius: var(--border-radius-md);
-      padding: 1rem;
-      background-color: var(--orvix-surface-2);
+      background:
+        linear-gradient(var(--orvix-surface-2), var(--orvix-surface-2)) padding-box,
+        radial-gradient(circle at 100% 0, rgba(var(--bs-primary-rgb), 0.08), transparent 30%);
+      scroll-behavior: smooth;
+    }
+
+    .chat-empty-state {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 430px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .chat-empty-icon {
+      width: 68px;
+      height: 68px;
+      margin-bottom: 1rem;
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--orvix-primary);
+      font-size: 1.75rem;
+      background: var(--orvix-primary-soft);
+      border: 1px solid rgba(var(--bs-primary-rgb), 0.12);
+      transform: rotate(-3deg);
+    }
+
+    .chat-empty-state h6 {
+      margin-bottom: 0.35rem;
+      font-size: 1.05rem;
+    }
+
+    .chat-empty-state p {
+      max-width: 390px;
+      margin: 0;
+      color: var(--orvix-text-secondary);
+      line-height: 1.55;
     }
 
     .chat-message {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.65rem;
+      margin-bottom: 1.15rem;
       animation: fadeIn var(--transition-fast);
     }
 
+    .chat-message:last-child {
+      margin-bottom: 0;
+    }
+
     .user-message {
-      display: flex;
       flex-direction: row-reverse;
     }
 
-    .message-bubble {
-      max-width: 80%;
-      padding: 0.75rem 1rem;
-      border-radius: var(--border-radius-lg);
+    .message-avatar,
+    .ai-avatar {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      border-radius: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ai-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      font-size: 0.9rem;
+    }
+
+    .user-avatar {
+      color: var(--orvix-text-secondary);
+      background: var(--orvix-surface);
+      border: 1px solid var(--orvix-border);
+    }
+
+    .message-column {
+      max-width: min(76%, 620px);
+    }
+
+    .user-message .message-column {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .message-meta {
+      display: flex;
+      gap: 0.55rem;
+      margin: 0 0.25rem 0.35rem;
+      color: var(--orvix-text-muted);
+      font-size: 0.72rem;
+    }
+
+    .message-meta span {
+      color: var(--orvix-text-secondary);
+      font-weight: 700;
+    }
+
+    .message-bubble,
+    .typing-bubble {
+      padding: 0.75rem 0.95rem;
+      border: 1px solid var(--orvix-border);
+      border-radius: 16px;
+      box-shadow: var(--orvix-shadow-sm);
+    }
+
+    .message-bubble p {
+      margin: 0;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
     }
 
     .user-bubble {
-      background-color: var(--orvix-primary);
       color: white;
-      border-bottom-right-radius: 4px;
+      border: none;
+      background: linear-gradient(135deg, var(--orvix-primary), var(--orvix-primary-hover));
+      border-bottom-right-radius: 5px;
+      box-shadow: 0 8px 18px rgba(var(--bs-primary-rgb), 0.16);
     }
 
     .assistant-bubble {
-      background-color: var(--orvix-surface);
-      border: 1px solid var(--orvix-border);
-      border-bottom-left-radius: 4px;
+      background: var(--orvix-surface);
+      border-bottom-left-radius: 5px;
+    }
+
+    .typing-bubble {
+      width: 58px;
+      background: var(--orvix-surface);
+      border-bottom-left-radius: 5px;
     }
 
     .typing-indicator {
       display: flex;
+      align-items: center;
+      justify-content: center;
       gap: 4px;
-      padding: 0.5rem;
+      height: 20px;
     }
 
     .typing-indicator span {
@@ -421,6 +634,125 @@ interface ChatMessage {
     @keyframes typing {
       0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
       30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    .ai-unavailable-note {
+      margin-top: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--orvix-warning);
+      font-size: 0.82rem;
+    }
+
+    .suggestions-block {
+      margin: 0.75rem 0;
+    }
+
+    .suggestions-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--orvix-text-muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .suggestion-list {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+      scrollbar-width: none;
+    }
+
+    .suggestion-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .suggestion-chip {
+      flex: 0 0 auto;
+      min-height: 38px;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--orvix-border);
+      border-radius: var(--border-radius-pill);
+      color: var(--orvix-text-secondary);
+      background: var(--orvix-surface);
+      font-size: 0.82rem;
+      transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .suggestion-chip:hover:not(:disabled) {
+      color: var(--orvix-primary);
+      border-color: rgba(var(--bs-primary-rgb), 0.35);
+      background: var(--orvix-primary-soft);
+      transform: translateY(-1px);
+    }
+
+    .suggestion-chip:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .chat-composer {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      min-height: 58px;
+      padding: 0.5rem;
+      border: 1px solid var(--orvix-border);
+      border-radius: 18px;
+      background: var(--orvix-surface);
+      box-shadow: var(--orvix-shadow-sm);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .chat-composer:focus-within {
+      border-color: rgba(var(--bs-primary-rgb), 0.55);
+      box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.10);
+    }
+
+    .chat-input {
+      min-width: 0;
+      flex: 1;
+      height: 44px;
+      padding: 0 0.65rem;
+      border: 0;
+      outline: 0;
+      color: var(--orvix-text);
+      background: transparent;
+    }
+
+    .chat-input::placeholder {
+      color: var(--orvix-text-muted);
+    }
+
+    .chat-send {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      border: 0;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      background: var(--orvix-primary);
+      font-size: 1.1rem;
+      box-shadow: 0 8px 16px rgba(var(--bs-primary-rgb), 0.20);
+      transition: background var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .chat-send:hover:not(:disabled) {
+      background: var(--orvix-primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .chat-send:disabled {
+      opacity: 0.45;
+      box-shadow: none;
+      cursor: not-allowed;
     }
 
     .tool-card {
@@ -450,8 +782,42 @@ interface ChatMessage {
         text-align: center;
       }
 
-      .message-bubble {
-        max-width: 90%;
+      .ai-chat-header {
+        min-height: 68px;
+        padding: 0.75rem;
+      }
+
+      .ai-brand-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+      }
+
+      .ai-status {
+        height: 30px;
+        padding: 0 0.55rem;
+      }
+
+      .ai-chat-body {
+        padding: 0.75rem;
+      }
+
+      .chat-container {
+        height: 380px;
+        padding: 0.75rem;
+      }
+
+      .message-column {
+        max-width: 82%;
+      }
+
+      .chat-empty-state {
+        padding: 1rem;
+      }
+
+      .suggestion-list {
+        margin-right: -0.75rem;
+        padding-right: 0.75rem;
       }
     }
   `]
@@ -673,10 +1039,10 @@ export class InsightsComponent implements OnInit, AfterViewChecked {
 
   private escapeHtml(text: string): string {
     return text
-      .replace(/&/g, '&')
-      .replace(/</g, '<')
-      .replace(/>/g, '>')
-      .replace(/"/g, '"')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
       .replace(/'/g, '&apos;');
   }
 
