@@ -10,9 +10,6 @@ const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
 const requiredEnvironment = ["DATABASE_URL", "JWT_SECRET"];
-if (NODE_ENV === "production") {
-    requiredEnvironment.push("CORS_ORIGIN", "ANTHROPIC_API_KEY");
-}
 
 const missingEnvironment = requiredEnvironment.filter(
     (name) => !process.env[name]?.trim()
@@ -117,19 +114,13 @@ app.use(
 
 // Em desenvolvimento, mantém o acesso flexível.
 //
-// Em produção, se CORS_ORIGIN estiver definido,
-// somente essa origem será permitida.
+// Em produção, CORS_ORIGIN restringe o acesso à origem configurada.
+// Sem ela, o navegador só poderá fazer chamadas same-origin.
 
-const corsOptions =
-    NODE_ENV === "production" &&
-    process.env.CORS_ORIGIN
-        ? {
-            origin:
-                process.env.CORS_ORIGIN
-        }
-        : {
-            origin: true
-        };
+const configuredCorsOrigin = process.env.CORS_ORIGIN?.trim();
+const corsOptions = NODE_ENV === "production"
+    ? { origin: configuredCorsOrigin || false }
+    : { origin: true };
 
 app.use(
     cors(corsOptions)

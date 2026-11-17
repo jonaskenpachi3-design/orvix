@@ -180,11 +180,11 @@ curl http://localhost:3000/api/health
 | `DATABASE_URL` | Sim | String de conexão do PostgreSQL. | `postgresql://usuario:senha@localhost:5432/orvix` |
 | `JWT_SECRET` | Sim | Chave usada para assinar e validar os tokens. Use um valor longo e aleatório. | `uma-chave-longa-e-aleatoria` |
 | `NODE_ENV` | Não | `development` (padrão) ou `production`. | `development` |
-| `CORS_ORIGIN` | Sim em produção | Origem pública do frontend, sem caminho. | `https://meu-orvix.onrender.com` |
-| `ANTHROPIC_API_KEY` | Sim em produção | Chave de API do Anthropic para o chat contábil. | Configure no provedor, nunca no Git. |
+| `CORS_ORIGIN` | Não | Origem permitida quando o frontend está em outro domínio. Sem ela em produção, somente chamadas same-origin são permitidas. | `https://meu-orvix.onrender.com` |
+| `ANTHROPIC_API_KEY` | Não | Habilita o chat contábil. Sem ela, o chat responde `503`; configure no provedor, nunca no Git. | Configure no provedor, nunca no Git. |
 | `ANTHROPIC_MODEL` | Não | Modelo Anthropic; padrão `claude-sonnet-5-5`. | `claude-sonnet-5-5` |
 
-Em `production`, o Orvix exige `DATABASE_URL`, `JWT_SECRET` (mínimo de 32 caracteres), `CORS_ORIGIN` e `ANTHROPIC_API_KEY`, ativa `trust proxy`, usa SSL na conexão com o banco e aumenta o pool de conexões de 5 para 10. Gere um segredo forte, por exemplo, com `openssl rand -base64 48`; não reutilize o valor de exemplo.
+Em `production`, o Orvix exige `DATABASE_URL` e `JWT_SECRET` (mínimo de 32 caracteres), ativa `trust proxy`, usa SSL na conexão com o banco e aumenta o pool de conexões de 5 para 10. `CORS_ORIGIN` é opcional e restringe chamadas cross-origin quando definida; `ANTHROPIC_API_KEY` é opcional e habilita o chat com IA. Gere um segredo forte, por exemplo, com `openssl rand -base64 48`; não reutilize o valor de exemplo.
 
 ## Banco de dados
 
@@ -552,7 +552,7 @@ O estilo é compartilhado por um design system (`public/css/orvix-design-system.
 - **Isolamento de dados:** todas as consultas filtram pelo `user_id` do token.
 - **SQL:** consultas parametrizadas (`$1`, `$2`, ...), sem concatenação de valores.
 - **Headers HTTP:** Helmet ativo. A Content Security Policy fica desativada porque o dashboard carrega o Chart.js por CDN.
-- **CORS:** aberto em desenvolvimento; `CORS_ORIGIN` é obrigatória em produção.
+- **CORS:** aberto em desenvolvimento; em produção, só permite a origem de `CORS_ORIGIN`; sem ela, não envia permissões cross-origin (o frontend servido pelo mesmo serviço continua funcionando).
 - **Erros:** em produção, detalhes internos não são enviados ao cliente.
 - **Segredos:** o `.env` está no `.gitignore`. Nunca versione credenciais.
 
@@ -564,10 +564,10 @@ O projeto pode ser publicado como um único serviço Node no [Render](https://re
 2. Crie um *Web Service* apontando para a raiz do repositório.
 3. Configure o comando de build: `npm ci && npm ci --prefix frontend && npm run build`.
 4. Configure o comando de start: `npm start`.
-5. Configure `NODE_ENV=production`, `JWT_SECRET` (pelo menos 32 caracteres aleatórios), `CORS_ORIGIN` (URL pública do serviço) e `ANTHROPIC_API_KEY`.
+5. Configure `NODE_ENV=production` e `JWT_SECRET` (pelo menos 32 caracteres aleatórios). Opcionalmente, defina `CORS_ORIGIN` se o frontend estiver em outra origem e `ANTHROPIC_API_KEY` para habilitar o chat com IA.
 6. Configure `npm run migrate` como comando de pre-deploy após criar o banco. Ele aplica o schema base e as migrações pendentes; faça backup antes de migrações em um banco com dados.
 
-A aplicação encerra a inicialização com erro claro se faltar configuração obrigatória em produção ou se o build Angular não existir. O health check `/api/health` testa a conexão com PostgreSQL; `aiConfigured` confirma apenas a presença da chave, não a validade da credencial ou disponibilidade do modelo.
+A aplicação encerra a inicialização com erro claro se faltar `DATABASE_URL`, `JWT_SECRET` ou o build Angular. O health check `/api/health` testa a conexão com PostgreSQL; `aiConfigured` confirma apenas a presença da chave, não a validade da credencial ou disponibilidade do modelo.
 
 ## Progressive Web App (PWA)
 

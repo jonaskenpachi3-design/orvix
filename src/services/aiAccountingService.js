@@ -19,9 +19,13 @@ const MAX_MESSAGE_LENGTH = 1000;     // Limite de caracteres da mensagem do usu�
 // Cliente Anthropic criado de forma preguiçosa (lazy)
 let anthropicClient = null;
 
+function isConfigured() {
+    return Boolean(process.env.ANTHROPIC_API_KEY?.trim());
+}
+
 function getAnthropicClient() {
     if (!anthropicClient) {
-        const apiKey = process.env.ANTHROPIC_API_KEY;
+        const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
         if (!apiKey) {
             throw new Error("ANTHROPIC_API_KEY não configurada no servidor.");
         }
@@ -322,6 +326,7 @@ async function chatWithAI(userId, userMessage) {
 
 module.exports = {
     chatWithAI,
+    isConfigured,
     TOOLS,
     // Exporta constantes para testes/debug se necessário
     MAX_TOOL_CYCLES,

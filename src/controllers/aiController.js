@@ -21,6 +21,12 @@ async function chat(req, res) {
             });
         }
 
+        if (!aiAccountingService.isConfigured()) {
+            return res.status(503).json({
+                error: "Chat com IA indisponível: configure ANTHROPIC_API_KEY para ativá-lo."
+            });
+        }
+
         const response = await aiAccountingService.chatWithAI(req.user.id, normalizedMessage);
 
         return res.status(200).json({
