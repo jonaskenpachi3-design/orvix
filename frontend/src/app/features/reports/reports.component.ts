@@ -413,14 +413,17 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private categoryColorMap = new Map<string, string>();
 
-  ngOnInit(): void {
-    this.setDefaultPeriod();
-    this.loadReport();
-    // Listen for theme changes to update charts
+  constructor() {
+    // effect() precisa rodar em contexto de injeção (construtor), não em ngOnInit
     effect(() => {
       this.themeService.currentTheme();
       this.updateCharts();
     });
+  }
+
+  ngOnInit(): void {
+    this.setDefaultPeriod();
+    this.loadReport();
   }
 
   ngAfterViewInit(): void {

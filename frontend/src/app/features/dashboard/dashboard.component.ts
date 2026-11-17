@@ -538,13 +538,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private categoryColorMap = new Map<string, string>();
 
-  ngOnInit(): void {
-    this.loadDashboard();
-    // Listen for theme changes to update charts
+  constructor() {
+    // effect() precisa rodar em contexto de injeção (construtor), não em ngOnInit
     effect(() => {
       this.themeService.currentTheme();
       this.updateChart();
     });
+  }
+
+  ngOnInit(): void {
+    this.loadDashboard();
   }
 
   ngOnDestroy(): void {
