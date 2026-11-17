@@ -5,7 +5,7 @@
 // 1. Tokens de design (variáveis CSS --orvix-*) - @use deve vir primeiro
 @use './_tokens' as *;
 
-// 2. Bootstrap com nossas sobrescritas (usa @import internamente)
+// 2. Bootstrap com nossas sobrescritas (compatibilidade do Bootstrap 5.3)
 @import './_bootstrap-overrides';
 
 // 3. Bootstrap Icons

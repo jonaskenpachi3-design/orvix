@@ -1,8 +1,6 @@
 // ============================================================================
 // ORVIX — BOOTSTRAP IMPORTS
-// Using @import for proper dependency handling
 // Theming is handled via CSS custom properties in _tokens.scss
 // ============================================================================
 
-// Import Bootstrap - this handles all internal dependencies correctly
 @import 'bootstrap/scss/bootstrap';
