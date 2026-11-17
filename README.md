@@ -42,13 +42,14 @@ Plataforma web de controle e inteligência financeira pessoal. Reúne receitas, 
 - **Dashboard:** resumo do período, taxa de economia, saúde financeira, categoria principal, comparação mensal e gráficos.
 - **Relatórios:** relatório financeiro por intervalo de datas, com evolução mensal e despesas por categoria.
 - **Insights:** análises automáticas sobre a taxa de economia e a concentração de gastos.
+- **IA contábil:** chat com consultas às transações, categorias e parcelas do usuário autenticado.
 - **Interface:** tema escuro, layout responsivo e gráficos com Chart.js.
 
 ## Tecnologias
 
 | Camada | Tecnologias |
 | --- | --- |
-| Frontend | HTML5, CSS3, JavaScript, [Chart.js](https://www.chartjs.org/) (via CDN) |
+| Frontend | Angular 18, Bootstrap 5, ng-bootstrap, [Chart.js](https://www.chartjs.org/) |
 | Backend | Node.js (>= 20), Express 5, API REST |
 | Autenticação | JSON Web Token (`jsonwebtoken`), `bcryptjs` |
 | Banco de dados | PostgreSQL, `pg` (node-postgres) |
@@ -78,27 +79,20 @@ Requisição HTTP
   PostgreSQL (pool de conexões em src/config/database.js)
 ```
 
-O servidor Express também serve o frontend estático da pasta `public/`. A rota `/` entrega a página de login.
+Em produção, o Express serve o build Angular de `frontend/dist/orvix-frontend`. Durante o desenvolvimento, use `npm start --prefix frontend` para servir o Angular e encaminhar `/api` ao backend.
 
 ## Estrutura do projeto
 
 ```text
 orvix/
 ├── db/
-│   └── schema.sql              # Estrutura do banco de dados
-├── public/                     # Frontend estático
-│   ├── css/                    # Estilos por página + design system
-│   ├── images/                 # Logo e favicon
-│   ├── js/                     # Scripts por página
-│   ├── login.html
-│   ├── register.html
-│   ├── dashboard.html
-│   ├── transactions.html
-│   ├── categories.html
-│   ├── goals.html
-│   ├── budgets.html
-│   ├── reports.html
-│   └── insights.html
+│   ├── migrations/             # Migrações aplicadas pelo runner
+│   └── schema.sql              # Estrutura base do PostgreSQL
+├── frontend/                   # Aplicação Angular
+│   ├── src/app/                # Páginas, serviços e componentes
+│   ├── src/assets/             # Logo e demais arquivos estáticos
+│   └── package.json
+├── public/                     # Páginas legadas servidas em desenvolvimento
 ├── src/
 │   ├── config/
 │   │   └── database.js         # Pool de conexões PostgreSQL
@@ -108,6 +102,7 @@ orvix/
 │   ├── routes/                 # Definição dos endpoints
 │   └── services/               # Regras de negócio e SQL
 ├── scripts/
+│   ├── run-migrations.js       # Schema base + migrações
 │   └── test-db.js              # Teste de conexão com o banco
 ├── .env.example
 ├── package.json
@@ -118,7 +113,7 @@ orvix/
 
 ### Pré-requisitos
 
-- [Node.js](https://nodejs.org/) 20 ou superior
+- [Node.js](https://nodejs.org/) 20.19 ou superior
 - [PostgreSQL](https://www.postgresql.org/) em execução (local ou na nuvem)
 - Git
 
@@ -129,8 +124,9 @@ orvix/
 git clone https://github.com/jonaskenpachi3-design/orvix.git
 cd orvix
 
-# 2. Instale as dependências
-npm install
+# 2. Instale as dependências do backend e do frontend
+npm ci
+npm ci --prefix frontend
 
 # 3. Crie o arquivo de ambiente
 cp .env.example .env
@@ -139,12 +135,14 @@ cp .env.example .env
 
 ### Preparando o banco
 
-Crie o banco e aplique o schema:
+Crie o banco e aplique o schema base e as migrações:
 
 ```bash
 createdb orvix
-psql "$DATABASE_URL" -f db/schema.sql
+npm run migrate
 ```
+
+`npm run migrate` aplica o schema base idempotente e, em seguida, as migrações pendentes.
 
 ### Executando
 
@@ -152,7 +150,7 @@ psql "$DATABASE_URL" -f db/schema.sql
 npm start
 ```
 
-A aplicação sobe em `http://localhost:3000` (ou na porta definida em `PORT`). Abra essa URL no navegador para acessar o login e crie uma conta em `/register.html`.
+Para desenvolver a interface, execute `npm start --prefix frontend` e acesse `http://localhost:4200`. O backend pode ser iniciado separadamente com `npm run dev`.
 
 Scripts disponíveis:
 
@@ -160,6 +158,8 @@ Scripts disponíveis:
 | --- | --- |
 | `npm start` | Inicia o servidor. |
 | `npm run dev` | Inicia o servidor reiniciando a cada alteração (`node --watch`). |
+| `npm run build` | Gera o build de produção do Angular. |
+| `npm run migrate` | Aplica o schema base e migrações pendentes. |
 | `npm run test:db` | Testa a conexão com o banco usando o `DATABASE_URL`. |
 
 Para conferir se o servidor e o banco estão funcionando:
@@ -169,7 +169,7 @@ curl http://localhost:3000/api/health
 ```
 
 ```json
-{ "status": "ok", "application": "Orvix", "environment": "development", "database": "connected" }
+{ "status": "ok", "application": "Orvix", "environment": "development", "database": "connected", "aiConfigured": false }
 ```
 
 ## Variáveis de ambiente
@@ -180,9 +180,11 @@ curl http://localhost:3000/api/health
 | `DATABASE_URL` | Sim | String de conexão do PostgreSQL. | `postgresql://usuario:senha@localhost:5432/orvix` |
 | `JWT_SECRET` | Sim | Chave usada para assinar e validar os tokens. Use um valor longo e aleatório. | `uma-chave-longa-e-aleatoria` |
 | `NODE_ENV` | Não | `development` (padrão) ou `production`. | `development` |
-| `CORS_ORIGIN` | Não | Em produção, restringe o CORS a essa origem. Sem ela, qualquer origem é aceita. | `https://meu-orvix.onrender.com` |
+| `CORS_ORIGIN` | Sim em produção | Origem pública do frontend, sem caminho. | `https://meu-orvix.onrender.com` |
+| `ANTHROPIC_API_KEY` | Sim em produção | Chave de API do Anthropic para o chat contábil. | Configure no provedor, nunca no Git. |
+| `ANTHROPIC_MODEL` | Não | Modelo Anthropic; padrão `claude-sonnet-5-5`. | `claude-sonnet-5-5` |
 
-Em `production`, o Orvix também ativa `trust proxy`, usa SSL na conexão com o banco, não expõe detalhes de erros internos e aumenta o pool de conexões de 5 para 10.
+Em `production`, o Orvix exige `DATABASE_URL`, `JWT_SECRET` (mínimo de 32 caracteres), `CORS_ORIGIN` e `ANTHROPIC_API_KEY`, ativa `trust proxy`, usa SSL na conexão com o banco e aumenta o pool de conexões de 5 para 10. Gere um segredo forte, por exemplo, com `openssl rand -base64 48`; não reutilize o valor de exemplo.
 
 ## Banco de dados
 
@@ -235,7 +237,7 @@ Convenções:
 
 | Método | Rota | Auth | Descrição |
 | --- | --- | :-: | --- |
-| GET | `/health` | Não | Verifica servidor e banco. |
+| GET | `/health` | Não | Verifica servidor e banco; informa se a chave da IA está configurada. |
 | POST | `/auth/register` | Não | Cria uma conta. |
 | POST | `/auth/login` | Não | Autentica e devolve o token. |
 | GET | `/auth/me` | Sim | Valida o token. |
@@ -260,6 +262,8 @@ Convenções:
 | GET | `/dashboard?period=` | Sim | Dados consolidados do dashboard. |
 | GET | `/reports/financial?start_date=&end_date=` | Sim | Relatório financeiro do período. |
 | GET | `/insights/financial?start_date=&end_date=` | Sim | Insights do período. |
+| POST | `/ai/chat` | Sim | Chat financeiro com consultas limitadas aos dados do usuário autenticado. |
+| GET | `/ai/tools` | Sim | Metadados das ferramentas disponíveis para a IA. |
 
 ---
 
@@ -267,7 +271,7 @@ Convenções:
 
 `GET /api/health`
 
-Responde `200` com `database: "connected"` quando o banco responde, ou `500` com `status: "error"` e `database: "disconnected"` quando não responde.
+Responde `200` com `database: "connected"` quando o banco responde, ou `500` com `status: "error"` e `database: "disconnected"` quando não responde. `aiConfigured` informa apenas se `ANTHROPIC_API_KEY` está configurada; não faz uma chamada faturável ao provedor.
 
 ### Auth
 
@@ -548,20 +552,22 @@ O estilo é compartilhado por um design system (`public/css/orvix-design-system.
 - **Isolamento de dados:** todas as consultas filtram pelo `user_id` do token.
 - **SQL:** consultas parametrizadas (`$1`, `$2`, ...), sem concatenação de valores.
 - **Headers HTTP:** Helmet ativo. A Content Security Policy fica desativada porque o dashboard carrega o Chart.js por CDN.
-- **CORS:** aberto em desenvolvimento; restrito por `CORS_ORIGIN` em produção, quando definida.
+- **CORS:** aberto em desenvolvimento; `CORS_ORIGIN` é obrigatória em produção.
 - **Erros:** em produção, detalhes internos não são enviados ao cliente.
 - **Segredos:** o `.env` está no `.gitignore`. Nunca versione credenciais.
 
 ## Deploy
 
-O projeto está preparado para o [Render](https://render.com/):
+O projeto pode ser publicado como um único serviço Node no [Render](https://render.com/):
 
-1. Crie um banco PostgreSQL e aplique o `db/schema.sql`.
-2. Crie um *Web Service* apontando para este repositório.
-3. Comando de build: `npm install`. Comando de start: `npm start`.
-4. Defina `NODE_ENV=production`, `DATABASE_URL`, `JWT_SECRET` e, opcionalmente, `CORS_ORIGIN`.
+1. Crie um banco PostgreSQL e configure `DATABASE_URL` com a URL interna do banco.
+2. Crie um *Web Service* apontando para a raiz do repositório.
+3. Configure o comando de build: `npm ci && npm ci --prefix frontend && npm run build`.
+4. Configure o comando de start: `npm start`.
+5. Configure `NODE_ENV=production`, `JWT_SECRET` (pelo menos 32 caracteres aleatórios), `CORS_ORIGIN` (URL pública do serviço) e `ANTHROPIC_API_KEY`.
+6. Configure `npm run migrate` como comando de pre-deploy após criar o banco. Ele aplica o schema base e as migrações pendentes; faça backup antes de migrações em um banco com dados.
 
-A conexão com o banco usa SSL em produção (com `rejectUnauthorized: false`, comum em bancos gerenciados) e o Express confia no proxy do Render para identificar HTTPS corretamente.
+A aplicação encerra a inicialização com erro claro se faltar configuração obrigatória em produção ou se o build Angular não existir. O health check `/api/health` testa a conexão com PostgreSQL; `aiConfigured` confirma apenas a presença da chave, não a validade da credencial ou disponibilidade do modelo.
 
 ## Progressive Web App (PWA)
 
@@ -570,7 +576,7 @@ O Orvix pode ser instalado pelo navegador em dispositivos compatíveis. Após ac
 ## Limitações conhecidas
 
 - O comentário final do `schema.sql` diz que categorias padrão são criadas no cadastro, mas o código atual não faz isso. Cada usuário precisa criar suas categorias antes de lançar transações categorizadas ou orçamentos.
-- O projeto não possui testes automatizados; `npm run test:db` apenas confere a conexão com o banco.
+- O projeto não possui suíte automatizada de testes do backend; `npm run test:db` apenas confere a conexão com o banco.
 - O token JWT fica no `localStorage` do navegador.
 
 ## Autor e licença

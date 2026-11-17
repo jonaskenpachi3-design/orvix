@@ -4,12 +4,43 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const path = require("path");
+const fs = require("fs");
 
-const pool = require("./src/config/database");
+const PORT = process.env.PORT || 3000;
+const NODE_ENV = process.env.NODE_ENV || "development";
+
+const requiredEnvironment = ["DATABASE_URL", "JWT_SECRET"];
+if (NODE_ENV === "production") {
+    requiredEnvironment.push("CORS_ORIGIN", "ANTHROPIC_API_KEY");
+}
+
+const missingEnvironment = requiredEnvironment.filter(
+    (name) => !process.env[name]?.trim()
+);
+
+if (missingEnvironment.length > 0) {
+    console.error(
+        `Variáveis de ambiente obrigatórias ausentes: ${missingEnvironment.join(", ")}`
+    );
+    process.exit(1);
+}
+
+if (NODE_ENV === "production" && process.env.JWT_SECRET.length < 32) {
+    console.error("JWT_SECRET deve ter pelo menos 32 caracteres em produção.");
+    process.exit(1);
+}
 
 // Frontend build path (Angular output)
 const FRONTEND_DIST = path.join(__dirname, "frontend", "dist", "orvix-frontend");
 
+if (NODE_ENV === "production" && !fs.existsSync(path.join(FRONTEND_DIST, "index.html"))) {
+    console.error(
+        `Build do frontend não encontrado em ${FRONTEND_DIST}. Execute o build do Angular antes de iniciar.`
+    );
+    process.exit(1);
+}
+
+const pool = require("./src/config/database");
 
 // ========================================
 // ROTAS
@@ -51,12 +82,6 @@ const aiRoutes =
 // ========================================
 
 const app = express();
-
-const PORT =
-    process.env.PORT || 3000;
-
-const NODE_ENV =
-    process.env.NODE_ENV || "development";
 
 
 // ========================================
@@ -251,7 +276,10 @@ app.get(
                     NODE_ENV,
 
                 database:
-                    "connected"
+                    "connected",
+
+                aiConfigured:
+                    Boolean(process.env.ANTHROPIC_API_KEY)
             });
 
         } catch (error) {
@@ -272,7 +300,10 @@ app.get(
                     NODE_ENV,
 
                 database:
-                    "disconnected"
+                    "disconnected",
+
+                aiConfigured:
+                    Boolean(process.env.ANTHROPIC_API_KEY)
             });
         }
     }

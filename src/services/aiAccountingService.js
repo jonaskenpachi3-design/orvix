@@ -143,10 +143,14 @@ async function executeTool(userId, toolName, input) {
     switch (toolName) {
         case "listar_transacoes": {
             const { start_date, end_date, type, include_scheduled } = input;
-            const options = { includeScheduled: include_scheduled || false };
+            const options = {
+                includeScheduled: include_scheduled || false,
+                startDate: start_date,
+                endDate: end_date,
+                type
+            };
             const transactions = await transactionService.getTransactionsByUser(userId, options);
 
-            // Helper para formatar data consistentemente
             const formatDate = (dateValue) => {
                 if (dateValue instanceof Date) {
                     return dateValue.toISOString().split("T")[0];
@@ -154,15 +158,7 @@ async function executeTool(userId, toolName, input) {
                 return String(dateValue).split("T")[0];
             };
 
-            // Filtrar por data e tipo na aplicação (mais flexível)
-            const filtered = transactions.filter(t => {
-                const txDate = formatDate(t.transaction_date);
-                const dateOk = txDate >= start_date && txDate <= end_date;
-                const typeOk = type ? t.type === type : true;
-                return dateOk && typeOk;
-            });
-
-            return filtered.map(t => ({
+            return transactions.map(t => ({
                 id: t.id,
                 description: t.description,
                 amount: Number(t.amount),

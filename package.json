@@ -4,6 +4,7 @@
   "description": "Orvix — Financial Intelligence Platform",
   "main": "server.js",
   "scripts": {
+    "build": "npm run build --prefix frontend",
     "start": "node server.js",
     "dev": "node --watch server.js",
     "test:db": "node scripts/test-db.js",
@@ -21,7 +22,7 @@
   "license": "MIT",
   "type": "commonjs",
   "engines": {
-    "node": ">=20"
+    "node": ">=20.19.0"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",

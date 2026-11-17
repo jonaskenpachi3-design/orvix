@@ -13,6 +13,9 @@ import { ToastService } from '../../../shared/services/toast.service';
   template: `
     <main class="auth-shell">
       <section class="auth-visual" aria-hidden="true">
+        <div class="brand auth-visual-brand">
+          <img class="brand-logo-image" src="/assets/images/logo-orvix.png" alt=""/>
+        </div>
         <div class="auth-visual-inner">
           <span class="auth-badge">FINANCIAL INTELLIGENCE PLATFORM</span>
           <h2>Organize sua vida financeira com clareza.</h2>
@@ -29,11 +32,7 @@ import { ToastService } from '../../../shared/services/toast.service';
 
       <section class="auth-card" role="main">
         <div class="brand">
-          <svg class="brand-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect width="48" height="48" rx="12" fill="var(--orvix-primary)"/>
-            <path d="M16 24L22 30L32 18" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span class="brand-wordmark">ORVIX</span>
+          <img class="brand-logo-image" src="/assets/images/logo-orvix.png" alt="Orvix"/>
         </div>
 
         <div class="auth-header">
@@ -155,6 +154,14 @@ import { ToastService } from '../../../shared/services/toast.service';
       margin: 0 auto;
     }
 
+    .auth-visual-brand {
+      position: absolute;
+      top: var(--space-6);
+      left: var(--space-6);
+      z-index: 1;
+      margin: 0;
+    }
+
     .auth-badge {
       display: inline-block;
       font-size: var(--font-size-caption);
@@ -214,17 +221,9 @@ import { ToastService } from '../../../shared/services/toast.service';
       margin-bottom: var(--space-6);
     }
 
-    .brand-logo {
-      width: 48px;
-      height: 48px;
-    }
-
-    .brand-wordmark {
-      font-size: 1.25rem;
-      font-weight: 800;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--orvix-text);
+    .brand-logo-image {
+      width: 156px;
+      height: 50px;
     }
 
     .auth-header {

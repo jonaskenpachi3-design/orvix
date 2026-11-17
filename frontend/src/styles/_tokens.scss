@@ -69,16 +69,42 @@ $transition-normal: 250ms ease;
 // ============================================================================
 :root,
 [data-bs-theme='light'] {
+  // CSS tokens used by component-scoped styles.
+  --space-1: #{$space-1};
+  --space-2: #{$space-2};
+  --space-3: #{$space-3};
+  --space-4: #{$space-4};
+  --space-5: #{$space-5};
+  --space-6: #{$space-6};
+  --space-7: #{$space-7};
+  --space-8: #{$space-8};
+  --font-size-display: #{$font-size-display};
+  --font-size-h1: #{$font-size-h1};
+  --font-size-h2: #{$font-size-h2};
+  --font-size-h3: #{$font-size-h3};
+  --font-size-h4: #{$font-size-h4};
+  --font-size-body: #{$font-size-body};
+  --font-size-small: #{$font-size-small};
+  --font-size-caption: #{$font-size-caption};
+  --border-radius-sm: #{$border-radius-sm};
+  --border-radius-md: #{$border-radius-md};
+  --border-radius-lg: #{$border-radius-lg};
+  --border-radius-pill: #{$border-radius-pill};
+  --transition-fast: #{$transition-fast};
+  --transition-normal: #{$transition-normal};
+
   // Cores base
   --orvix-bg: #F6F7FB;
   --orvix-surface: #FFFFFF;
   --orvix-surface-2: #F0F2F8;
   --orvix-border: #E4E7EF;
+  --orvix-border-strong: #CDD2DF;
 
   // Texto
   --orvix-text: #0F1424;
   --orvix-text-secondary: #5A6278;
   --orvix-text-muted: #8A91A6;
+  --orvix-text-tertiary: var(--orvix-text-muted);
 
   // Brand (Roxo - não verde/vermelho para não confundir com financeiro)
   --orvix-primary: #5B4BFF;
@@ -89,6 +115,11 @@ $transition-normal: 250ms ease;
   --orvix-positive: #12A150;   // Receita/Sucesso
   --orvix-negative: #E5384F;   // Despesa/Erro
   --orvix-warning: #E8890C;    // Atenção
+  --orvix-success: var(--orvix-positive);
+  --orvix-danger: var(--orvix-negative);
+  --orvix-success-rgb: 18, 161, 80;
+  --orvix-danger-rgb: 229, 56, 79;
+  --orvix-warning-rgb: 232, 137, 12;
 
   // Sombras
   --orvix-shadow-floating: #{$shadow-floating-light};
@@ -111,8 +142,11 @@ $transition-normal: 250ms ease;
   --bs-primary: var(--orvix-primary);
   --bs-primary-rgb: 91, 75, 255;
   --bs-success: var(--orvix-positive);
+  --bs-success-rgb: 18, 161, 80;
   --bs-danger: var(--orvix-negative);
+  --bs-danger-rgb: 229, 56, 79;
   --bs-warning: var(--orvix-warning);
+  --bs-warning-rgb: 232, 137, 12;
   --bs-border-color: var(--orvix-border);
   --bs-card-bg: var(--orvix-surface);
   --bs-card-border-color: var(--orvix-border);
@@ -134,11 +168,13 @@ $transition-normal: 250ms ease;
   --orvix-surface: #121820;
   --orvix-surface-2: #18212B;
   --orvix-border: #222D3A;
+  --orvix-border-strong: #344153;
 
   // Texto
   --orvix-text: #F5F7FA;
   --orvix-text-secondary: #A3ADBF;
   --orvix-text-muted: #6F7A8E;
+  --orvix-text-tertiary: var(--orvix-text-muted);
 
   // Brand
   --orvix-primary: #8B80FF;
@@ -149,6 +185,11 @@ $transition-normal: 250ms ease;
   --orvix-positive: #2FD07A;
   --orvix-negative: #FF6B7D;
   --orvix-warning: #F5A524;
+  --orvix-success: var(--orvix-positive);
+  --orvix-danger: var(--orvix-negative);
+  --orvix-success-rgb: 47, 208, 122;
+  --orvix-danger-rgb: 255, 107, 125;
+  --orvix-warning-rgb: 245, 165, 36;
 
   // Sombras
   --orvix-shadow-floating: #{$shadow-floating-dark};
@@ -171,8 +212,11 @@ $transition-normal: 250ms ease;
   --bs-primary: var(--orvix-primary);
   --bs-primary-rgb: 139, 128, 255;
   --bs-success: var(--orvix-positive);
+  --bs-success-rgb: 47, 208, 122;
   --bs-danger: var(--orvix-negative);
+  --bs-danger-rgb: 255, 107, 125;
   --bs-warning: var(--orvix-warning);
+  --bs-warning-rgb: 245, 165, 36;
   --bs-border-color: var(--orvix-border);
   --bs-card-bg: var(--orvix-surface);
   --bs-card-border-color: var(--orvix-border);

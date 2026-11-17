@@ -1,7 +1,6 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { importProvidersFrom } from '@angular/core';
 import { NgbModule, NgbModalModule, NgbToastModule, NgbDatepickerModule, NgbDropdownModule, NgbTooltipModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { registerLocaleData } from '@angular/common';
@@ -24,9 +23,6 @@ bootstrapApplication(AppComponent, {
 
     // HTTP com interceptors
     provideHttpClient(withInterceptors([authInterceptor])),
-
-    // Animações para ng-bootstrap
-    provideAnimations(),
 
     // ng-bootstrap modules
     importProvidersFrom(

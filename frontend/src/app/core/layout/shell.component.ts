@@ -19,14 +19,10 @@ interface NavItem {
   template: `
     <div class="app-shell">
       <!-- Sidebar -->
-      <aside class="sidebar" [class.show]="sidebarOpen()" role="navigation" aria-label="Menu principal">
+      <aside id="sidebar" class="sidebar" [class.show]="sidebarOpen()" role="navigation" aria-label="Menu principal">
         <div class="sidebar-header">
           <a routerLink="/dashboard" class="brand" aria-label="Orvix - Página inicial">
-            <svg class="brand-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <rect width="48" height="48" rx="12" fill="var(--orvix-primary)"/>
-              <path d="M16 24L22 30L32 18" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="brand-wordmark">ORVIX</span>
+            <img class="brand-logo-image" src="/assets/images/logo-orvix.png" alt="Orvix"/>
           </a>
         </div>
 
@@ -55,7 +51,7 @@ interface NavItem {
             </div>
           </div>
           <button
-            class="btn btn-danger btn-logout w-100"
+            class="btn btn-ghost btn-logout w-100"
             (click)="logout()"
             type="button"
           >
@@ -85,6 +81,9 @@ interface NavItem {
             >
               <i class="bi bi-list" aria-hidden="true"></i>
             </button>
+            <a routerLink="/dashboard" class="brand topbar-brand" aria-label="Orvix - Página inicial">
+              <img class="brand-logo-image" src="/assets/images/logo-orvix.png" alt="Orvix"/>
+            </a>
             <ng-content select="[topbar-title]"></ng-content>
           </div>
 
