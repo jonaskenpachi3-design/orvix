@@ -538,6 +538,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private readonly cdr = inject(ChangeDetectorRef);
   private categoryColorMap = new Map<string, string>();
+  private resizeObserver?: ResizeObserver;
 
   constructor() {
     // effect() precisa rodar em contexto de injeção (construtor), não em ngOnInit
@@ -545,7 +546,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     effect(() => {
       this.themeService.currentTheme();
       this.evolutionChartType();
-      untracked(() => this.createEvolutionChart());
+      untracked(() => {
+        // Garante que o canvas existe e tem dimensões antes de criar/atualizar
+        if (this.evolutionChartRef?.nativeElement?.offsetWidth > 0) {
+          this.createEvolutionChart();
+        }
+      });
     });
   }
 
@@ -553,8 +559,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadDashboard();
   }
 
+  ngAfterViewInit(): void {
+    // ResizeObserver para recriar o gráfico quando o container torna-se visível
+    // (ex: ao trocar de aba, ou quando o dashboard carrega em container oculto)
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(() => {
+        if (this.evolutionChartRef?.nativeElement?.offsetWidth > 0 && this.dashboardData()) {
+          this.createEvolutionChart();
+        }
+      });
+      this.resizeObserver.observe(this.evolutionChartRef.nativeElement);
+    }
+  }
+
   ngOnDestroy(): void {
     this.evolutionChartInstance?.destroy();
+    this.resizeObserver?.disconnect();
   }
 
   onPeriodChange(period: DashboardPeriod): void {

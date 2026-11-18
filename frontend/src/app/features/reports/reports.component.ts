@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, effect, ChangeDetectorRef } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, effect, ChangeDetectorRef, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbAlertModule, NgbTooltipModule, NgbDatepickerModule, NgbInputDatepicker, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
@@ -204,8 +204,8 @@ Chart.register(...registerables);
                     <p class="text-muted mb-0">Nenhuma receita no período</p>
                   </div>
                 } @else {
-                  <div class="d-flex justify-content-center" style="height: 300px;">
-                    <canvas #incomeChart style="max-width: 100%;"></canvas>
+                  <div class="d-flex justify-content-center" style="height: 300px; width: 100%;">
+                    <canvas #incomeChart style="width: 100%; height: 100%; max-width: 100%;"></canvas>
                   </div>
                   <div class="mt-3">
                     <div class="d-flex flex-wrap gap-2 justify-content-center">
@@ -234,8 +234,8 @@ Chart.register(...registerables);
                     <p class="text-muted mb-0">Nenhuma despesa no período</p>
                   </div>
                 } @else {
-                  <div class="d-flex justify-content-center" style="height: 300px;">
-                    <canvas #expenseChart style="max-width: 100%;"></canvas>
+                  <div class="d-flex justify-content-center" style="height: 300px; width: 100%;">
+                    <canvas #expenseChart style="width: 100%; height: 100%; max-width: 100%;"></canvas>
                   </div>
                   <div class="mt-3">
                     <div class="d-flex flex-wrap gap-2 justify-content-center">
@@ -415,12 +415,24 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   private categoryColorMap = new Map<string, string>();
+  private resizeObserver?: ResizeObserver;
 
   constructor() {
     // effect() precisa rodar em contexto de injeção (construtor), não em ngOnInit
     effect(() => {
       this.themeService.currentTheme();
-      this.updateCharts();
+      untracked(() => {
+        // Só atualiza se os charts existem e os canvas têm dimensões válidas
+        if (this.evolutionChartInstance && this.evolutionChartRef?.nativeElement?.offsetWidth > 0) {
+          this.evolutionChartInstance.update();
+        }
+        if (this.incomeChartInstance && this.incomeChartRef?.nativeElement?.offsetWidth > 0) {
+          this.incomeChartInstance.update();
+        }
+        if (this.expenseChartInstance && this.expenseChartRef?.nativeElement?.offsetWidth > 0) {
+          this.expenseChartInstance.update();
+        }
+      });
     });
   }
 
@@ -431,10 +443,31 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     // Charts will be created in loadReport after data is available
+    // ResizeObserver para recriar os gráficos quando o container torna-se visível
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(() => {
+        if (this.reportData()) {
+          // Recria gráficos se eles não existem mas o container está visível
+          const needsEvolution = !this.evolutionChartInstance && this.evolutionChartRef?.nativeElement?.offsetWidth > 0;
+          const needsIncome = !this.incomeChartInstance && this.incomeChartRef?.nativeElement?.offsetWidth > 0;
+          const needsExpense = !this.expenseChartInstance && this.expenseChartRef?.nativeElement?.offsetWidth > 0;
+
+          if (needsEvolution || needsIncome || needsExpense) {
+            this.createCharts();
+          }
+        }
+      });
+
+      // Observa todos os canvas
+      if (this.evolutionChartRef?.nativeElement) this.resizeObserver.observe(this.evolutionChartRef.nativeElement);
+      if (this.incomeChartRef?.nativeElement) this.resizeObserver.observe(this.incomeChartRef.nativeElement);
+      if (this.expenseChartRef?.nativeElement) this.resizeObserver.observe(this.expenseChartRef.nativeElement);
+    }
   }
 
   ngOnDestroy(): void {
     this.destroyCharts();
+    this.resizeObserver?.disconnect();
   }
 
   private setDefaultPeriod(): void {
