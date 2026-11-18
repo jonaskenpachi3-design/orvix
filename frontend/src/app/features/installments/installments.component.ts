@@ -547,7 +547,8 @@ export class InstallmentsComponent implements OnInit, OnDestroy {
     description: ['', [Validators.required, Validators.maxLength(150)]],
     totalAmount: [0, [Validators.required, Validators.min(0.01)]],
     installmentsTotal: [1, [Validators.required, Validators.min(1), Validators.max(60)]],
-    firstDueDate: ['', [Validators.required]],
+    // O ngbDatepicker trabalha com { year, month, day }; uma string ISO deixava o campo inválido
+    firstDueDate: [null as NgbDateStruct | null, [Validators.required]],
     categoryId: [''],
   });
 
@@ -578,14 +579,20 @@ export class InstallmentsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private formatNgbDateForApi(dateValue: string | NgbDateStruct): string {
+  private formatNgbDateForApi(dateValue: string | NgbDateStruct | null): string {
+    if (!dateValue) {
+      return '';
+    }
     if (typeof dateValue === 'string') {
       return dateValue;
     }
     return `${dateValue.year}-${String(dateValue.month).padStart(2, '0')}-${String(dateValue.day).padStart(2, '0')}`;
   }
 
-  private formatNgbDateForCalc(dateValue: string | NgbDateStruct): string {
+  private formatNgbDateForCalc(dateValue: string | NgbDateStruct | null): string {
+    if (!dateValue) {
+      return '';
+    }
     if (typeof dateValue === 'string') {
       return dateValue;
     }
@@ -843,11 +850,7 @@ export class InstallmentsComponent implements OnInit, OnDestroy {
       month: nextMonth.getMonth() + 1,
       day: nextMonth.getDate(),
     };
-    this.firstDueDate.setValue(this.formatNgbDate(ngbDate));
-  }
-
-  private formatNgbDate(date: NgbDateStruct): string {
-    return `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
+    this.firstDueDate.setValue(ngbDate);
   }
 
   async togglePlanDetails(planId: string): Promise<void> {
