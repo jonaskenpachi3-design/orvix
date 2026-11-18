@@ -73,6 +73,9 @@ const installmentRoutes =
 const aiRoutes =
     require("./src/routes/aiRoutes");
 
+const bankRoutes =
+    require("./src/routes/bankRoutes");
+
 
 // ========================================
 // APLICAÇÃO
@@ -239,6 +242,12 @@ app.use(
 app.use(
     "/api/ai",
     aiRoutes
+);
+
+
+app.use(
+    "/api/bank",
+    bankRoutes
 );
 
 

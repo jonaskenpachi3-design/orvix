@@ -186,6 +186,7 @@ curl http://localhost:3000/api/health
 | `AI_PROVIDER` | Não | `groq`, `anthropic` ou `openai-compatible`. Se omitido, é detectado pela chave presente. | `groq` |
 | `ANTHROPIC_API_KEY` | Não | Alternativa paga (Claude). | Configure no provedor, nunca no Git. |
 | `AI_API_KEY`, `AI_BASE_URL` | Não | Para `openai-compatible` (OpenRouter, Cerebras etc.). | — |
+| `PLUGGY_CLIENT_ID`, `PLUGGY_CLIENT_SECRET` | Não | Habilitam a sincronização do cartão de crédito via Open Finance (Pluggy). São segredos: configure só no provedor, nunca no Git. | Configure no provedor, nunca no Git. |
 
 Em `production`, o Orvix exige `DATABASE_URL` e `JWT_SECRET` (mínimo de 32 caracteres), ativa `trust proxy`, usa SSL na conexão com o banco e aumenta o pool de conexões de 5 para 10. `CORS_ORIGIN` é opcional e restringe chamadas cross-origin quando definida; `GROQ_API_KEY` (gratuita) ou `ANTHROPIC_API_KEY` é opcional e habilita o chat com IA. Gere um segredo forte, por exemplo, com `openssl rand -base64 48`; não reutilize o valor de exemplo.
 
@@ -503,6 +504,23 @@ Mesmas regras de validação dos relatórios.
 ```
 
 `top_categories` traz até as 5 categorias com mais despesas no período.
+
+## Sincronização do cartão de crédito (Open Finance)
+
+O Orvix importa as compras do cartão pela [Pluggy](https://docs.pluggy.ai), agregador autorizado do Open Finance Brasil. A importação grava em `transactions` com `source = 'pluggy'` e um `external_id` único, então sincronizar de novo não duplica.
+
+1. Conecte o banco no [MeuPluggy](https://meu.pluggy.ai) e crie uma aplicação em [dashboard.pluggy.ai](https://dashboard.pluggy.ai).
+2. Defina `PLUGGY_CLIENT_ID` e `PLUGGY_CLIENT_SECRET` no servidor e rode `npm run migrate`.
+3. Na tela **Transações**, cole o *Item ID* da conexão e clique em **Conectar**; depois, **Sincronizar cartão**.
+
+Regras: só valores positivos viram despesa (pagamentos de fatura e estornos são ignorados para não contar em dobro); compras com data futura (parcelas) entram como `scheduled`; a categoria inicial é "Cartão de crédito" e a recategorização manual é preservada nas próximas sincronizações.
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| `GET` | `/api/bank/status` | Indica se a integração está configurada e lista as conexões. |
+| `POST` | `/api/bank/connections` | Salva a conexão (`{ "itemId": "<uuid>" }`) após validar que há cartão. |
+| `POST` | `/api/bank/sync` | Importa/atualiza as transações (limite de 3 por minuto por usuário). |
+| `DELETE` | `/api/bank/connections/:id` | Remove a conexão; as transações importadas são mantidas. |
 
 ## Regras de negócio
 

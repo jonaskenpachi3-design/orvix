@@ -5,6 +5,7 @@ import { NgbModalModule, NgbModal, NgbAlertModule, NgbTooltipModule, NgbDatepick
 import { TransactionApi, Transaction, CreateTransactionDto, TransactionsResponse } from '@core/api/transaction.api';
 import { CategoryApi, Category } from '@core/api/category.api';
 import { ToastService } from '@shared/services/toast.service';
+import { BankSyncCardComponent } from './bank-sync-card.component';
 
 @Component({
   selector: 'app-transactions',
@@ -18,6 +19,7 @@ import { ToastService } from '@shared/services/toast.service';
     NgbDatepickerModule,
     NgbInputDatepicker,
     NgbPaginationModule,
+    BankSyncCardComponent,
   ],
   template: `
     <div class="transactions-page">
@@ -44,6 +46,9 @@ import { ToastService } from '@shared/services/toast.service';
           {{ successMessage() }}
         </ngb-alert>
       }
+
+      <!-- Open Finance: cartão de crédito -->
+      <app-bank-sync-card (synced)="onBankSynced()" />
 
       <!-- Summary Cards -->
       <div class="row g-3 mb-4">
@@ -642,6 +647,10 @@ export class TransactionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCategories();
+    this.loadTransactions();
+  }
+
+  onBankSynced(): void {
     this.loadTransactions();
   }
 
