@@ -24,6 +24,40 @@ export interface GoalsResponse {
   goals: Goal[];
 }
 
+export interface GoalContribution {
+  id: string;
+  goal_id: string;
+  user_id: string;
+  amount: number;
+  description: string | null;
+  contribution_date: string;
+  installment_number: number | null;
+  installments_total: number | null;
+  type: 'manual' | 'recurring' | 'installment';
+  created_at: string;
+}
+
+export interface AddContributionDto {
+  amount: number;
+  description?: string;
+  contributionDate?: string;
+  installmentNumber?: number;
+  installmentsTotal?: number;
+  type?: 'manual' | 'recurring' | 'installment';
+}
+
+export interface AddRecurringContributionsDto {
+  amount: number;
+  description?: string;
+  firstDate: string;
+  installmentsTotal: number;
+  frequencyMonths?: number;
+}
+
+export interface ContributionsResponse {
+  contributions: GoalContribution[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class GoalApi extends ApiService {
   getAll(): Observable<GoalsResponse> {
@@ -44,5 +78,29 @@ export class GoalApi extends ApiService {
 
   deleteGoal(id: string): Observable<void> {
     return this.delete<void>(`/goals/${id}`);
+  }
+
+  // =========================
+  // CONTRIBUTIONS
+  // =========================
+
+  addContribution(goalId: string, dto: AddContributionDto): Observable<{ contribution: GoalContribution }> {
+    return this.post<{ contribution: GoalContribution }>(`/goals/${goalId}/contributions`, dto);
+  }
+
+  getContributions(goalId: string): Observable<ContributionsResponse> {
+    return this.get<ContributionsResponse>(`/goals/${goalId}/contributions`);
+  }
+
+  updateContribution(goalId: string, contributionId: string, dto: Partial<AddContributionDto>): Observable<{ contribution: GoalContribution }> {
+    return this.put<{ contribution: GoalContribution }>(`/goals/${goalId}/contributions/${contributionId}`, dto);
+  }
+
+  deleteContribution(goalId: string, contributionId: string): Observable<void> {
+    return this.delete<void>(`/goals/${goalId}/contributions/${contributionId}`);
+  }
+
+  addRecurringContributions(goalId: string, dto: AddRecurringContributionsDto): Observable<{ contributions: GoalContribution[] }> {
+    return this.post<{ contributions: GoalContribution[] }>(`/goals/${goalId}/contributions/recurring`, dto);
   }
 }

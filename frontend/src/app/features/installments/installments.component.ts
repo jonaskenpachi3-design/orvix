@@ -578,10 +578,25 @@ export class InstallmentsComponent implements OnInit, OnDestroy {
     });
   }
 
+  private formatNgbDateForApi(dateValue: string | NgbDateStruct): string {
+    if (typeof dateValue === 'string') {
+      return dateValue;
+    }
+    return `${dateValue.year}-${String(dateValue.month).padStart(2, '0')}-${String(dateValue.day).padStart(2, '0')}`;
+  }
+
+  private formatNgbDateForCalc(dateValue: string | NgbDateStruct): string {
+    if (typeof dateValue === 'string') {
+      return dateValue;
+    }
+    return `${dateValue.year}-${String(dateValue.month).padStart(2, '0')}-${String(dateValue.day).padStart(2, '0')}`;
+  }
+
   private updatePreview(): void {
     const totalAmount = this.totalAmount.value;
     const installmentsTotal = this.installmentsTotal.value;
-    const firstDueDate = this.firstDueDate.value;
+    const firstDueDateRaw = this.firstDueDate.value;
+    const firstDueDate = this.formatNgbDateForCalc(firstDueDateRaw);
 
     if (!totalAmount || !installmentsTotal || !firstDueDate || totalAmount <= 0 || installmentsTotal <= 0) {
       this.showPreview.set(false);
@@ -801,7 +816,7 @@ export class InstallmentsComponent implements OnInit, OnDestroy {
         description: formValue.description,
         totalAmount: formValue.totalAmount,
         installmentsTotal: formValue.installmentsTotal,
-        firstDueDate: formValue.firstDueDate,
+        firstDueDate: this.formatNgbDateForApi(formValue.firstDueDate),
         categoryId: formValue.categoryId || undefined,
       };
 

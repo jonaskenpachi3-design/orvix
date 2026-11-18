@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Termos de Uso do Orvix - Plataforma de Inteligência Financeira Pessoal">
+<meta name="theme-color" content="#0f172a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Termos de Uso | Orvix</title>
+<style>
+:root {
+--bg:#0f172a; --bg-elev:#1e293b; --fg:#f1f5f9; --muted:#94a3b8;
+--accent:#22d3ee; --accent-weak:#22d3ee22; --border:#334155;
+--success:#22c55e; --warning:#f59e0b; --danger:#ef4444;
+--font-sans:'Inter',system-ui,sans-serif; --font-display:'Space Grotesk',sans-serif;
+--radius:12px; --radius-sm:8px; --shadow:0 10px 30px -10px #00000080;
+--max-w:800px; --header-h:64px;
+}
+@media (prefers-color-scheme:light) {
+:root { --bg:#f8fafc; --bg-elev:#ffffff; --fg:#0f172a; --muted:#64748b; --border:#e2e8f0; --accent:#06b6d4; --accent-weak:#06b6d41a; }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce) {html{scroll-behavior:auto}*, *::before, *::after{animation:none!important;transition:none!important}}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--fg);line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+.skip-link{position:absolute;top:-100%;left:1rem;background:var(--accent);color:#0f172a;padding:.75rem 1.25rem;border-radius:var(--radius-sm);font-weight:600;z-index:1000}
+.skip-link:focus{top:1rem}
+header{position:sticky;top:0;z-index:100;background:var(--bg)/80;backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.header-inner{max-width:var(--max-w);margin:0 auto;padding:0 1.5rem;height:var(--header-h);display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--font-display);font-weight:700;font-size:1.25rem;color:var(--fg);text-decoration:none;display:flex;align-items:center;gap:.5rem}
+.logo svg{width:28px;height:28px;color:var(--accent)}
+main{max-width:var(--max-w);margin:0 auto;padding:3rem 1.5rem 5rem}
+h1{font-family:var(--font-display);font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.15;margin-bottom:.5rem;background:linear-gradient(135deg,var(--fg),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.meta{color:var(--muted);font-size:.95rem;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.section{margin-bottom:3rem;animation:fade-in .6s ease-out both}
+@keyframes fade-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.section h2{font-family:var(--font-display);font-size:1.5rem;font-weight:600;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid var(--accent);display:inline-block}
+.section h3{font-family:var(--font-display);font-size:1.15rem;font-weight:600;margin:1.5rem 0 .75rem}
+p{margin-bottom:1rem;color:var(--fg)}
+ul,ol{margin:1rem 0 1rem 1.5rem;color:var(--fg)}
+li{margin-bottom:.5rem}
+li::marker{color:var(--accent)}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+a:hover,a:focus{border-bottom-color:var(--accent);outline:none}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.card{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0}
+.card h4{font-family:var(--font-display);font-size:1.1rem;margin-bottom:.75rem;color:var(--accent)}
+.table-wrap{overflow-x:auto;margin:1.5rem 0}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:.75rem 1rem;text-align:left;border-bottom:1px solid var(--border)}
+th{background:var(--accent-weak);color:var(--accent);font-weight:600;font-family:var(--font-display);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+tr:hover td{background:var(--bg)}
+.badge{display:inline-block;padding:.2rem .6rem;background:var(--accent-weak);color:var(--accent);border-radius:999px;font-size:.75rem;font-weight:600;margin-right:.5rem}
+.toc{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:2.5rem}
+.toc h3{font-family:var(--font-display);margin-bottom:1rem;color:var(--accent)}
+.toc ul{list-style:none;margin:0;padding:0}
+.toc li{margin:.4rem 0}
+.toc a{color:var(--fg);border-bottom:none;padding:.25rem 0;display:block;border-radius:var(--radius-sm);transition:background .2s}
+.toc a:hover{background:var(--accent-weak);color:var(--accent);border-bottom:none}
+footer{border-top:1px solid var(--border);padding:2rem 1.5rem;text-align:center;color:var(--muted);font-size:.9rem}
+.updated{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1rem;background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:2rem;font-size:.9rem}
+@media print{
+header,.skip-link{display:none}
+body{background:#fff;color:#000}
+a{color:#000;text-decoration:underline}
+.section{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Pular para conteúdo principal</a>
+<header>
+<div class="header-inner">
+<a href="#" class="logo" aria-label="Orvix - Início">
+<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M8 20L14 12l4 6 6-10" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+Orvix
+</a>
+</div>
+</header>
+<main id="main">
+<div class="updated">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+<strong>Última atualização:</strong> 17 de novembro de 2026 | <strong>Versão:</strong> 1.0
+</div>
+
+<h1>Termos de Uso</h1>
+<p class="meta">Bem-vindo ao Orvix. Ao criar uma conta ou usar nossos serviços, você concorda com estes Termos. Leia com atenção.</p>
+
+<nav class="toc" aria-label="Sumário">
+<h3>Sumário</h3>
+<ul>
+<li><a href="#aceitacao">1. Aceitação dos Termos</a></li>
+<li><a href="#licenca">2. Licença de Uso</a></li>
+<li><a href="#responsabilidades">3. Responsabilidades do Usuário</a></li>
+<li><a href="#propriedade">4. Propriedade Intelectual</a></li>
+<li><a href="#ia">5. Recursos de Inteligência Artificial</a></li>
+<li><a href="#limitacao">6. Limitação de Responsabilidade</a></li>
+<li><a href="#suspensao">7. Suspensão e Encerramento</a></li>
+<li><a href="#alteracoes">8. Alterações nos Termos</a></li>
+<li><a href="#lei">9. Lei Aplicável e Foro</a></li>
+<li><a href="#contato">10. Contato</a></li>
+</ul>
+</nav>
+
+<article class="section" id="aceitacao">
+<h2>1. Aceitação dos Termos</h2>
+<p>Ao se cadastrar no Orvix (web ou app), você declara ter lido, compreendido e aceito estes Termos de Uso e a <a href="orvix-politica-privacidade.html">Política de Privacidade</a>. Se não concorda, não use o serviço.</p>
+<p>A aceitação é eletrônica, feita ao clicar em "Criar conta" ou "Continuar" no fluxo de onboarding. Equivale a assinatura manuscrita para todos os efeitos legais (Lei 14.063/2020, art. 5º).</p>
+<p>Você deve ter <strong>18 anos ou mais</strong> e capacidade civil plena. Menores de idade só podem usar com consentimento expresso dos pais/responsáveis, que respondem solidariamente.</p>
+</article>
+
+<article class="section" id="licenca">
+<h2>2. Licença de Uso</h2>
+<p>Concedemos a você uma licença <strong>pessoal, não exclusiva, intransferível e revogável</strong> para:</p>
+<ul>
+<li>Acessar e usar o Orvix via web ou app móvel oficial;</li>
+<li>Armazenar, visualizar e gerenciar seus dados financeiros pessoais;</li>
+<li>Utilizar os recursos de IA (chat, insights, projeções) conforme seu plano.</li>
+</ul>
+<p>Esta licença <strong>não</strong> permite:</p>
+<ul>
+<li>Sublicenciar, alugar, vender ou distribuir o serviço;</li>
+<li>Fazer engenharia reversa, descompilar ou tentar extrair código-fonte;</li>
+<li>Usar bots, scrapers ou automações que extraiam dados em massa;</li>
+<li>Remover avisos de direitos autorais ou marcas registradas;</li>
+<li>Usar o serviço para fins ilegais ou não autorizados.</li>
+</ul>
+</article>
+
+<article class="section" id="responsabilidades">
+<h2>3. Responsabilidades do Usuário</h2>
+<h3>3.1 Cadastro e Credenciais</h3>
+<ul>
+<li>Fornecer informações <strong>verídicas, atuais e completas</strong> no cadastro;</li>
+<li>Manter sua senha e dispositivos seguros; não compartilhar credenciais;</li>
+<li>Notificar-nos imediatamente em caso de uso não autorizado da conta;</li>
+<li>Você é responsável por <strong>todas as atividades</strong> na sua conta.</li>
+</ul>
+<h3>3.2 Dados Financeiros</h3>
+<ul>
+<li>Inserir apenas transações, categorias, metas e orçamentos <strong>reais e lícitos</strong>;</li>
+<li>Não usar o Orvix para lavagem de dinheiro, evasão fiscal ou fraudes;</li>
+<li>Você é o único responsável pela exatidão dos dados que insere.</li>
+</ul>
+<h3>3.3 Uso Lícito</h3>
+<p>Compromete-se a não:</p>
+<ul>
+<li>Violar leis brasileiras ou internacionais;</li>
+<li>Interferir na segurança ou integridade do serviço;</li>
+<li>Transmitir vírus, malware ou código malicioso;</li>
+<li>Tentar acessar contas de outros usuários ou áreas restritas.</li>
+</ul>
+</article>
+
+<article class="section" id="propriedade">
+<h2>4. Propriedade Intelectual</h2>
+<h3>4.1 Nosso Conteúdo</h3>
+<p>O Orvix (código, design, marca, logos, interface, documentação) é de nossa propriedade ou licenciado a nós. Protegido por leis de direitos autorais (Lei 9.610/98), marcas (Lei 9.279/96) e tratados internacionais.</p>
+<p>O código-fonte do backend/frontend é aberto sob <strong>licença MIT</strong> no GitHub — você pode ver, copiar, modificar e distribuir o código conforme a licença, mas <strong>não</strong> inclui a marca "Orvix", logos, design system ou infraestrutura hospedada.</p>
+<h3>4.2 Seus Dados</h3>
+<p><strong>Você é dono dos seus dados financeiros.</strong> Transações, categorias, metas, orçamentos, parcelamentos e insights gerados a partir deles pertencem a você. Nós apenas hospedamos e processamos sob suas instruções (LGPD art. 5º, VI).</p>
+<p>Você pode exportar seus dados a qualquer momento (CSV, OFX, PDF) e solicitar exclusão total (LGPD art. 18, VI).</p>
+</article>
+
+<article class="section" id="ia">
+<h2>5. Recursos de Inteligência Artificial</h2>
+<h3>5.1 Como Funciona</h3>
+<p>O Orvix oferece chat com IA e insights automáticos. A IA acessa <strong>apenas seus dados</strong> (isolamento por <code>user_id</code> em todas as queries) via <em>function calling</em> — executa queries reais no seu PostgreSQL, não alucina números.</p>
+<h3>5.2 Provedores</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Plano</th><th>Provedor</th><th>Modelo</th><th>Custo para você</th></tr></thead>
+<tbody>
+<tr><td>Free / Pro</td><td>Groq</td><td>Llama 3 (70B/120B)</td><td>Grátis (incluído)</td></tr>
+<tr><td>Pro + Claude</td><td>Anthropic</td><td>Claude 3.5 Sonnet</td><td>Incluso no plano</td></tr>
+</tbody>
+</table>
+</div>
+<h3>5.3 Limitações Importantes</h3>
+<ul>
+<li><strong>Não é aconselhamento financeiro, contábil, tributário ou jurídico.</strong> A IA fornece informações baseadas nos seus dados; decisões financeiras são sua responsabilidade;</li>
+<li>A IA pode cometer erros. Verifique valores críticos antes de agir;</li>
+<li>Não garantimos disponibilidade contínua dos provedores de IA (Groq/Anthropic);</li>
+<li>Mensagens do chat são enviadas aos provedores para processamento — <strong>não enviamos seus saldos, extratos ou PII</strong>, apenas o texto da sua pergunta e resultados das function calls.</li>
+</ul>
+</article>
+
+<article class="section" id="limitacao">
+<h2>6. Limitação de Responsabilidade</h2>
+<div class="card">
+<h4>⚠️ Leia com atenção</h4>
+<p>Na extensão máxima permitida por lei (CDC art. 14, §3º; CC art. 927):</p>
+<ul>
+<li>O Orvix é fornecido <strong>"como está" e "conforme disponível"</strong>, sem garantias de qualquer tipo (explícitas ou implícitas);</li>
+<li>Não garantimos que o serviço será ininterrupto, livre de erros, seguro ou que defeitos serão corrigidos;</li>
+<li><strong>Não somos responsáveis</strong> por: (a) perdas financeiras baseadas em insights/IA; (b) dados inseridos incorretamente por você; (c) indisponibilidade temporária; (d) ações de terceiros (bancos, provedores IA, hospedagem);</li>
+<li>Nossa responsabilidade total, se houver, limita-se ao valor pago por você nos <strong>últimos 12 meses</strong> (ou R$ 100, o que for maior).</li>
+</ul>
+</div>
+<p>Direitos do consumidor (CDC) não são renunciados por estes Termos.</p>
+</article>
+
+<article class="section" id="suspensao">
+<h2>7. Suspensão e Encerramento</h2>
+<h3>7.1 Por Nós</h3>
+<p>Podemos suspender ou encerrar sua conta, com aviso prévio de <strong>30 dias</strong> (exceto casos graves), se:</p>
+<ul>
+<li>Violação destes Termos ou da Política de Privacidade;</li>
+<li>Uso fraudulento, ilegal ou abusivo;</li>
+<li>Inatividade contínua por <strong>12 meses</strong> (dados mantidos em backup por mais 12 meses antes de exclusão definitiva);</li>
+<li>Descumprimento de ordens judiciais ou regulatórias.</li>
+</ul>
+<h3>7.2 Por Você</h3>
+<p>Pode encerrar sua conta a qualquer momento em <em>Configurações → Excluir conta</em>. A exclusão é irreversível após confirmação. Dados financeiros são removidos em cascata (transações, categorias, metas, orçamentos, parcelamentos).</p>
+<h3>7.3 Efeitos do Encerramento</h3>
+<ul>
+<li>Licença de uso termina imediatamente;</li>
+<li>Você perde acesso ao serviço e aos dados (exceto backups legais);</li>
+<li>Assinaturas ativas são canceladas sem reembolso proporcional (exceto se lei exigir);</li>
+<li>Cláusulas de propriedade intelectual, limitação de responsabilidade e lei aplicável sobrevivem.</li>
+</ul>
+</article>
+
+<article class="section" id="alteracoes">
+<h2>8. Alterações nos Termos</h2>
+<p>Podemos atualizar estes Termos periodicamente. Se a mudança for <strong>material</strong> (preços, direitos, coleta de dados, IA):</p>
+<ul>
+<li>Notificaremos com <strong>30 dias de antecedência</strong> via e-mail e banner no app;</li>
+<li>Continuar usando após a vigência = aceitação dos novos Termos;</li>
+<li>Se não concordar, pode encerrar a conta antes da vigência.</li>
+</ul>
+<p>Mudanças não materiais (correções, melhorias de UX) entram em vigor imediatamente com aviso no changelog.</p>
+<p>Versões anteriores ficam disponíveis mediante solicitação.</p>
+</article>
+
+<article class="section" id="lei">
+<h2>9. Lei Aplicável e Foro</h2>
+<p>Estes Termos são regidos pelas leis da <strong>República Federativa do Brasil</strong> (especialmente CDC Lei 8.078/90, LGPD Lei 13.709/18, Marco Civil Lei 12.965/14).</p>
+<p>Fica eleito o foro da <strong>Comarca de São Paulo/SP</strong> para dirimir quaisquer controvérsias, com renúncia a qualquer outro, por mais privilegiado que seja.</p>
+<p>Se qualquer cláusula for considerada nula ou inexequível, as demais permanecem em vigor.</p>
+</article>
+
+<article class="section" id="contato">
+<h2>10. Contato</h2>
+<p>Dúvidas, solicitações ou denúncias sobre estes Termos:</p>
+<div class="card">
+<p><strong>E-mail:</strong> <a href="mailto:termos@orvix.app">termos@orvix.app</a></p>
+<p><strong>DPO (Encarregado LGPD):</strong> Jonas Sousa — <a href="mailto:privacidade@orvix.app">privacidade@orvix.app</a></p>
+<p><strong>Resposta garantida em até 15 dias úteis</strong> (LGPD art. 18, §1º).</p>
+</div>
+</article>
+</main>
+<footer>
+<p>Orvix — Financial Intelligence Platform &copy; 2026. Todos os direitos reservados.</p>
+<p><a href="orvix-politica-privacidade.html">Política de Privacidade</a> · <a href="orvix-politica-cookies.html">Política de Cookies</a></p>
+</footer>
+</body>
+</html>

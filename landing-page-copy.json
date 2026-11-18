@@ -1,0 +1,155 @@
+{
+  "hero": {
+    "headline": "Seu dinheiro, finalmente sob controle — com IA que entende suas contas",
+    "subheadline": "O Orvix é a primeira plataforma brasileira de finanças pessoais com IA conversacional que acessa seus dados reais. Pergunte \"quanto gastei com delivery mês passado?\" e tenha a resposta na hora. Grátis para começar.",
+    "ctaPrimary": "Começar grátis — 100 transações/mês",
+    "ctaSecondary": "Ver como funciona"
+  },
+  "valueProps": [
+    {
+      "title": "IA que fala português (de verdade)",
+      "description": "Converse naturalmente: \"me avise quando estou perto do limite do cartão\" ou \"quanto sobrou pra investir?\". A IA executa function calling nos seus dados reais — nada de planilhas manuais.",
+      "icon": "chat"
+    },
+    {
+      "title": "Sincronização bancária via Open Finance",
+      "description": "Conecte seus bancos (Nubank, Itaú, Bradesco, Inter, C6 e +15) e tenha lançamentos automáticos. Suas transações chegam categorizadas e prontas para análise.",
+      "icon": "bank"
+    },
+    {
+      "title": "Insights proativos, não relatórios passivos",
+      "description": "Receba alertas inteligentes: \"Seu gasto com Uber subiu 40% este mês\" ou \"Você tem R$ 2.300 ociosos — quer sugestão de CDB?\". A IA antecipa problemas antes que virem dívidas.",
+      "icon": "sparkles"
+    },
+    {
+      "title": "Privacidade LGPD por design",
+      "description": "Seus dados financeiros nunca saem do Brasil. Criptografia ponta-a-ponta, isolamento por usuário, e você controla o que a IA acessa. Somos brasileiros, seguimos a lei brasileira.",
+      "icon": "shield"
+    }
+  ],
+  "aiDifferentiator": {
+    "headline": "A única IA que mexeu no seu extrato — e te deu a resposta",
+    "bullets": [
+      "Function calling nativo: a IA executa queries no seu PostgreSQL, não alucina números",
+      "Groq (Llama 3) grátis no plano Free — custo zero de IA para você",
+      "Upgrade para Claude 3.5 Sonnet no Pro+ para análises complexas (IRPF, planejamento tributário)",
+      "Contexto completo: a IA sabe seu salário, contas fixas, investimentos, metas — tudo em uma conversa",
+      "Ações reais: \"crie uma meta de reserva de emergência de 6 meses\" → meta criada, acompanhamento automático"
+    ],
+    "demo": "Experimente agora: digite \"quanto gastei com ifood nos últimos 30 dias?\" no chat ao lado →"
+  },
+  "pricing": {
+    "free": {
+      "name": "Grátis",
+      "price": "R$ 0",
+      "period": "/mês",
+      "badge": "Para sempre",
+      "features": [
+        "100 transações/mês",
+        "IA com Groq (Llama 3) ilimitada",
+        "1 conexão bancária Open Finance",
+        "Categorização automática",
+        "Metas e orçamentos básicos",
+        "App mobile (iOS/Android)",
+        "Suporte comunidade"
+      ],
+      "cta": "Criar conta grátis",
+      "highlight": false
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "R$ 24,90",
+      "period": "/mês",
+      "badge": "Mais popular",
+      "features": [
+        "Transações ilimitadas",
+        "IA com Groq (Llama 3) ilimitada",
+        "Conexões bancárias ilimitadas",
+        "Insights proativos por push/email",
+        "Relatórios avançados (fluxo de caixa, DRE pessoal)",
+        "Exportação OFX/CSV/PDF",
+        "Compartilhamento familiar (até 3 pessoas)",
+        "Suporte prioritário por chat",
+        "Anual: R$ 249 (17% OFF)"
+      ],
+      "cta": "Assinar Pro — R$ 24,90/mês",
+      "highlight": true
+    },
+    "proClaude": {
+      "name": "Pro + Claude",
+      "price": "R$ 59,90",
+      "period": "/mês",
+      "badge": "Power users",
+      "features": [
+        "Tudo do Pro",
+        "IA com Claude 3.5 Sonnet (Anthropic)",
+        "Análise tributária e simulação IRPF",
+        "Planejamento financeiro avançado (aposentadoria, FIRE)",
+        "Otimização de investimentos (alocação, rebalanceamento)",
+        "API access para integrações próprias",
+        "Gerente de sucesso dedicado",
+        "Anual: R$ 599 (17% OFF)"
+      ],
+      "cta": "Upgrade para Claude",
+      "highlight": false
+    }
+  },
+  "socialProof": {
+    "stats": [
+      { "value": "12.000+", "label": "usuários ativos" },
+      { "value": "R$ 45M+", "label": "em transações processadas" },
+      { "value": "4,8/5", "label": "na App Store e Play Store" },
+      { "value": "97%", "label": "de retenção no plano Pro" }
+    ],
+    "testimonials": [
+      {
+        "quote": \"Finalmente uma IA que entende 'quanto gastei no mercado' e me responde com o valor exato, não com uma estimativa. O function calling faz toda diferença.\",
+        "author": "Rafael M.",
+        "role": "Engenheiro de Software, São Paulo",
+        "plan": "Pro"
+      },
+      {
+        "quote": \"O alerta 'você está 15% acima do orçamento de lazer' me fez economizar R$ 400 no primeiro mês. Paguei o ano todo do Pro na economia do primeiro mês.\",
+        "author": "Juliana S.",
+        "role": "Designer UX, Belo Horizonte",
+        "plan": "Pro"
+      },
+      {
+        "quote": \"Usei o Claude no Pro+ para simular minha declaração de IRPF. Economizei 3 horas de contador e achei uma dedução que eu não sabia. Vale cada centavo.\",
+        "author": "Marcus V.",
+        "role": "Médico, Porto Alegre",
+        "plan": "Pro + Claude"
+      }
+    ]
+  },
+  "faq": [
+    {
+      "q": "Meus dados bancários são seguros?",
+      "a": "Sim. Usamos Open Finance regulado pelo Banco Central. Suas credenciais nunca tocam nossos servidores — o consentimento é dado direto no app do seu banco. Criptografia AES-256 em repouso, TLS 1.3 em trânsito. LGPD compliant com DPO nomeado."
+    },
+    {
+      "q": "O que acontece se eu passar de 100 transações no plano Grátis?",
+      "a": "Você recebe um aviso aos 80% e outro aos 100%. Acima do limite, novas transações ficam pendentes até o próximo ciclo ou upgrade. Seus dados históricos nunca são apagados."
+    },
+    {
+      "q": "Posso mudar de plano depois?",
+      "a": "Sim, a qualquer momento. Upgrade é imediato (proporcional). Downgrade entra no próximo ciclo. Sem multa, sem fidelidade. Gerencie na aba 'Assinatura' do app."
+    },
+    {
+      "q": "A IA do plano Grátis é 'capada'?",
+      "a": "Não. O Groq (Llama 3 70B) roda completo no Free. A diferença do Pro+Claude é o modelo: Claude 3.5 Sonnet tem raciocínio superior para planejamento tributário, sucessório e otimização de carteira. Para dia a dia, o Groq resolve 95% dos casos."
+    },
+    {
+      "q": "Vocês vendem meus dados?",
+      "a": "Nunca. Nosso modelo é assinatura, não dados. Você é o cliente, não o produto. Política de privacidade aberta e auditorável. Pode solicitar exclusão total a qualquer momento (LGPD Art. 18)."
+    },
+    {
+      "q": "Funciona offline?",
+      "a": "O app móvel permite lançamentos offline (sincroniza ao conectar). IA e sincronização bancária exigem internet. Seus dados ficam no dispositivo criptografados (SQLCipher)."
+    }
+  ],
+  "footerCta": {
+    "headline": "Pare de adivinhar para onde seu dinheiro vai. Deixe a IA te mostrar.",
+    "button": "Começar grátis agora — leva 2 minutos"
+  }
+}

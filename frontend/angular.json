@@ -63,15 +63,7 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "configurations": {
-            "production": {
-              "browserTarget": "orvix-frontend:build:production"
-            },
-            "development": {
-              "browserTarget": "orvix-frontend:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
+          "buildTarget": "orvix-frontend:build"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

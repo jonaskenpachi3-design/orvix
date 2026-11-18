@@ -294,11 +294,187 @@ async function deleteGoal(req, res) {
     }
 }
 
+/* =========================
+   CONTRIBUTIONS
+========================= */
+
+async function addContribution(req, res) {
+    try {
+        const { goalId } = req.params;
+        const {
+            amount,
+            description,
+            contributionDate,
+            installmentNumber,
+            installmentsTotal,
+            type
+        } = req.body;
+
+        if (!amount || Number(amount) <= 0) {
+            return res.status(400).json({ error: "Valor da contribuição deve ser maior que zero." });
+        }
+
+        const contribution = await goalService.addGoalContribution(
+            req.user.id,
+            goalId,
+            Number(amount),
+            description?.trim() || null,
+            contributionDate || null,
+            installmentNumber ? Number(installmentNumber) : null,
+            installmentsTotal ? Number(installmentsTotal) : null,
+            type || 'manual'
+        );
+
+        return res.status(201).json({
+            message: "Contribuição adicionada com sucesso.",
+            contribution
+        });
+
+    } catch (error) {
+        console.error("Erro ao adicionar contribuição:", error);
+
+        if (error.message === "Meta não encontrada.") {
+            return res.status(404).json({ error: error.message });
+        }
+
+        return res.status(500).json({ error: "Erro interno do servidor." });
+    }
+}
+
+
+async function getContributions(req, res) {
+    try {
+        const { goalId } = req.params;
+
+        const contributions = await goalService.getGoalContributions(
+            req.user.id,
+            goalId
+        );
+
+        return res.status(200).json({ contributions });
+
+    } catch (error) {
+        console.error("Erro ao buscar contribuições:", error);
+        return res.status(500).json({ error: "Erro interno do servidor." });
+    }
+}
+
+
+async function updateContribution(req, res) {
+    try {
+        const { goalId, contributionId } = req.params;
+        const { amount, description, contributionDate } = req.body;
+
+        if (!amount || Number(amount) <= 0) {
+            return res.status(400).json({ error: "Valor da contribuição deve ser maior que zero." });
+        }
+
+        const contribution = await goalService.updateGoalContribution(
+            req.user.id,
+            goalId,
+            contributionId,
+            Number(amount),
+            description?.trim() || null,
+            contributionDate || null
+        );
+
+        return res.status(200).json({
+            message: "Contribuição atualizada com sucesso.",
+            contribution
+        });
+
+    } catch (error) {
+        console.error("Erro ao atualizar contribuição:", error);
+
+        if (error.message === "Contribuição não encontrada.") {
+            return res.status(404).json({ error: error.message });
+        }
+
+        return res.status(500).json({ error: "Erro interno do servidor." });
+    }
+}
+
+
+async function deleteContribution(req, res) {
+    try {
+        const { goalId, contributionId } = req.params;
+
+        const deleted = await goalService.deleteGoalContribution(
+            req.user.id,
+            goalId,
+            contributionId
+        );
+
+        if (!deleted) {
+            return res.status(404).json({ error: "Contribuição não encontrada." });
+        }
+
+        return res.status(200).json({ message: "Contribuição excluída com sucesso." });
+
+    } catch (error) {
+        console.error("Erro ao excluir contribuição:", error);
+        return res.status(500).json({ error: "Erro interno do servidor." });
+    }
+}
+
+
+async function addRecurringContributions(req, res) {
+    try {
+        const { goalId } = req.params;
+        const {
+            amount,
+            description,
+            firstDate,
+            installmentsTotal,
+            frequencyMonths
+        } = req.body;
+
+        if (!amount || Number(amount) <= 0) {
+            return res.status(400).json({ error: "Valor da parcela deve ser maior que zero." });
+        }
+        if (!installmentsTotal || Number(installmentsTotal) <= 0) {
+            return res.status(400).json({ error: "Número de parcelas deve ser maior que zero." });
+        }
+        if (!firstDate) {
+            return res.status(400).json({ error: "Data da primeira parcela é obrigatória." });
+        }
+
+        const contributions = await goalService.addRecurringContributions(
+            req.user.id,
+            goalId,
+            Number(amount),
+            description?.trim() || null,
+            firstDate,
+            Number(installmentsTotal),
+            frequencyMonths ? Number(frequencyMonths) : 1
+        );
+
+        return res.status(201).json({
+            message: `${contributions.length} contribuições recorrentes criadas com sucesso.`,
+            contributions
+        });
+
+    } catch (error) {
+        console.error("Erro ao criar contribuições recorrentes:", error);
+
+        if (error.message === "Meta não encontrada.") {
+            return res.status(404).json({ error: error.message });
+        }
+
+        return res.status(500).json({ error: "Erro interno do servidor." });
+    }
+}
+
 
 module.exports = {
     createGoal,
     getGoals,
     getGoal,
     updateGoal,
-    deleteGoal
+    deleteGoal,
+    addContribution,
+    getContributions,
+    updateContribution,
+    deleteContribution,
+    addRecurringContributions
 };

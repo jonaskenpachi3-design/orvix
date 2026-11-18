@@ -2,7 +2,7 @@ import { Component, signal, computed, inject, OnInit, ViewChild } from '@angular
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModalModule, NgbModal, NgbAlertModule, NgbTooltipModule, NgbDatepickerModule, NgbInputDatepicker } from '@ng-bootstrap/ng-bootstrap';
-import { GoalApi, Goal, CreateGoalDto, GoalsResponse } from '@core/api/goal.api';
+import { GoalApi, Goal, CreateGoalDto, GoalsResponse, GoalContribution, AddContributionDto, AddRecurringContributionsDto } from '@core/api/goal.api';
 import { ToastService } from '@shared/services/toast.service';
 
 @Component({
@@ -96,7 +96,25 @@ import { ToastService } from '@shared/services/toast.service';
                             class="dropdown-item"
                             (click)="openContributeModal(goal)"
                           >
-                            <i class="bi bi-cash-stack me-2" aria-hidden="true"></i> Contribuir
+                            <i class="bi bi-cash-stack me-2" aria-hidden="true"></i> Contribuir (único)
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            class="dropdown-item"
+                            (click)="openRecurringModal(goal)"
+                          >
+                            <i class="bi bi-calendar2-plus me-2" aria-hidden="true"></i> Parcelar/Recorrente
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            class="dropdown-item"
+                            (click)="openHistoryModal(goal)"
+                          >
+                            <i class="bi bi-clock-history me-2" aria-hidden="true"></i> Ver histórico
                           </button>
                         </li>
                         <li>
@@ -282,7 +300,7 @@ import { ToastService } from '@shared/services/toast.service';
       </div>
     </ng-template>
 
-    <!-- Contribute Modal -->
+    <!-- Contribute Modal (Único) -->
     <ng-template #contributeModal let-modal>
       <div class="modal-header">
         <h5 class="modal-title">Contribuir para "{{ contributingGoal()?.name }}"</h5>
@@ -305,6 +323,41 @@ import { ToastService } from '@shared/services/toast.service';
             @if (contributionAmount.invalid && (contributionAmount.dirty || contributionAmount.touched)) {
               <div class="form-error">Informe um valor válido.</div>
             }
+          </div>
+
+          <div class="mb-3">
+            <label for="contributionDescription" class="form-label">Descrição (opcional)</label>
+            <input
+              type="text"
+              id="contributionDescription"
+              class="form-control"
+              formControlName="description"
+              placeholder="Ex: Salário, Freelance, Venda..."
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="contributionDate" class="form-label">Data (opcional)</label>
+            <div class="input-group">
+              <input
+                type="text"
+                id="contributionDate"
+                class="form-control"
+                formControlName="contributionDate"
+                placeholder="DD/MM/AAAA"
+                ngbDatepicker
+                #cdp="ngbDatepicker"
+              />
+              <button
+                class="btn btn-outline"
+                type="button"
+                (click)="cdp.toggle()"
+                aria-label="Abrir calendário"
+              >
+                <i class="bi bi-calendar3" aria-hidden="true"></i>
+              </button>
+            </div>
+            <small class="text-muted">Deixe em branco para usar a data de hoje.</small>
           </div>
 
           <div class="alert alert-info">
@@ -331,7 +384,311 @@ import { ToastService } from '@shared/services/toast.service';
       </div>
     </ng-template>
 
-    <!-- Delete Confirmation Modal -->
+    <!-- Recurring/Parcelado Modal -->
+    <ng-template #recurringModal let-modal>
+      <div class="modal-header">
+        <h5 class="modal-title">Parcelamento/Recorrência para "{{ recurringGoal()?.name }}"</h5>
+        <button type="button" class="btn-close" aria-label="Fechar" (click)="modal.dismiss()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="recurringForm" (ngSubmit)="addRecurringContributions(modal)">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="recurringAmount" class="form-label">Valor por parcela</label>
+              <input
+                type="number"
+                id="recurringAmount"
+                class="form-control"
+                formControlName="amount"
+                placeholder="0,00"
+                step="0.01"
+                min="0.01"
+                [class.is-invalid]="recurringAmount.invalid && (recurringAmount.dirty || recurringAmount.touched)"
+              />
+              @if (recurringAmount.invalid && (recurringAmount.dirty || recurringAmount.touched)) {
+                <div class="form-error">Informe um valor válido.</div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="installmentsTotal" class="form-label">Número de parcelas</label>
+              <input
+                type="number"
+                id="installmentsTotal"
+                class="form-control"
+                formControlName="installmentsTotal"
+                placeholder="12"
+                min="1"
+                max="60"
+                [class.is-invalid]="installmentsTotal.invalid && (installmentsTotal.dirty || installmentsTotal.touched)"
+              />
+              @if (installmentsTotal.invalid && (installmentsTotal.dirty || installmentsTotal.touched)) {
+                <div class="form-error">Informe 1 a 60 parcelas.</div>
+              }
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="firstDate" class="form-label">1º vencimento</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="firstDate"
+                  class="form-control"
+                  formControlName="firstDate"
+                  placeholder="DD/MM/AAAA"
+                  ngbDatepicker
+                  #fdp="ngbDatepicker"
+                  [class.is-invalid]="firstDate.invalid && (firstDate.dirty || firstDate.touched)"
+                />
+                <button
+                  class="btn btn-outline"
+                  type="button"
+                  (click)="fdp.toggle()"
+                  aria-label="Abrir calendário"
+                >
+                  <i class="bi bi-calendar3" aria-hidden="true"></i>
+                </button>
+              </div>
+              @if (firstDate.invalid && (firstDate.dirty || firstDate.touched)) {
+                <div class="form-error">Data do primeiro vencimento é obrigatória.</div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="frequencyMonths" class="form-label">Frequência (meses)</label>
+              <input
+                type="number"
+                id="frequencyMonths"
+                class="form-control"
+                formControlName="frequencyMonths"
+                placeholder="1"
+                min="1"
+                max="12"
+              />
+              <small class="text-muted">1 = mensal, 2 = bimestral, etc.</small>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recurringDescription" class="form-label">Descrição base (opcional)</label>
+            <input
+              type="text"
+              id="recurringDescription"
+              class="form-control"
+              formControlName="description"
+              placeholder="Ex: Parcela da meta Viagem"
+            />
+          </div>
+
+          <!-- Preview -->
+          @if (recurringPreview().length > 0) {
+            <div class="alert alert-light border preview-card">
+              <h6 class="mb-3"><i class="bi bi-list-ol me-2" aria-hidden="true"></i> Prévia das parcelas</h6>
+              <div class="preview-list" style="max-height: 200px; overflow-y: auto;">
+                @for (item of recurringPreview(); track item.number) {
+                  <div class="preview-item d-flex align-items-center justify-content-between py-2 px-3 rounded border-bottom">
+                    <span class="badge bg-primary-subtle text-primary fw-semibold">{{ item.number }}/{{ recurringForm.controls.installmentsTotal.value }}</span>
+                    <div class="ms-3 flex-grow-1">
+                      <div class="fw-medium">{{ recurringForm.controls.description.value || 'Parcela da meta' }}</div>
+                      <small class="text-muted">{{ formatDate(item.dueDate) }}</small>
+                    </div>
+                    <span class="fw-semibold text-danger tabular-nums">{{ formatCurrency(item.amount) }}</span>
+                  </div>
+                }
+              </div>
+              <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                <span class="fw-medium">Total</span>
+                <span class="fw-bold text-danger tabular-nums">{{ formatCurrency((recurringForm.controls.amount.value || 0) * (recurringForm.controls.installmentsTotal.value || 0)) }}</span>
+              </div>
+            </div>
+          }
+
+          <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>
+            <strong>Importante:</strong> As parcelas serão criadas como contribuições agendadas (tipo "installment").
+            Elas aparecem no histórico e atualizam o valor atual da meta automaticamente.
+            Você pode editar ou excluir parcelas individuais no histórico.
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="addRecurringContributions(modal)"
+          [disabled]="recurringForm.invalid || savingRecurring()"
+        >
+          @if (savingRecurring()) {
+            <span class="spinner spinner-sm me-2" aria-hidden="true"></span> Criando parcelas...
+          } @else {
+            <i class="bi bi-calendar2-plus me-2" aria-hidden="true"></i> Criar parcelamento
+          }
+        </button>
+      </div>
+    </ng-template>
+
+    <!-- History Modal -->
+    <ng-template #historyModal let-modal>
+      <div class="modal-header">
+        <h5 class="modal-title">Histórico de contribuições - "{{ historyGoal()?.name }}"</h5>
+        <button type="button" class="btn-close" aria-label="Fechar" (click)="modal.dismiss()"></button>
+      </div>
+      <div class="modal-body">
+        @if (loadingHistory()) {
+          <div class="loading-state text-center py-4">
+            <div class="spinner mx-auto"></div>
+            <p class="mt-2 text-muted">Carregando histórico...</p>
+          </div>
+        } @else if (goalContributions().length === 0) {
+          <div class="empty-state text-center py-4">
+            <i class="bi bi-clock-history empty-icon" aria-hidden="true" style="font-size: 2.5rem;"></i>
+            <h6 class="mt-2">Nenhuma contribuição registrada</h6>
+            <p class="text-muted small">Use "Contribuir" ou "Parcelar/Recorrente" para adicionar aportes.</p>
+          </div>
+        } @else {
+          <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-sm table-hover mb-0">
+              <thead class="sticky-top">
+                <tr>
+                  <th>Data</th>
+                  <th>Valor</th>
+                  <th>Tipo</th>
+                  <th>Descrição</th>
+                  <th class="text-end">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (contrib of goalContributions(); track contrib.id) {
+                  <tr>
+                    <td>{{ formatDate(contrib.contribution_date) }}</td>
+                    <td class="fw-semibold text-danger tabular-nums">{{ formatCurrency(contrib.amount) }}</td>
+                    <td>
+                      <span class="badge"
+                        [class]="getContribTypeClass(contrib.type)">
+                        {{ getContribTypeLabel(contrib.type) }}
+                        @if (contrib.type === 'installment' && contrib.installment_number && contrib.installments_total) {
+                          <span class="ms-1">{{ contrib.installment_number }}/{{ contrib.installments_total }}</span>
+                        }
+                      </span>
+                    </td>
+                    <td>{{ contrib.description || '—' }}</td>
+                    <td class="text-end">
+                      <div class="btn-group btn-group-sm">
+                        <button
+                          type="button"
+                          class="btn btn-outline"
+                          (click)="openEditContributionModal(contrib)"
+                          title="Editar"
+                        >
+                          <i class="bi bi-pencil" aria-hidden="true"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-outline text-danger"
+                          (click)="confirmDeleteContribution(contrib)"
+                          title="Excluir"
+                        >
+                          <i class="bi bi-trash" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+            <span class="fw-medium">Total contribuído</span>
+            <span class="fw-bold text-danger tabular-nums">{{ formatCurrency(totalContributed()) }}</span>
+          </div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fechar</button>
+      </div>
+    </ng-template>
+
+    <!-- Edit Contribution Modal -->
+    <ng-template #editContributionModal let-modal>
+      <div class="modal-header">
+        <h5 class="modal-title">Editar contribuição</h5>
+        <button type="button" class="btn-close" aria-label="Fechar" (click)="modal.dismiss()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="editContributionForm" (ngSubmit)="saveEditContribution(modal)">
+          <div class="mb-3">
+            <label for="editAmount" class="form-label">Valor</label>
+            <input
+              type="number"
+              id="editAmount"
+              class="form-control"
+              formControlName="amount"
+              placeholder="0,00"
+              step="0.01"
+              min="0.01"
+              [class.is-invalid]="editAmount.invalid && (editAmount.dirty || editAmount.touched)"
+            />
+            @if (editAmount.invalid && (editAmount.dirty || editAmount.touched)) {
+              <div class="form-error">Informe um valor válido.</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="editDescription" class="form-label">Descrição</label>
+            <input
+              type="text"
+              id="editDescription"
+              class="form-control"
+              formControlName="description"
+              placeholder="Ex: Salário, Freelance..."
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="editDate" class="form-label">Data</label>
+            <div class="input-group">
+              <input
+                type="text"
+                id="editDate"
+                class="form-control"
+                formControlName="contributionDate"
+                placeholder="DD/MM/AAAA"
+                ngbDatepicker
+                #edp="ngbDatepicker"
+              />
+              <button
+                class="btn btn-outline"
+                type="button"
+                (click)="edp.toggle()"
+                aria-label="Abrir calendário"
+              >
+                <i class="bi bi-calendar3" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="saveEditContribution(modal)"
+          [disabled]="editContributionForm.invalid || savingEditContribution()"
+        >
+          @if (savingEditContribution()) {
+            <span class="spinner spinner-sm me-2" aria-hidden="true"></span> Salvando...
+          } @else {
+            <i class="bi bi-check-circle me-2" aria-hidden="true"></i> Salvar alterações
+          }
+        </button>
+      </div>
+    </ng-template>
+
+    <!-- Delete Confirmation Modals -->
     <ng-template #deleteModal let-modal>
       <div class="modal-header">
         <h5 class="modal-title">Excluir meta</h5>
@@ -341,7 +698,7 @@ import { ToastService } from '@shared/services/toast.service';
         <p>Tem certeza que deseja excluir a meta <strong>{{ goalToDelete()?.name }}</strong>?</p>
         <div class="alert alert-warning">
           <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>
-          Esta ação não pode ser desfeita.
+          Esta ação não pode ser desfeita. Todas as contribuições também serão removidas.
         </div>
       </div>
       <div class="modal-footer">
@@ -353,6 +710,35 @@ import { ToastService } from '@shared/services/toast.service';
           [disabled]="deletingGoalId() === goalToDelete()?.id"
         >
           @if (deletingGoalId() === goalToDelete()?.id) {
+            <span class="spinner spinner-sm me-1" aria-hidden="true"></span> Excluindo...
+          } @else {
+            Excluir
+          }
+        </button>
+      </div>
+    </ng-template>
+
+    <ng-template #deleteContributionModal let-modal>
+      <div class="modal-header">
+        <h5 class="modal-title">Excluir contribuição</h5>
+        <button type="button" class="btn-close" aria-label="Fechar" (click)="modal.dismiss()"></button>
+      </div>
+      <div class="modal-body">
+        <p>Tem certeza que deseja excluir a contribuição de <strong>{{ formatCurrency(contributionToDelete()?.amount ?? 0) }}</strong>?</p>
+        <div class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>
+          O valor será subtraído do progresso da meta. Esta ação não pode ser desfeita.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="deleteContribution(modal)"
+          [disabled]="deletingContributionId() === contributionToDelete()?.id"
+        >
+          @if (deletingContributionId() === contributionToDelete()?.id) {
             <span class="spinner spinner-sm me-1" aria-hidden="true"></span> Excluindo...
           } @else {
             Excluir
@@ -430,6 +816,41 @@ import { ToastService } from '@shared/services/toast.service';
       border-radius: 5px;
     }
 
+    .preview-card {
+      background-color: var(--orvix-surface-2);
+    }
+
+    .preview-item {
+      transition: background-color var(--transition-fast);
+    }
+
+    .preview-item:hover {
+      background-color: var(--orvix-border);
+    }
+
+    .table th {
+      font-weight: 600;
+      font-size: var(--font-size-caption);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--orvix-text-muted);
+      border-bottom: 2px solid var(--orvix-border);
+    }
+
+    .table td {
+      vertical-align: middle;
+      font-size: var(--font-size-small);
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: var(--orvix-surface-2);
+    }
+
+    .btn-group-sm .btn {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+
     @media (max-width: 767.98px) {
       .page-header {
         flex-direction: column;
@@ -439,6 +860,10 @@ import { ToastService } from '@shared/services/toast.service';
 
       .page-header > div {
         text-align: center;
+      }
+
+      .modal-body {
+        padding: 1rem;
       }
     }
   `]
@@ -454,16 +879,29 @@ export class GoalsComponent implements OnInit {
   readonly loadingGoals = signal(false);
   readonly savingGoal = signal(false);
   readonly savingContribution = signal(false);
+  readonly savingRecurring = signal(false);
+  readonly savingEditContribution = signal(false);
   readonly deletingGoalId = signal<string | null>(null);
+  readonly deletingContributionId = signal<string | null>(null);
   readonly editingGoal = signal<Goal | null>(null);
   readonly contributingGoal = signal<Goal | null>(null);
+  readonly recurringGoal = signal<Goal | null>(null);
+  readonly historyGoal = signal<Goal | null>(null);
   readonly goalToDelete = signal<Goal | null>(null);
+  readonly contributionToDelete = signal<GoalContribution | null>(null);
+  readonly editingContribution = signal<GoalContribution | null>(null);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
+  readonly loadingHistory = signal(false);
+  readonly goalContributions = signal<GoalContribution[]>([]);
 
   @ViewChild('goalModal', { static: false }) goalModalRef!: any;
   @ViewChild('contributeModal', { static: false }) contributeModalRef!: any;
+  @ViewChild('recurringModal', { static: false }) recurringModalRef!: any;
+  @ViewChild('historyModal', { static: false }) historyModalRef!: any;
+  @ViewChild('editContributionModal', { static: false }) editContributionModalRef!: any;
   @ViewChild('deleteModal', { static: false }) deleteModalRef!: any;
+  @ViewChild('deleteContributionModal', { static: false }) deleteContributionModalRef!: any;
 
   readonly today = {
     year: new Date().getFullYear(),
@@ -480,15 +918,127 @@ export class GoalsComponent implements OnInit {
 
   readonly contributeForm = this.fb.nonNullable.group({
     amount: [0, [Validators.required, Validators.min(0.01)]],
+    description: [''],
+    contributionDate: ['' as string | { year: number; month: number; day: number }],
+  });
+
+  readonly recurringForm = this.fb.nonNullable.group({
+    amount: [0, [Validators.required, Validators.min(0.01)]],
+    installmentsTotal: [1, [Validators.required, Validators.min(1), Validators.max(60)]],
+    firstDate: ['' as string | { year: number; month: number; day: number }, [Validators.required]],
+    frequencyMonths: [1, [Validators.min(1), Validators.max(12)]],
+    description: [''],
+  });
+
+  readonly editContributionForm = this.fb.nonNullable.group({
+    amount: [0, [Validators.required, Validators.min(0.01)]],
+    description: [''],
+    contributionDate: ['' as string | { year: number; month: number; day: number }],
   });
 
   get name() { return this.goalForm.controls.name; }
   get targetAmount() { return this.goalForm.controls.targetAmount; }
   get currentAmount() { return this.goalForm.controls.currentAmount; }
   get contributionAmount() { return this.contributeForm.controls.amount; }
+  get recurringAmount() { return this.recurringForm.controls.amount; }
+  get installmentsTotal() { return this.recurringForm.controls.installmentsTotal; }
+  get firstDate() { return this.recurringForm.controls.firstDate; }
+  get editAmount() { return this.editContributionForm.controls.amount; }
+
+  // Preview para parcelamento recorrente
+  readonly recurringPreview = computed(() => {
+    const amount = this.recurringAmount.value;
+    const installments = this.installmentsTotal.value;
+    const firstDateRaw = this.firstDate.value;
+
+    if (!amount || !installments || !firstDateRaw || amount <= 0 || installments <= 0) {
+      return [] as { number: number; dueDate: string; amount: number }[];
+    }
+
+    const firstDate = this.formatNgbDateForCalc(firstDateRaw);
+    const items: { number: number; dueDate: string; amount: number }[] = [];
+
+    for (let i = 1; i <= installments; i++) {
+      const dueDate = this.calculateDueDate(firstDate, i);
+      items.push({
+        number: i,
+        dueDate,
+        amount,
+      });
+    }
+
+    return items;
+  });
+
+  readonly totalContributed = computed(() =>
+    this.goalContributions().reduce((sum, c) => sum + c.amount, 0)
+  );
 
   ngOnInit(): void {
     this.loadGoals();
+    this.setDefaultFirstDate();
+    this.setupRecurringPreviewListener();
+  }
+
+  private setupRecurringPreviewListener(): void {
+    ['amount', 'installmentsTotal', 'firstDate'].forEach(field => {
+      this.recurringForm.get(field)?.valueChanges.subscribe(() => {});
+    });
+  }
+
+  private formatNgbDateForCalc(dateValue: string | { year: number; month: number; day: number }): string {
+    if (typeof dateValue === 'string') {
+      return dateValue;
+    }
+    return `${dateValue.year}-${String(dateValue.month).padStart(2, '0')}-${String(dateValue.day).padStart(2, '0')}`;
+  }
+
+  private calculateDueDate(firstDueDate: string, installmentIndex: number): string {
+    const ngbDate = this.parseNgbDate(firstDueDate);
+    if (!ngbDate) return firstDueDate;
+
+    const date = new Date(Date.UTC(ngbDate.year, ngbDate.month - 1, ngbDate.day));
+    // Usa frequencyMonths do form
+    const freq = this.recurringForm.controls.frequencyMonths.value || 1;
+    date.setUTCMonth(date.getUTCMonth() + (installmentIndex - 1) * freq);
+
+    const originalDay = ngbDate.day;
+    if (date.getUTCDate() !== originalDay) {
+      date.setUTCDate(0);
+    }
+
+    const y = date.getUTCFullYear();
+    const m = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const d = String(date.getUTCDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  private parseNgbDate(value: string): { year: number; month: number; day: number } | null {
+    const parts = value.split('-');
+    if (parts.length === 3) {
+      return {
+        year: parseInt(parts[0], 10),
+        month: parseInt(parts[1], 10),
+        day: parseInt(parts[2], 10),
+      };
+    }
+    return null;
+  }
+
+  private setDefaultFirstDate(): void {
+    const today = new Date();
+    const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+    const ngbDate = {
+      year: nextMonth.getFullYear(),
+      month: nextMonth.getMonth() + 1,
+      day: nextMonth.getDate(),
+    };
+    this.firstDate.setValue(this.formatNgbDate(ngbDate));
+    this.recurringForm.controls.frequencyMonths.setValue(1);
+  }
+
+  private formatNgbDate(date: { year: number; month: number; day: number }): string {
+    return `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
   }
 
   private async loadGoals(): Promise<void> {
@@ -535,6 +1085,24 @@ export class GoalsComponent implements OnInit {
     }).format(value);
   }
 
+  getContribTypeClass(type: string): string {
+    switch (type) {
+      case 'installment': return 'bg-primary-subtle text-primary';
+      case 'recurring': return 'bg-info-subtle text-info';
+      default: return 'bg-secondary-subtle text-secondary';
+    }
+  }
+
+  getContribTypeLabel(type: string): string {
+    switch (type) {
+      case 'installment': return 'Parcelada';
+      case 'recurring': return 'Recorrente';
+      default: return 'Manual';
+    }
+  }
+
+  // --- Modals ---
+
   openCreateModal(): void {
     this.editingGoal.set(null);
     this.goalForm.reset({
@@ -568,8 +1136,39 @@ export class GoalsComponent implements OnInit {
     this.contributingGoal.set(goal);
     this.contributeForm.reset({
       amount: 0,
+      description: '',
+      contributionDate: '',
     });
     this.modalService.open(this.contributeModalRef, { centered: true });
+  }
+
+  openRecurringModal(goal: Goal): void {
+    this.recurringGoal.set(goal);
+    this.recurringForm.reset({
+      amount: 0,
+      installmentsTotal: 1,
+      firstDate: '',
+      frequencyMonths: 1,
+      description: '',
+    });
+    this.setDefaultFirstDate();
+    this.modalService.open(this.recurringModalRef, { centered: true, size: 'lg' });
+  }
+
+  async openHistoryModal(goal: Goal): Promise<void> {
+    this.historyGoal.set(goal);
+    this.loadingHistory.set(true);
+    this.goalContributions.set([]);
+    try {
+      const response = await this.goalApi.getContributions(goal.id).toPromise();
+      this.goalContributions.set(response?.contributions ?? []);
+    } catch (err) {
+      console.error('Erro ao carregar histórico:', err);
+      this.toastService.error('Não foi possível carregar o histórico.');
+    } finally {
+      this.loadingHistory.set(false);
+    }
+    this.modalService.open(this.historyModalRef, { centered: true, size: 'lg' });
   }
 
   private formatDateForInput(dateString: string): { year: number; month: number; day: number } {
@@ -618,10 +1217,6 @@ export class GoalsComponent implements OnInit {
     }
   }
 
-  private formatDateFromInput(dateObj: { year: number; month: number; day: number }): string {
-    return `${dateObj.year}-${String(dateObj.month).padStart(2, '0')}-${String(dateObj.day).padStart(2, '0')}`;
-  }
-
   async addContribution(modal: any): Promise<void> {
     if (this.contributeForm.invalid || !this.contributingGoal()) {
       this.contributeForm.markAllAsTouched();
@@ -631,17 +1226,15 @@ export class GoalsComponent implements OnInit {
     this.savingContribution.set(true);
     try {
       const goal = this.contributingGoal()!;
-      const amount = this.contributionAmount.value;
-      const newCurrentAmount = goal.current_amount + amount;
+      const formValue = this.contributeForm.getRawValue();
+      const dto: AddContributionDto = {
+        amount: formValue.amount,
+        description: formValue.description || undefined,
+        contributionDate: formValue.contributionDate ? this.formatDateForApi(formValue.contributionDate) : undefined,
+        type: 'manual',
+      };
 
-      await this.goalApi
-        .update(goal.id, {
-          name: goal.name,
-          targetAmount: goal.target_amount,
-          currentAmount: newCurrentAmount,
-          deadline: goal.deadline ?? undefined,
-        })
-        .toPromise();
+      await this.goalApi.addContribution(goal.id, dto).toPromise();
       this.toastService.success('Contribuição adicionada com sucesso.');
       modal.close();
       await this.loadGoals();
@@ -653,6 +1246,110 @@ export class GoalsComponent implements OnInit {
       this.contributingGoal.set(null);
     }
   }
+
+  async addRecurringContributions(modal: any): Promise<void> {
+    if (this.recurringForm.invalid || !this.recurringGoal()) {
+      this.recurringForm.markAllAsTouched();
+      return;
+    }
+
+    this.savingRecurring.set(true);
+    try {
+      const goal = this.recurringGoal()!;
+      const formValue = this.recurringForm.getRawValue();
+      const dto: AddRecurringContributionsDto = {
+        amount: formValue.amount,
+        description: formValue.description || undefined,
+        firstDate: this.formatNgbDateForCalc(formValue.firstDate),
+        installmentsTotal: formValue.installmentsTotal,
+        frequencyMonths: formValue.frequencyMonths,
+      };
+
+      await this.goalApi.addRecurringContributions(goal.id, dto).toPromise();
+      this.toastService.success(`${formValue.installmentsTotal} parcelas criadas com sucesso.`);
+      modal.close();
+      await this.loadGoals();
+    } catch (err) {
+      console.error('Erro ao criar parcelamento:', err);
+      this.toastService.error('Não foi possível criar o parcelamento.');
+    } finally {
+      this.savingRecurring.set(false);
+      this.recurringGoal.set(null);
+    }
+  }
+
+  // --- Edit Contribution ---
+
+  openEditContributionModal(contrib: GoalContribution): void {
+    this.editingContribution.set(contrib);
+    this.editContributionForm.patchValue({
+      amount: contrib.amount,
+      description: contrib.description || '',
+      contributionDate: contrib.contribution_date ? this.formatDateForInput(contrib.contribution_date) : '',
+    });
+    this.modalService.open(this.editContributionModalRef, { centered: true });
+  }
+
+  async saveEditContribution(modal: any): Promise<void> {
+    if (this.editContributionForm.invalid || !this.editingContribution() || !this.historyGoal()) {
+      this.editContributionForm.markAllAsTouched();
+      return;
+    }
+
+    this.savingEditContribution.set(true);
+    try {
+      const contrib = this.editingContribution()!;
+      const goal = this.historyGoal()!;
+      const formValue = this.editContributionForm.getRawValue();
+      const dto = {
+        amount: formValue.amount,
+        description: formValue.description || undefined,
+        contributionDate: formValue.contributionDate ? this.formatDateForApi(formValue.contributionDate) : undefined,
+      };
+
+      await this.goalApi.updateContribution(goal.id, contrib.id, dto).toPromise();
+      this.toastService.success('Contribuição atualizada com sucesso.');
+      modal.close();
+      // Recarregar histórico
+      await this.openHistoryModal(goal);
+    } catch (err) {
+      console.error('Erro ao atualizar contribuição:', err);
+      this.toastService.error('Não foi possível atualizar a contribuição.');
+    } finally {
+      this.savingEditContribution.set(false);
+      this.editingContribution.set(null);
+    }
+  }
+
+  // --- Delete Contribution ---
+
+  confirmDeleteContribution(contrib: GoalContribution): void {
+    this.contributionToDelete.set(contrib);
+    this.modalService.open(this.deleteContributionModalRef, { centered: true });
+  }
+
+  async deleteContribution(modal: any): Promise<void> {
+    const contrib = this.contributionToDelete();
+    const goal = this.historyGoal();
+    if (!contrib || !goal) return;
+
+    this.deletingContributionId.set(contrib.id);
+    try {
+      await this.goalApi.deleteContribution(goal.id, contrib.id).toPromise();
+      this.toastService.success('Contribuição excluída com sucesso.');
+      modal.close();
+      // Recarregar histórico
+      await this.openHistoryModal(goal);
+    } catch (err) {
+      console.error('Erro ao excluir contribuição:', err);
+      this.toastService.error('Não foi possível excluir a contribuição.');
+    } finally {
+      this.deletingContributionId.set(null);
+      this.contributionToDelete.set(null);
+    }
+  }
+
+  // --- Delete Goal ---
 
   confirmDeleteGoal(goal: Goal): void {
     this.goalToDelete.set(goal);

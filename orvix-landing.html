@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Orvix — Plataforma de Inteligência Financeira Pessoal com IA conversacional que acessa seus dados reais. Grátis para começar.">
+<meta name="theme-color" content="#0B0F14">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="logo-orvix.png">
+<link rel="apple-touch-icon" href="logo-orvix.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Orvix — Inteligência Financeira Pessoal</title>
+<style>
+/* ============================================================================
+   ORVIX DESIGN TOKENS (copiados de frontend/src/styles/_tokens.scss)
+   ============================================================================ */
+:root,
+[data-bs-theme="light"] {
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.5rem;    /* 24px */
+  --space-6: 2rem;      /* 32px */
+  --space-7: 3rem;      /* 48px */
+  --space-8: 4rem;      /* 64px */
+
+  --font-size-display: 2.25rem;   /* 36px */
+  --font-size-h1: 1.75rem;        /* 28px */
+  --font-size-h2: 1.25rem;        /* 20px */
+  --font-size-h3: 1.125rem;       /* 18px */
+  --font-size-h4: 1rem;           /* 16px */
+  --font-size-body: 1rem;         /* 16px */
+  --font-size-small: 0.875rem;    /* 14px */
+  --font-size-caption: 0.75rem;   /* 12px */
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+
+  --border-radius-sm: 10px;
+  --border-radius-md: 14px;
+  --border-radius-lg: 18px;
+  --border-radius-pill: 999px;
+
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+
+  /* Light theme colors */
+  --orvix-bg: #F6F7FB;
+  --orvix-surface: #FFFFFF;
+  --orvix-surface-2: #F0F2F8;
+  --orvix-border: #E4E7EF;
+  --orvix-border-strong: #CDD2DF;
+
+  --orvix-text: #0F1424;
+  --orvix-text-secondary: #5A6278;
+  --orvix-text-muted: #8A91A6;
+  --orvix-text-tertiary: var(--orvix-text-muted);
+
+  --orvix-primary: #5B4BFF;
+  --orvix-primary-hover: #4A3BE6;
+  --orvix-primary-soft: #ECEAFF;
+
+  --orvix-positive: #12A150;
+  --orvix-negative: #E5384F;
+  --orvix-warning: #E8890C;
+  --orvix-success: var(--orvix-positive);
+  --orvix-danger: var(--orvix-negative);
+
+  --orvix-shadow-floating: 0 12px 32px rgba(15, 20, 36, 0.12);
+  --orvix-shadow-sm: 0 1px 2px rgba(15, 20, 36, 0.05);
+  --orvix-shadow-md: 0 4px 6px -1px rgba(15, 20, 36, 0.1), 0 2px 4px -1px rgba(15, 20, 36, 0.06);
+  --orvix-shadow-lg: 0 10px 15px -3px rgba(15, 20, 36, 0.1), 0 4px 6px -2px rgba(15, 20, 36, 0.05);
+  --orvix-shadow-xl: 0 20px 25px -5px rgba(15, 20, 36, 0.1), 0 10px 10px -5px rgba(15, 20, 36, 0.04);
+}
+
+[data-bs-theme="dark"] {
+  --orvix-bg: #0B0F14;
+  --orvix-surface: #121820;
+  --orvix-surface-2: #18212B;
+  --orvix-border: #222D3A;
+  --orvix-border-strong: #344153;
+
+  --orvix-text: #F5F7FA;
+  --orvix-text-secondary: #A3ADBF;
+  --orvix-text-muted: #6F7A8E;
+  --orvix-text-tertiary: var(--orvix-text-muted);
+
+  --orvix-primary: #8B80FF;
+  --orvix-primary-hover: #9C93FF;
+  --orvix-primary-soft: #1E1B3D;
+
+  --orvix-positive: #2FD07A;
+  --orvix-negative: #FF6B7D;
+  --orvix-warning: #F5A524;
+  --orvix-success: var(--orvix-positive);
+  --orvix-danger: var(--orvix-negative);
+
+  --orvix-shadow-floating: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --orvix-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --orvix-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --orvix-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --orvix-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================================
+   GLOBAL RESET & BASE
+   ============================================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+  background-color: var(--orvix-bg);
+  color: var(--orvix-text);
+  font-weight: 400;
+}
+
+.skip-link {
+  position: absolute; top: -100%; left: var(--space-4);
+  background: var(--orvix-primary); color: white;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--border-radius-sm);
+  font-weight: 600; font-size: var(--font-size-small);
+  z-index: 1000; transition: top var(--transition-fast);
+}
+.skip-link:focus { top: var(--space-4); }
+
+:focus-visible {
+  outline: 2px solid var(--orvix-primary);
+  outline-offset: 2px;
+}
+
+::selection {
+  background-color: var(--orvix-primary-soft);
+  color: var(--orvix-primary);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: var(--orvix-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background-color: var(--orvix-text-muted); }
+
+/* ============================================================================
+   LAYOUT
+   ============================================================================ */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: color-mix(in srgb, var(--orvix-surface) 80%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--orvix-border);
+}
+.header-inner {
+  max-width: 1200px; margin: 0 auto;
+  padding: 0 var(--space-5);
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.logo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800; font-size: 1.125rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--orvix-text); text-decoration: none;
+  display: flex; align-items: center; gap: var(--space-3);
+}
+.logo svg { width: 40px; height: 40px; color: var(--orvix-primary); flex-shrink: 0; }
+
+.brand-logo-image {
+  display: block;
+  width: 132px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: var(--orvix-surface);
+  object-fit: cover;
+  object-position: center;
+}
+
+.footer-logo .brand-logo-image {
+  width: 150px;
+  height: 48px;
+}
+
+main { max-width: 1200px; margin: 0 auto; padding: var(--space-8) var(--space-5) var(--space-8); }
+
+.section { margin-bottom: var(--space-7); }
+.section:last-of-type { margin-bottom: 0; }
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in-up { animation: fadeInUp var(--transition-normal) ease-out both; }
+.animate-fade-in { animation: fadeIn var(--transition-normal) ease-out both; }
+.animate-slide-in-right { animation: slideInRight var(--transition-normal) ease-out both; }
+
+/* Stagger delays */
+.delay-1 { animation-delay: 100ms; }
+.delay-2 { animation-delay: 200ms; }
+.delay-3 { animation-delay: 300ms; }
+.delay-4 { animation-delay: 400ms; }
+.delay-5 { animation-delay: 500ms; }
+.delay-6 { animation-delay: 600ms; }
+
+/* ============================================================================
+   TYPOGRAPHY
+   ============================================================================ */
+h1 { font-size: var(--font-size-display); font-weight: 800; line-height: var(--line-height-tight); letter-spacing: -0.03em; margin-bottom: var(--space-3); }
+h2 { font-size: var(--font-size-h2); font-weight: 700; line-height: var(--line-height-tight); margin-bottom: var(--space-3); }
+h3 { font-size: var(--font-size-h3); font-weight: 600; line-height: var(--line-height-tight); margin-bottom: var(--space-2); }
+h4 { font-size: var(--font-size-h4); font-weight: 600; line-height: var(--line-height-tight); margin-bottom: var(--space-2); }
+
+.eyebrow {
+  font-size: var(--font-size-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--orvix-primary);
+  margin-bottom: var(--space-2);
+  display: inline-block;
+}
+
+.lead {
+  font-size: var(--font-size-h3);
+  font-weight: 400;
+  line-height: var(--line-height-relaxed);
+  color: var(--orvix-text-secondary);
+  max-width: 60ch;
+}
+
+.text-muted { color: var(--orvix-text-muted) !important; }
+.text-secondary { color: var(--orvix-text-secondary) !important; }
+.text-primary { color: var(--orvix-primary) !important; }
+.text-positive { color: var(--orvix-positive) !important; }
+.text-negative { color: var(--orvix-negative) !important; }
+.text-warning { color: var(--orvix-warning) !important; }
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-family: 'JetBrains Mono', 'Plus Jakarta Sans', monospace;
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  font-family: inherit; font-size: var(--font-size-body); font-weight: 600;
+  border-radius: var(--border-radius-md);
+  border: 1px solid transparent;
+  text-decoration: none; cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn:focus-visible { outline: 2px solid var(--orvix-primary); outline-offset: 2px; }
+
+.btn-primary {
+  background: var(--orvix-primary); border-color: var(--orvix-primary); color: white;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--orvix-primary-hover); border-color: var(--orvix-primary-hover);
+}
+
+.btn-secondary {
+  background: var(--orvix-surface-2); border-color: var(--orvix-border); color: var(--orvix-text);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--orvix-border); color: var(--orvix-text);
+}
+
+.btn-outline {
+  background: transparent; border-color: var(--orvix-border); color: var(--orvix-text-secondary);
+}
+.btn-outline:hover:not(:disabled) {
+  background: var(--orvix-surface-2); border-color: var(--orvix-border-strong); color: var(--orvix-text);
+}
+
+.btn-ghost {
+  background: transparent; border-color: transparent; color: var(--orvix-text-secondary);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--orvix-surface-2); color: var(--orvix-text);
+}
+
+.btn-lg { padding: var(--space-4) var(--space-7); font-size: var(--font-size-h4); }
+.btn-sm { padding: var(--space-2) var(--space-3); font-size: var(--font-size-small); }
+.btn-icon { padding: var(--space-3); }
+
+/* ============================================================================
+   CARDS
+   ============================================================================ */
+.card {
+  background: var(--orvix-surface);
+  border: 1px solid var(--orvix-border);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  transition: box-shadow var(--transition-normal), border-color var(--transition-normal);
+}
+.card:hover { box-shadow: var(--orvix-shadow-sm); }
+
+.card-body { padding: var(--space-5); }
+
+/* ============================================================================
+   FORMS
+   ============================================================================ */
+.form-group { margin-bottom: var(--space-4); }
+.form-label {
+  display: block; font-size: var(--font-size-small);
+  font-weight: 500; color: var(--orvix-text);
+  margin-bottom: var(--space-2);
+}
+.form-control {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-family: inherit; font-size: var(--font-size-body);
+  background: var(--orvix-bg); color: var(--orvix-text);
+  border: 1px solid var(--orvix-border);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+}
+.form-control::placeholder { color: var(--orvix-text-tertiary); }
+.form-control:focus {
+  border-color: var(--orvix-primary);
+  box-shadow: 0 0 0 0.25rem rgba(91, 75, 255, 0.15);
+  background: var(--orvix-bg); color: var(--orvix-text);
+  outline: none;
+}
+.form-control:disabled { background: var(--orvix-surface-2); opacity: 0.6; }
+.form-error {
+  font-size: var(--font-size-small); color: var(--orvix-danger);
+  margin-top: var(--space-1); display: none;
+}
+.form-error.visible { display: block; }
+
+/* Toast notifications */
+.toast-container {
+  position: fixed; bottom: var(--space-5); right: var(--space-5); z-index: 1100;
+  display: flex; flex-direction: column; gap: var(--space-2); max-width: 360px;
+}
+.toast {
+  display: flex; align-items: flex-start; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--orvix-surface); border: 1px solid var(--orvix-border);
+  border-radius: var(--border-radius-md); box-shadow: var(--orvix-shadow-lg);
+  animation: slideInRight var(--transition-normal) ease;
+}
+.toast-success { border-left: 4px solid var(--orvix-success); }
+.toast-error { border-left: 4px solid var(--orvix-danger); }
+.toast-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 2px; }
+.toast-message { font-size: var(--font-size-body); color: var(--orvix-text); line-height: 1.5; }
+.toast-close {
+  background: none; border: none; color: var(--orvix-text-tertiary);
+  padding: 0; font-size: 1.25rem; line-height: 1; cursor: pointer;
+  margin-left: auto; flex-shrink: 0;
+}
+.toast-close:hover { color: var(--orvix-text); }
+
+/* ============================================================================
+   HERO
+   ============================================================================ */
+.hero {
+  text-align: center; padding: var(--space-8) var(--space-4);
+  background: linear-gradient(180deg, var(--orvix-surface) 0%, var(--orvix-bg) 100%);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--orvix-border);
+  margin-bottom: var(--space-7);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% -20%, var(--orvix-primary-soft) 0%, transparent 60%);
+  opacity: 0.5; pointer-events: none;
+}
+.hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--orvix-primary-soft); color: var(--orvix-primary);
+  border-radius: var(--border-radius-pill);
+  font-size: var(--font-size-caption); font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  margin-bottom: var(--space-4);
+}
+.hero h1 { margin-bottom: var(--space-4); }
+.hero .lead { margin-bottom: var(--space-6); margin-left: auto; margin-right: auto; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; margin-bottom: var(--space-7); }
+.trust-badges {
+  display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center;
+  margin-bottom: var(--space-7); opacity: 0.7;
+}
+.trust-badge {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--orvix-surface); border: 1px solid var(--orvix-border);
+  border-radius: var(--border-radius-pill);
+  font-size: var(--font-size-small); color: var(--orvix-text-secondary);
+}
+.trust-badge svg { width: 16px; height: 16px; }
+
+/* Hero Chart */
+.hero-chart-wrap { max-width: 700px; margin: 0 auto; padding: var(--space-4); }
+.hero-chart-wrap canvas { max-height: 200px; }
+
+/* ============================================================================
+   FEATURES
+   ============================================================================ */
+.features { margin-bottom: var(--space-7); }
+.features-header { text-align: center; margin-bottom: var(--space-7); }
+.features-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+.feature-card {
+  display: flex; flex-direction: column; height: 100%;
+  padding: var(--space-5);
+}
+.feature-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px;
+  background: var(--orvix-primary-soft); color: var(--orvix-primary);
+  border-radius: var(--border-radius-md); font-size: 1.5rem;
+  margin-bottom: var(--space-3); flex-shrink: 0;
+}
+.feature-card h3 { margin-bottom: var(--space-2); }
+.feature-card p { flex: 1; color: var(--orvix-text-secondary); margin-bottom: 0; }
+
+/* ============================================================================
+   AI DIFFERENTIATOR
+   ============================================================================ */
+.ai-section {
+  background: var(--orvix-surface); border: 1px solid var(--orvix-border);
+  border-radius: var(--border-radius-lg); overflow: hidden;
+  margin-bottom: var(--space-7);
+}
+.ai-header {
+  padding: var(--space-6) var(--space-5);
+  background: linear-gradient(135deg, var(--orvix-primary) 0%, #4A3BE6 100%);
+  color: white;
+  position: relative; overflow: hidden;
+}
+.ai-header::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.ai-header h2 { margin: 0; font-size: var(--font-size-h1); font-weight: 700; }
+.ai-header p { margin: var(--space-2) 0 0; opacity: 0.9; font-size: var(--font-size-body); max-width: 60ch; }
+.ai-body { padding: var(--space-6) var(--space-5); }
+.ai-bullets { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+.ai-bullets li {
+  display: flex; gap: var(--space-3); padding: var(--space-3);
+  background: var(--orvix-bg); border: 1px solid var(--orvix-border);
+  border-radius: var(--border-radius-md); transition: all var(--transition-fast);
+}
+.ai-bullets li:hover { border-color: var(--orvix-primary); background: var(--orvix-primary-soft); }
+.ai-bullets svg { width: 20px; height: 20px; color: var(--orvix-primary); flex-shrink: 0; margin-top: 2px; }
+.ai-bullets span { color: var(--orvix-text); line-height: var(--line-height-relaxed); }
+.ai-demo {
+  margin-top: var(--space-5); padding: var(--space-4);
+  background: var(--orvix-bg); border: 1px solid var(--orvix-border);
+  border-radius: var(--border-radius-md); text-align: center;
+}
+.ai-demo-label { font-size: var(--font-size-caption); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--orvix-text-muted); margin-bottom: var(--space-2); display: block; }
+.ai-demo-query { font-family: 'JetBrains Mono', monospace; font-size: var(--font-size-body); color: var(--orvix-text); background: var(--orvix-surface); padding: var(--space-3); border-radius: var(--border-radius-sm); border: 1px solid var(--orvix-border); display: inline-block; max-width: 100%; overflow-x: auto; }
+
+/* ============================================================================
+   PRICING
+   ============================================================================ */
+.pricing { margin-bottom: var(--space-7); }
+.pricing-header { text-align: center; margin-bottom: var(--space-5); }
+.pricing-toggle {
+  display: inline-flex; align-items: center; gap: var(--space-3);
+  background: var(--orvix-surface); border: 1px solid var(--orvix-border);
+  border-radius: var(--border-radius-pill); padding: var(--space-1);
+  margin-bottom: var(--space-6);
+}
+.pricing-toggle-btn {
+  padding: var(--space-2) var(--space-4); font-size: var(--font-size-small);
+  font-weight: 600; border-radius: var(--border-radius-pill);
+  background: transparent; border: none; color: var(--orvix-text-secondary);
+  cursor: pointer; transition: all var(--transition-fast);
+}
+.pricing-toggle-btn.active {
+  background: var(--orvix-primary); color: white;
+  box-shadow: var(--orvix-shadow-sm);
+}
+.pricing-toggle-label { font-size: var(--font-size-caption); font-weight: 600; color: var(--orvix-text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.pricing-badge { font-size: var(--font-size-caption); font-weight: 700; color: var(--orvix-primary); background: var(--orvix-primary-soft); padding: 2px 8px; border-radius: var(--border-radius-pill); margin-left: var(--space-2); }
+
+.pricing-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-4); align-items: stretch;
+}
+.pricing-card {
+  display: flex; flex-direction: column; height: 100%;
+  position: relative;
+}
+.pricing-card.popular {
+  border-color: var(--orvix-primary);
+  box-shadow: 0 0 0 1px var(--orvix-primary), var(--orvix-shadow-xl);
+}
+.pricing-card.popular::before {
+  content: 'Mais popular'; position: absolute; top: -12px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--orvix-primary); color: white;
+  font-size: var(--font-size-caption); font-weight: 700;
+  padding: var(--space-1) var(--space-3); border-radius: var(--border-radius-pill);
+  white-space: nowrap;
+}
+.pricing-header-card { padding: var(--space-5); border-bottom: 1px solid var(--orvix-border); text-align: center; }
+.pricing-name { font-size: var(--font-size-h3); font-weight: 700; color: var(--orvix-text); margin-bottom: var(--space-3); }
+.pricing-price { display: flex; align-items: baseline; justify-content: center; gap: var(--space-1); margin-bottom: var(--space-2); }
+.pricing-amount { font-size: var(--font-size-display); font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--orvix-text); line-height: 1; }
+.pricing-period { font-size: var(--font-size-body); color: var(--orvix-text-muted); }
+.pricing-desc { font-size: var(--font-size-small); color: var(--orvix-text-muted); margin: 0; }
+.pricing-features { flex: 1; padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
+.pricing-feature { display: flex; align-items: flex-start; gap: var(--space-3); font-size: var(--font-size-small); color: var(--orvix-text-secondary); }
+.pricing-feature svg { width: 18px; height: 18px; color: var(--orvix-positive); flex-shrink: 0; margin-top: 2px; }
+.pricing-cta { padding: var(--space-5); border-top: 1px solid var(--orvix-border); }
+
+/* ============================================================================
+   CTA SECTION
+   ============================================================================ */
+.cta-section {
+  background: linear-gradient(135deg, var(--orvix-primary) 0%, #4A3BE6 100%);
+  border-radius: var(--border-radius-lg); padding: var(--space-7) var(--space-5);
+  text-align: center; color: white; position: relative; overflow: hidden;
+}
+.cta-section::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.cta-content { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+.cta-section h2 { color: white; margin-bottom: var(--space-3); }
+.cta-section p { color: rgba(255,255,255,0.9); margin-bottom: var(--space-5); max-width: 50ch; margin-left: auto; margin-right: auto; }
+.cta-form { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; max-width: 500px; margin: 0 auto; }
+.cta-form .form-group { flex: 1; min-width: 200px; margin-bottom: 0; }
+.cta-form .form-control { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: white; }
+.cta-form .form-control::placeholder { color: rgba(255,255,255,0.5); }
+.cta-form .form-control:focus { background: rgba(255,255,255,0.15); border-color: white; box-shadow: 0 0 0 0.25rem rgba(255,255,255,0.15); }
+.cta-form .btn { background: white; color: var(--orvix-primary); }
+.cta-form .btn:hover { background: var(--orvix-surface-2); color: var(--orvix-primary); }
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+.footer {
+  border-top: 1px solid var(--orvix-border);
+  padding: var(--space-7) var(--space-5) var(--space-5);
+  background: var(--orvix-surface);
+  margin-top: var(--space-7);
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: var(--space-6);
+  max-width: 1200px; margin: 0 auto var(--space-6);
+}
+.footer-brand { max-width: 300px; }
+.footer-logo { display: inline-flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+.footer-logo svg { width: 40px; height: 40px; color: var(--orvix-primary); }
+.footer-brand-text { font-weight: 800; font-size: 1.125rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--orvix-text); }
+.footer-brand-desc { font-size: var(--font-size-small); color: var(--orvix-text-muted); line-height: var(--line-height-relaxed); margin-top: var(--space-3); }
+.footer-column h4 { font-size: var(--font-size-small); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--orvix-text-muted); margin-bottom: var(--space-3); }
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: var(--space-2); }
+.footer-links a { color: var(--orvix-text-secondary); font-size: var(--font-size-body); text-decoration: none; transition: color var(--transition-fast); }
+.footer-links a:hover { color: var(--orvix-primary); }
+.footer-bottom {
+  max-width: 1200px; margin: 0 auto; padding-top: var(--space-5);
+  border-top: 1px solid var(--orvix-border);
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-3);
+}
+.footer-copyright { font-size: var(--font-size-small); color: var(--orvix-text-muted); }
+.footer-legal { display: flex; gap: var(--space-4); }
+.footer-legal a { font-size: var(--font-size-small); color: var(--orvix-text-muted); text-decoration: none; }
+.footer-legal a:hover { color: var(--orvix-primary); }
+
+/* ============================================================================
+   THEME TOGGLE (inline in header)
+   ============================================================================ */
+.theme-toggle {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px;
+  border-radius: var(--border-radius-md);
+  background: transparent; border: 1px solid var(--orvix-border);
+  color: var(--orvix-text-secondary); cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.theme-toggle:hover {
+  background: var(--orvix-surface-2); color: var(--orvix-text);
+  border-color: var(--orvix-border-strong);
+}
+.theme-toggle svg { width: 20px; height: 20px; }
+.theme-toggle .sun-icon { display: none; }
+.theme-toggle .moon-icon { display: block; }
+[data-bs-theme="light"] .theme-toggle .sun-icon { display: block; }
+[data-bs-theme="light"] .theme-toggle .moon-icon { display: none; }
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+@media (max-width: 991.98px) {
+  .hero { padding: var(--space-6) var(--space-4); }
+  h1 { font-size: clamp(1.75rem, 5vw, var(--font-size-display)); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; max-width: none; }
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --space-7: 2.5rem; --space-8: 3rem;
+  }
+  main { padding: var(--space-6) var(--space-4) var(--space-6); }
+  .header-inner { padding: 0 var(--space-4); height: 56px; }
+  .hero { border-radius: var(--border-radius-md); padding: var(--space-5) var(--space-3); }
+  .hero h1 { font-size: var(--font-size-h1); }
+  .hero .lead { font-size: var(--font-size-body); }
+  .hero-cta { flex-direction: column; }
+  .hero-cta .btn { width: 100%; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .pricing-toggle { flex-wrap: wrap; justify-content: center; }
+  .cta-form .form-group { min-width: 100%; }
+  .cta-form .btn { width: 100%; }
+  .footer-grid { grid-template-columns: 1fr; text-align: center; }
+  .footer-brand { max-width: none; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .footer-legal { justify-content: center; }
+  .features-grid { grid-template-columns: 1fr; }
+  .ai-header h2 { font-size: var(--font-size-h2); }
+  .ai-bullets li { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+}
+
+/* ============================================================================
+   PRINT
+   ============================================================================ */
+@media print {
+  .header, .theme-toggle, .hero-cta, .cta-form, .pricing-cta, .footer-legal { display: none !important; }
+  body { background: white !important; color: black !important; }
+  .hero { background: none !important; border: none !important; }
+  .hero::before { display: none !important; }
+  .card, .feature-card, .pricing-card, .ai-section, .cta-section { break-inside: avoid; page-break-inside: avoid; border: 1px solid #ccc !important; box-shadow: none !important; }
+  a { text-decoration: underline; color: black !important; }
+}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Pular para conteúdo principal</a>
+
+<header class="header" role="banner">
+  <div class="header-inner">
+    <a href="#" class="logo" aria-label="Orvix — Início">
+      <img src="logo-orvix.png" alt="Orvix" class="brand-logo-image" width="132" height="42">
+    </a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema" type="button">
+      <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+  <!-- HERO -->
+  <section class="hero animate-fade-in-up" aria-labelledby="hero-title">
+    <div class="hero-content">
+      <div class="hero-badge">Novo: IA Conversacional com Function Calling</div>
+      <h1 id="hero-title">Seu dinheiro, finalmente sob controle — com IA que entende suas contas</h1>
+      <p class="lead">O Orvix é a primeira plataforma brasileira de finanças pessoais com IA que acessa seus dados reais. Pergunte <span class="tabular-nums">"quanto gastei com delivery mês passado?"</span> e tenha a resposta na hora. Grátis para começar.</p>
+      <div class="hero-cta">
+        <a href="#cta" class="btn btn-primary btn-lg">Começar grátis — 100 transações/mês</a>
+        <a href="#features" class="btn btn-outline btn-lg">Ver como funciona</a>
+      </div>
+      <div class="trust-badges">
+        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Segurança bancária</div>
+        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>LGPD por design</div>
+        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Dados só seus</div>
+      </div>
+      <div class="hero-chart-wrap" aria-label="Simulação de evolução patrimonial: R$ 10.000 iniciais crescendo para R$ 55.000 em 24 meses">
+        <canvas id="heroChart" aria-hidden="true"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="features animate-fade-in-up delay-1" aria-labelledby="features-title">
+    <header class="features-header">
+      <span class="eyebrow">Recursos</span>
+      <h2 id="features-title">Tudo que você precisa para assumir o controle</h2>
+    </header>
+    <div class="features-grid">
+      <article class="card feature-card">
+        <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></div>
+        <h3>Dashboard Inteligente</h3>
+        <p>Resumo do período, taxa de economia, saúde financeira, categoria principal e comparação mensal com gráficos interativos.</p>
+      </article>
+      <article class="card feature-card">
+        <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+        <h3>Categorização Automática</h3>
+        <p>Open Finance conecta seus bancos (Nubank, Itaú, Bradesco, Inter, C6 +15). Transações chegam categorizadas e prontas para análise.</p>
+      </article>
+      <article class="card feature-card">
+        <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h3>IA Conversacional</h3>
+        <p>Chat com function calling nativo: a IA executa queries no seu PostgreSQL. Pergunte "me avise quando estou perto do limite do cartão" e a IA age.</p>
+      </article>
+      <article class="card feature-card">
+        <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <h3>Metas & Projeções</h3>
+        <p>Crie metas com valor alvo e prazo. A IA projeta parcelas futuras e sugere quanto poupar por mês para atingir seus objetivos.</p>
+      </article>
+      <article class="card feature-card">
+        <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+        <h3>Relatórios IRPF</h3>
+        <p>Relatórios financeiros por período com evolução mensal e despesas por categoria. Exportação CSV, OFX, PDF prontos para declaração.</p>
+      </article>
+      <article class="card feature-card">
+        <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <h3>Segurança Bancária</h3>
+        <p>Criptografia AES-256, TLS 1.3, JWT RS256, bcrypt cost 12, isolamento por usuário. Hospedado no Brasil (Render) com SCC para IA.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- AI DIFFERENTIATOR -->
+  <section class="ai-section animate-fade-in-up delay-2" aria-labelledby="ai-title">
+    <header class="ai-header">
+      <h2 id="ai-title">A única IA que mexeu no seu extrato — e te deu a resposta</h2>
+      <p>Function calling nativo: a IA executa queries reais nos seus dados, não alucina números.</p>
+    </header>
+    <div class="ai-body">
+      <ul class="ai-bullets" role="list">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Function calling nativo:</strong> a IA executa queries no seu PostgreSQL — retorna valores exatos, não estimativas.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Groq (Llama 3) grátis no Free:</strong> custo zero de IA para você. Upgrade para <strong>Claude 3.5 Sonnet</strong> no Pro+ para análises complexas (IRPF, planejamento tributário).</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Contexto completo:</strong> a IA sabe seu salário, contas fixas, investimentos, metas — tudo em uma conversa.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Ações reais:</strong> "crie uma meta de reserva de emergência de 6 meses" → meta criada, acompanhamento automático.</span></li>
+      </ul>
+      <div class="ai-demo">
+        <span class="ai-demo-label">Experimente agora</span>
+        <code class="ai-demo-query tabular-nums">"quanto gastei com ifood nos últimos 30 dias?"</code>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" class="pricing animate-fade-in-up delay-3" aria-labelledby="pricing-title">
+    <header class="pricing-header">
+      <span class="eyebrow">Preços</span>
+      <h2 id="pricing-title">Escolha o plano ideal para você</h2>
+      <p style="color: var(--orvix-text-secondary); max-width: 60ch; margin: 0 auto;">Todos os planos incluem IA ilimitada. Pague anualmente e ganhe <strong>17% de desconto</strong>.</p>
+    </header>
+    <div class="pricing-toggle" role="group" aria-label="Alternar período de cobrança">
+      <span class="pricing-toggle-label">Mensal</span>
+      <button class="pricing-toggle-btn active" data-period="monthly" aria-pressed="true" type="button">Mensal</button>
+      <button class="pricing-toggle-btn" data-period="yearly" aria-pressed="false" type="button">Anual <span class="pricing-badge">17% OFF</span></button>
+    </div>
+    <div class="pricing-grid" role="list">
+      <!-- FREE -->
+      <article class="card pricing-card" role="listitem">
+        <header class="pricing-header-card">
+          <h3 class="pricing-name">Grátis</h3>
+          <div class="pricing-price" data-monthly="0" data-yearly="0">
+            <span class="pricing-amount tabular-nums">R$ 0</span>
+            <span class="pricing-period">/mês</span>
+          </div>
+          <p class="pricing-desc">Para sempre · Sem cartão de crédito</p>
+        </header>
+        <ul class="pricing-features" role="list">
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>100 transações/mês</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>IA com Groq (Llama 3) ilimitada</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>1 conexão bancária Open Finance</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Categorização automática</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Metas e orçamentos básicos</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>App mobile (iOS/Android)</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Suporte comunidade</span></li>
+        </ul>
+        <div class="pricing-cta">
+          <a href="#cta" class="btn btn-primary" style="width: 100%;">Criar conta grátis</a>
+        </div>
+      </article>
+      <!-- PRO -->
+      <article class="card pricing-card popular" role="listitem">
+        <header class="pricing-header-card">
+          <h3 class="pricing-name">Pro</h3>
+          <div class="pricing-price" data-monthly="24.90" data-yearly="249">
+            <span class="pricing-amount tabular-nums">R$ 24,90</span>
+            <span class="pricing-period">/mês</span>
+          </div>
+          <p class="pricing-desc">Anual: <strong>R$ 249</strong> (17% OFF)</p>
+        </header>
+        <ul class="pricing-features" role="list">
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Transações ilimitadas</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>IA com Groq (Llama 3) ilimitada</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Conexões bancárias ilimitadas</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Insights proativos por push/email</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Relatórios avançados (fluxo de caixa, DRE pessoal)</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Exportação OFX/CSV/PDF</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Compartilhamento familiar (até 3 pessoas)</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Suporte prioritário por chat</span></li>
+        </ul>
+        <div class="pricing-cta">
+          <a href="#cta" class="btn btn-primary" style="width: 100%;">Assinar Pro — R$ 24,90/mês</a>
+        </div>
+      </article>
+      <!-- PRO + CLAUDE -->
+      <article class="card pricing-card" role="listitem">
+        <header class="pricing-header-card">
+          <h3 class="pricing-name">Pro + Claude</h3>
+          <div class="pricing-price" data-monthly="59.90" data-yearly="599">
+            <span class="pricing-amount tabular-nums">R$ 59,90</span>
+            <span class="pricing-period">/mês</span>
+          </div>
+          <p class="pricing-desc">Anual: <strong>R$ 599</strong> (17% OFF)</p>
+        </header>
+        <ul class="pricing-features" role="list">
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Tudo do Pro</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>IA com Claude 3.5 Sonnet (Anthropic)</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Análise tributária e simulação IRPF</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Planejamento financeiro avançado (aposentadoria, FIRE)</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Otimização de investimentos (alocação, rebalanceamento)</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>API access para integrações próprias</span></li>
+          <li class="pricing-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Gerente de sucesso dedicado</span></li>
+        </ul>
+        <div class="pricing-cta">
+          <a href="#cta" class="btn btn-outline" style="width: 100%;">Upgrade para Claude</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- CTA / LEAD CAPTURE -->
+  <section id="cta" class="cta-section animate-fade-in-up delay-4" aria-labelledby="cta-title">
+    <div class="cta-content">
+      <h2 id="cta-title">Pare de adivinhar para onde seu dinheiro vai. Deixe a IA te mostrar.</h2>
+      <p>Crie sua conta em 2 minutos. 100 transações/mês grátis para sempre. IA ilimitada incluída.</p>
+      <form class="cta-form" id="leadForm" novalidate>
+        <div class="form-group">
+          <label for="leadName" class="form-label">Nome</label>
+          <input type="text" id="leadName" name="name" class="form-control" placeholder="Seu nome" required autocomplete="given-name" aria-describedby="nameError">
+          <div class="form-error" id="nameError" role="alert">Informe seu nome</div>
+        </div>
+        <div class="form-group">
+          <label for="leadEmail" class="form-label">E-mail</label>
+          <input type="email" id="leadEmail" name="email" class="form-control" placeholder="seu@email.com" required autocomplete="email" aria-describedby="emailError">
+          <div class="form-error" id="emailError" role="alert">Informe um e-mail válido</div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Começar grátis agora</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="footer" role="contentinfo">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="footer-logo" aria-label="Orvix — Início">
+        <img src="logo-orvix.png" alt="Orvix" class="brand-logo-image" width="150" height="48">
+      </a>
+      <p class="footer-brand-desc">Plataforma de Inteligência Financeira Pessoal. Controle. Inteligência. Planejamento.</p>
+    </div>
+    <nav class="footer-column" aria-label="Produto">
+      <h4>Produto</h4>
+      <ul class="footer-links">
+        <li><a href="#features">Recursos</a></li>
+        <li><a href="#pricing">Preços</a></li>
+        <li><a href="#cta">Começar grátis</a></li>
+        <li><a href="orvix-politica-cookies.html">Changelog</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-column" aria-label="Empresa">
+      <h4>Empresa</h4>
+      <ul class="footer-links">
+        <li><a href="#">Sobre nós</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Carreiras</a></li>
+        <li><a href="#">Imprensa</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-column" aria-label="Legal">
+      <h4>Legal</h4>
+      <ul class="footer-links">
+        <li><a href="orvix-politica-privacidade.html">Política de Privacidade</a></li>
+        <li><a href="orvix-termos-uso.html">Termos de Uso</a></li>
+        <li><a href="orvix-politica-cookies.html">Política de Cookies</a></li>
+        <li><a href="#">Segurança</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copyright">Orvix — Financial Intelligence Platform &copy; 2026. Todos os direitos reservados.</p>
+    <nav class="footer-legal" aria-label="Redes sociais">
+      <a href="#" aria-label="GitHub"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg></a>
+      <a href="#" aria-label="Twitter"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg></a>
+      <a href="#" aria-label="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 6a2 2 0 100-4 2 2 0 000 4z"/></svg></a>
+    </nav>
+  </div>
+</footer>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+// ============================================================================
+// THEME TOGGLE
+// ============================================================================
+(function() {
+  const STORAGE_KEY = 'orvix_theme';
+  const toggle = document.getElementById('themeToggle');
+  const html = document.documentElement;
+
+  function getInitialTheme() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored && ['light','dark','auto'].includes(stored)) return stored;
+    } catch(e) {}
+    return 'auto';
+  }
+
+  function applyTheme(mode) {
+    let resolved = mode;
+    if (mode === 'auto') {
+      resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    html.setAttribute('data-bs-theme', resolved);
+    // Persist only if not auto
+    if (mode !== 'auto') {
+      try { localStorage.setItem(STORAGE_KEY, mode); } catch(e) {}
+    }
+  }
+
+  // Cycle: light -> dark -> auto
+  function cycleTheme() {
+    const current = localStorage.getItem(STORAGE_KEY) || 'auto';
+    const next = current === 'light' ? 'dark' : current === 'dark' ? 'auto' : 'light';
+    if (next === 'auto') {
+      localStorage.removeItem(STORAGE_KEY);
+    } else {
+      localStorage.setItem(STORAGE_KEY, next);
+    }
+    applyTheme(next);
+  }
+
+  applyTheme(getInitialTheme());
+
+  if (toggle) {
+    toggle.addEventListener('click', cycleTheme);
+  }
+
+  // Listen for system changes when auto
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      const current = localStorage.getItem(STORAGE_KEY) || 'auto';
+      if (current === 'auto') applyTheme('auto');
+    });
+  }
+})();
+
+// ============================================================================
+// HERO CHART (Chart.js)
+// ============================================================================
+(function() {
+  const ctx = document.getElementById('heroChart');
+  if (!ctx || typeof Chart === 'undefined') return;
+
+  const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+  const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,20,36,0.06)';
+  const textColor = isDark ? '#6F7A8E' : '#8A91A6';
+  const primaryColor = isDark ? '#8B80FF' : '#5B4BFF';
+  const primarySoft = isDark ? 'rgba(139,128,255,0.15)' : 'rgba(91,75,255,0.12)';
+
+  // Simulated data: R$10k → R$55k over 24 months
+  const months = Array.from({length: 24}, (_, i) => {
+    const d = new Date(); d.setMonth(d.getMonth() - 23 + i);
+    return d.toLocaleDateString('pt-BR', {month:'short'});
+  });
+  const values = months.map((_, i) => 10000 + (i/23)*45000 + Math.sin(i*0.5)*2000);
+
+  new Chart(ctx, {
+    type: 'line',
+    data: { labels: months, datasets: [{
+      label: 'Patrimônio (R$)',
+      data: values,
+      borderColor: primaryColor,
+      backgroundColor: primarySoft,
+      fill: true,
+      tension: 0.35,
+      pointRadius: 0,
+      pointHoverRadius: 5,
+      pointBackgroundColor: primaryColor,
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+    }]},
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: isDark ? '#121820' : '#fff',
+          titleColor: isDark ? '#F5F7FA' : '#0F1424',
+          bodyColor: isDark ? '#A3ADBF' : '#5A6278',
+          borderColor: isDark ? '#222D3A' : '#E4E7EF',
+          borderWidth: 1,
+          padding: 12,
+          displayColors: false,
+          callbacks: {
+            label: ctx => `R$ ${ctx.parsed.y.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 11 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 }
+        },
+        y: {
+          grid: { color: gridColor, drawBorder: false },
+          ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 11 }, callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' }
+        }
+      }
+    }
+  });
+
+  // Update chart on theme change
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => {
+      if (m.attributeName === 'data-bs-theme') {
+        const newDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        const newGrid = newDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,20,36,0.06)';
+        const newText = newDark ? '#6F7A8E' : '#8A91A6';
+        const newPrimary = newDark ? '#8B80FF' : '#5B4BFF';
+        const newSoft = newDark ? 'rgba(139,128,255,0.15)' : 'rgba(91,75,255,0.12)';
+        if (ctx.chart) {
+          ctx.chart.options.scales.x.ticks.color = newText;
+          ctx.chart.options.scales.y.ticks.color = newText;
+          ctx.chart.options.scales.y.grid.color = newGrid;
+          ctx.chart.data.datasets[0].borderColor = newPrimary;
+          ctx.chart.data.datasets[0].backgroundColor = newSoft;
+          ctx.chart.data.datasets[0].pointBackgroundColor = newPrimary;
+          ctx.chart.options.plugins.tooltip.backgroundColor = newDark ? '#121820' : '#fff';
+          ctx.chart.options.plugins.tooltip.titleColor = newDark ? '#F5F7FA' : '#0F1424';
+          ctx.chart.options.plugins.tooltip.bodyColor = newDark ? '#A3ADBF' : '#5A6278';
+          ctx.chart.options.plugins.tooltip.borderColor = newDark ? '#222D3A' : '#E4E7EF';
+          ctx.chart.update('none');
+        }
+      }
+    });
+  });
+  observer.observe(document.documentElement, { attributes: true });
+})();
+
+// ============================================================================
+// PRICING TOGGLE
+// ============================================================================
+(function() {
+  const toggle = document.querySelector('.pricing-toggle');
+  if (!toggle) return;
+
+  const buttons = toggle.querySelectorAll('.pricing-toggle-btn');
+  const prices = document.querySelectorAll('.pricing-price');
+
+  function updatePrices(period) {
+    prices.forEach(el => {
+      const amount = period === 'monthly' ? el.dataset.monthly : el.dataset.yearly;
+      const formatted = Number(amount).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      const amountEl = el.querySelector('.pricing-amount');
+      const periodEl = el.querySelector('.pricing-period');
+      if (amountEl) amountEl.textContent = 'R$ ' + formatted;
+      if (periodEl) periodEl.textContent = period === 'monthly' ? '/mês' : '/ano';
+    });
+  }
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+      btn.classList.add('active'); btn.setAttribute('aria-pressed', 'true');
+      updatePrices(btn.dataset.period);
+    });
+  });
+})();
+
+// ============================================================================
+// LEAD FORM WITH TOAST
+// ============================================================================
+(function() {
+  const form = document.getElementById('leadForm');
+  const container = document.getElementById('toastContainer');
+  if (!form || !container) return;
+
+  function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = `
+      <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        ${type === 'success' ? '<polyline points="20 6 9 17 4 12"/>' : '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'}
+      </svg>
+      <span class="toast-message">${message}</span>
+      <button class="toast-close" aria-label="Fechar">&times;</button>
+    `;
+    container.appendChild(toast);
+    toast.querySelector('.toast-close').addEventListener('click', () => toast.remove());
+    setTimeout(() => toast.remove(), 5000);
+  }
+
+  function setError(field, message) {
+    const input = field;
+    const errorEl = document.getElementById(input.id + 'Error');
+    input.setAttribute('aria-invalid', 'true');
+    if (errorEl) { errorEl.textContent = message; errorEl.classList.add('visible'); }
+  }
+
+  function clearError(field) {
+    const input = field;
+    const errorEl = document.getElementById(input.id + 'Error');
+    input.removeAttribute('aria-invalid');
+    if (errorEl) { errorEl.classList.remove('visible'); }
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    let valid = true;
+    if (!name) { setError(form.name, 'Informe seu nome'); valid = false; } else { clearError(form.name); }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError(form.email, 'Informe um e-mail válido'); valid = false; } else { clearError(form.email); }
+    if (!valid) return;
+
+    const btn = form.querySelector('button[type="submit"]');
+    const original = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Enviando...';
+
+    // Simulate API call
+    await new Promise(r => setTimeout(r, 800));
+
+    btn.disabled = false; btn.textContent = original;
+    form.reset();
+    showToast('Obrigado! Entraremos em contato em breve.', 'success');
+  });
+
+  // Clear error on input
+  form.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', () => clearError(input));
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Política de Cookies do Orvix - Plataforma de Inteligência Financeira Pessoal">
+<meta name="theme-color" content="#0f172a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Política de Cookies | Orvix</title>
+<style>
+:root {
+--bg:#0f172a; --bg-elev:#1e293b; --fg:#f1f5f9; --muted:#94a3b8;
+--accent:#22d3ee; --accent-weak:#22d3ee22; --border:#334155;
+--success:#22c55e; --warning:#f59e0b; --danger:#ef4444;
+--font-sans:'Inter',system-ui,sans-serif; --font-display:'Space Grotesk',sans-serif;
+--radius:12px; --radius-sm:8px; --shadow:0 10px 30px -10px #00000080;
+--max-w:800px; --header-h:64px;
+}
+@media (prefers-color-scheme:light) {
+:root { --bg:#f8fafc; --bg-elev:#ffffff; --fg:#0f172a; --muted:#64748b; --border:#e2e8f0; --accent:#06b6d4; --accent-weak:#06b6d41a; }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce) {html{scroll-behavior:auto}*, *::before, *::after{animation:none!important;transition:none!important}}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--fg);line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+.skip-link{position:absolute;top:-100%;left:1rem;background:var(--accent);color:#0f172a;padding:.75rem 1.25rem;border-radius:var(--radius-sm);font-weight:600;z-index:1000}
+.skip-link:focus{top:1rem}
+header{position:sticky;top:0;z-index:100;background:var(--bg)/80;backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.header-inner{max-width:var(--max-w);margin:0 auto;padding:0 1.5rem;height:var(--header-h);display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--font-display);font-weight:700;font-size:1.25rem;color:var(--fg);text-decoration:none;display:flex;align-items:center;gap:.5rem}
+.logo svg{width:28px;height:28px;color:var(--accent)}
+main{max-width:var(--max-w);margin:0 auto;padding:3rem 1.5rem 5rem}
+h1{font-family:var(--font-display);font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.15;margin-bottom:.5rem;background:linear-gradient(135deg,var(--fg),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.meta{color:var(--muted);font-size:.95rem;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.section{margin-bottom:3rem;animation:fade-in .6s ease-out both}
+@keyframes fade-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.section h2{font-family:var(--font-display);font-size:1.5rem;font-weight:600;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid var(--accent);display:inline-block}
+.section h3{font-family:var(--font-display);font-size:1.15rem;font-weight:600;margin:1.5rem 0 .75rem}
+p{margin-bottom:1rem;color:var(--fg)}
+ul,ol{margin:1rem 0 1rem 1.5rem;color:var(--fg)}
+li{margin-bottom:.5rem}
+li::marker{color:var(--accent)}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+a:hover,a:focus{border-bottom-color:var(--accent);outline:none}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.card{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0}
+.card h4{font-family:var(--font-display);font-size:1.1rem;margin-bottom:.75rem;color:var(--accent)}
+.table-wrap{overflow-x:auto;margin:1.5rem 0}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:.75rem 1rem;text-align:left;border-bottom:1px solid var(--border)}
+th{background:var(--accent-weak);color:var(--accent);font-weight:600;font-family:var(--font-display);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+tr:hover td{background:var(--bg)}
+.badge{display:inline-block;padding:.2rem .6rem;background:var(--accent-weak);color:var(--accent);border-radius:999px;font-size:.75rem;font-weight:600;margin-right:.5rem}
+.toc{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:2.5rem}
+.toc h3{font-family:var(--font-display);margin-bottom:1rem;color:var(--accent)}
+.toc ul{list-style:none;margin:0;padding:0}
+.toc li{margin:.4rem 0}
+.toc a{color:var(--fg);border-bottom:none;padding:.25rem 0;display:block;border-radius:var(--radius-sm);transition:background .2s}
+.toc a:hover{background:var(--accent-weak);color:var(--accent);border-bottom:none}
+footer{border-top:1px solid var(--border);padding:2rem 1.5rem;text-align:center;color:var(--muted);font-size:.9rem}
+.updated{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1rem;background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:2rem;font-size:.9rem}
+.cookie-banner{position:fixed;bottom:1.5rem;right:1.5rem;left:1.5rem;max-width:480px;margin:0 auto;background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);z-index:1000;animation:slide-up .4s ease-out}
+@keyframes slide-up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.cookie-banner.hidden{display:none}
+.cookie-banner h4{font-family:var(--font-display);margin-bottom:.5rem;color:var(--accent)}
+.cookie-banner .btns{display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap}
+.cookie-banner button{padding:.6rem 1.2rem;border-radius:var(--radius-sm);font-weight:600;font-family:var(--font-sans);font-size:.9rem;cursor:pointer;transition:all .2s;border:none}
+.cookie-banner .btn-accept{background:var(--accent);color:#0f172a}
+.cookie-banner .btn-accept:hover{filter:brightness(1.1)}
+.cookie-banner .btn-settings{background:transparent;color:var(--fg);border:1px solid var(--border)}
+.cookie-banner .btn-settings:hover{background:var(--bg);border-color:var(--accent)}
+@media (max-width:600px){.cookie-banner{left:1rem;right:1rem;bottom:1rem}}
+@media print{
+header,.skip-link,.cookie-banner{display:none}
+body{background:#fff;color:#000}
+a{color:#000;text-decoration:underline}
+.section{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Pular para conteúdo principal</a>
+<header>
+<div class="header-inner">
+<a href="#" class="logo" aria-label="Orvix - Início">
+<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M8 20L14 12l4 6 6-10" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+Orvix
+</a>
+</div>
+</header>
+<main id="main">
+<div class="updated">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+<strong>Última atualização:</strong> 17 de novembro de 2026 | <strong>Versão:</strong> 1.0
+</div>
+
+<h1>Política de Cookies</h1>
+<p class="meta">Esta política explica como o Orvix usa cookies e tecnologias similares (localStorage, sessionStorage, Service Worker). Em conformidade com LGPD (Lei 13.709/18) e Marco Civil da Internet (Lei 12.965/14).</p>
+
+<nav class="toc" aria-label="Sumário">
+<h3>Sumário</h3>
+<ul>
+<li><a href="#resumo">1. Resumo Rápido</a></li>
+<li><a href="#o-que-sao">2. O Que São Cookies e Storage</a></li>
+<li><a href="#classificacao">3. Classificação dos Cookies/Storage</a></li>
+<li><a href="#detalhamento">4. Detalhamento por Categoria</a></li>
+<li><a href="#consentimento">5. Consentimento e Controle</a></li>
+<li><a href="#terceiros">6. Terceiros e Transferência Internacional</a></li>
+<li><a href="#retencao">7. Retenção e Exclusão</a></li>
+<li><a href="#direitos">8. Seus Direitos</a></li>
+<li><a href="#alteracoes">9. Alterações nesta Política</a></li>
+<li><a href="#contato">10. Contato</a></li>
+</ul>
+</nav>
+
+<article class="section" id="resumo">
+<h2>1. Resumo Rápido</h2>
+<div class="card">
+<h4>🎯 Em 30 segundos</h4>
+<ul>
+<li><strong>Cookies HTTP tradicionais:</strong> <strong>NÃO usamos.</strong> Nenhum cookie de sessão, tracking ou analytics.</li>
+<li><strong>localStorage / sessionStorage:</strong> Usamos <strong>apenas para fins essenciais</strong> (autenticação JWT, preferência de tema).</li>
+<li><strong>Service Worker (PWA):</strong> Cache de assets estáticos (HTML, CSS, JS, imagens) para funcionar offline.</li>
+<li><strong>Terceiros (Google Analytics, Meta Pixel, etc.):</strong> <strong>ZERO.</strong> Não há tracking cross-site.</li>
+<li><strong>Banner de consentimento:</strong> Simples, apenas para essenciais (LGPD art. 7º, I). Você pode recusar — o app funciona sem localStorage (login expira ao fechar aba).</li>
+</ul>
+</div>
+</article>
+
+<article class="section" id="o-que-sao">
+<h2>2. O Que São Cookies e Storage</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Tecnologia</th><th>O que é</th><th>Persistência</th><th>Acesso</th></tr></thead>
+<tbody>
+<tr><td>Cookie HTTP</td><td>Pequeno arquivo de texto enviado pelo servidor nas respostas HTTP</td><td>Definida pelo servidor (expira ou sessão)</td><td>Enviado automaticamente em toda requisição ao domínio</td></tr>
+<tr><td>localStorage</td><td>API Web Storage chave-valor (5-10 MB) persistente no navegador</td><td>Até limpeza manual ou programática</td><td>JavaScript no mesmo domínio (origem)</td></tr>
+<tr><td>sessionStorage</td><td>Igual ao localStorage, mas limpo ao fechar a aba/janela</td><td>Sessão da aba</td><td>JavaScript na mesma aba/origem</td></tr>
+<tr><td>Service Worker Cache</td><td>Cache programático de recursos (HTML, CSS, JS, imagens) para offline</td><td>Até limpeza ou atualização do SW</td><td>Service Worker (escopo do domínio)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Para fins de LGPD e ePrivacy, <strong>localStorage/sessionStorage são tratados como cookies</strong> quando armazenam identificadores ou preferências do usuário.</p>
+</article>
+
+<article class="section" id="classificacao">
+<h2>3. Classificação dos Cookies/Storage</h2>
+<p>Seguimos a classificação do <strong>Guia de Cookies da ANPD</strong> e <strong>ePrivacy Directive</strong>:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Categoria</th><th>Finalidade</th><th>Consentimento</th><th>Exemplos no Orvix</th></tr></thead>
+<tbody>
+<tr><td><span class="badge">Essenciais</span></td><td>Estritamente necessários para o funcionamento do serviço solicitado</td><td>Não necessário (base legal: execução de contrato — LGPD art. 7º, V)</td><td>JWT (autenticação), tema preferido</td></tr>
+<tr><td><span class="badge" style="background:#f59e0b22;color:#f59e0b">Analíticos</span></td><td>Medir audiência, comportamento, performance</td><td>Obrigatório (opt-in)</td><td><strong>Não usamos</strong></td></tr>
+<tr><td><span class="badge" style="background:#ef444422;color:#ef4444">Marketing</span></td><td>Perfilamento, anúncios direcionados, remarketing</td><td>Obrigatório (opt-in)</td><td><strong>Não usamos</strong></td></tr>
+<tr><td><span class="badge" style="background:#22c55e22;color:#22c55e">Funcionais</span></td><td>Melhorar UX, lembrar escolhas, funcionalidades extras</td><td>Obrigatório (opt-in)</td><td>PWA Cache (Service Worker)</td></tr>
+</tbody>
+</table>
+</div>
+</article>
+
+<article class="section" id="detalhamento">
+<h2>4. Detalhamento por Categoria</h2>
+
+<h3>4.1 Essenciais (Sempre Ativos)</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Nome / Chave</th><th>Tecnologia</th><th>Finalidade</th><th>Duração</th><th>Dados Armazenados</th></tr></thead>
+<tbody>
+<tr><td><code>orvix_token</code></td><td>localStorage</td><td>Token JWT de autenticação (stateless). Mantém você logado entre sessões.</td><td>7 dias (expira com o token)</td><td>String JWT (assinada, não criptografada). Não contém senha.</td></tr>
+<tr><td><code>orvix_token</code> (fallback)</td><td>sessionStorage</td><td>Mesmo token, usado se localStorage bloqueado. Expira ao fechar aba.</td><td>Sessão da aba</td><td>String JWT</td></tr>
+<tr><td><code>orvix_theme</code></td><td>localStorage</td><td>Preferência de tema do usuário: <code>dark</code>, <code>light</code> ou <code>system</code>.</td><td>Indefinido (até mudança)</td><td>String: "dark" | "light" | "system"</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Base legal:</strong> Execução de contrato (LGPD art. 7º, V) — você pediu para usar o app, precisamos autenticar e lembrar sua preferência visual.</p>
+
+<h3>4.2 Funcionais (PWA / Offline)</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Recurso</th><th>Tecnologia</th><th>Finalidade</th><th>O que é Cacheado</th></tr></thead>
+<tbody>
+<tr><td>Service Worker</td><td>Cache API + IndexedDB</td><td>Permite abrir o app offline (shell), carrega assets instantaneamente</td><td>HTML, CSS, JS, fontes, imagens, manifest, ícones. <strong>NÃO</strong> cacheia dados financeiros nem chamadas de API.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Base legal:</strong> Legítimo interesse (LGPD art. 7º, IX) — melhora performance e UX sem processar dados pessoais. Você pode desativar nas configurações do navegador (limpar cache do site).</p>
+
+<h3>4.3 Não Utilizados</h3>
+<div class="card">
+<h4>🚫 Zero tracking</h4>
+<ul>
+<li>Google Analytics / GA4 / GTM</li>
+<li>Meta Pixel (Facebook/Instagram)</li>
+<li>Hotjar, FullStory, Mixpanel, Amplitude</li>
+<li>Cookies de afiliados, remarketing, social plugins</li>
+<li>Fingerprinting, canvas fingerprint, battery API</li>
+</ul>
+<p>Seu comportamento financeiro <strong>não é monitorado, perfilado ou vendido</strong>.</p>
+</div>
+</article>
+
+<article class="section" id="consentimento">
+<h2>5. Consentimento e Controle</h2>
+<h3>5.1 Banner de Consentimento</h3>
+<p>Ao acessar o Orvix pela primeira vez (ou após limpar dados), você verá um banner simples:</p>
+<div class="cookie-banner" role="dialog" aria-label="Consentimento de cookies" aria-describedby="cookie-desc">
+<p id="cookie-desc">Usamos armazenamento local essencial (autenticação, tema) e cache PWA para funcionar offline. <a href="orvix-politica-cookies.html">Saiba mais</a>.</p>
+<div class="btns">
+<button class="btn-accept" onclick="acceptCookies()">Aceitar essenciais</button>
+<button class="btn-settings" onclick="openSettings()">Configurar</button>
+</div>
+</div>
+<p><strong>Opções:</strong></p>
+<ul>
+<li><strong>"Aceitar essenciais"</strong> — salva <code>orvix_consent=essential</code> no localStorage, banner some. App funciona 100%.</li>
+<li><strong>"Configurar"</strong> — abre modal para gerenciar individualmente (futuro). Hoje redireciona para esta política.</li>
+<li><strong>Fechar (X) / Ignorar</strong> — banner reaparece na próxima visita. Sem consentimento salvo, o app ainda funciona (token vai para sessionStorage, tema usa <code>prefers-color-scheme</code>).</li>
+</ul>
+
+<h3>5.2 Como Gerenciar / Remover</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Método</th><th>Como Fazer</th><th>O que Remove</th></tr></thead>
+<tbody>
+<tr><td>Banner "Configurar" (futuro)</td><td>Clique em "Configurar" no banner → desative categorias</td><td>Seletivo por categoria</td></tr>
+<tr><td>Configurações do Navegador</td><td>Chrome: <kbd>⌘⇧Delete</kbd> / <kbd>Ctrl⇧Delete</kbd> → "Cookies e dados do site" → Orvix → Remover</td><td>Tudo (localStorage, sessionStorage, Cache API, IndexedDB, Service Worker)</td></tr>
+<tr><td>DevTools → Application</td><td>F12 → Application → Storage → Clear site data</td><td>Tudo</td></tr>
+<tr><td>Extensão "EditThisCookie" / "Cookie Editor"</td><td>Gerenciamento granular por chave</td><td>Seletivo por chave</td></tr>
+<tr><td>Código (Console)</td><td><code>localStorage.clear()</code> ou <code>localStorage.removeItem('orvix_token')</code></td><td>Seletivo</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Efeito de limpar tudo:</strong> Você será deslogado (token removido), tema volta ao padrão do sistema, cache PWA limpo — próximo acesso recarrega assets do servidor. Seus dados financeiros <strong>não são afetados</strong> (estão no servidor PostgreSQL).</p>
+</article>
+
+<article class="section" id="terceiros">
+<h2>6. Terceiros e Transferência Internacional</h2>
+<h3>6.1 Subprocessadores que Podem Receber Dados Técnicos</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Subprocessador</th><th>Finalidade</th><th>Localização</th><th>Mecanismo LGPD</th></tr></thead>
+<tbody>
+<tr><td>Render (hospedagem)</td><td>Servidores de aplicação e PostgreSQL</td><td>EUA (AWS us-east-1)</td><td>SCC (Cláusulas Contratuais Padrão) + DPA</td></tr>
+<tr><td>Groq (IA Free/Pro)</td><td>Processamento de texto do chat (apenas a mensagem do usuário)</td><td>EUA</td><td>SCC + DPA. <strong>Não enviamos dados financeiros</strong>.</td></tr>
+<tr><td>Anthropic (IA Pro+Claude)</td><td>Processamento de texto do chat (apenas a mensagem do usuário)</td><td>EUA</td><td>SCC + DPA. <strong>Não enviamos dados financeiros</strong>.</td></tr>
+</tbody>
+</table>
+</div>
+<h3>6.2 O que NÃO é compartilhado com terceiros</h3>
+<ul>
+<li>Tokens JWT, credenciais, senhas (bcrypt)</li>
+<li>Transações, saldos, extratos, categorias, metas, orçamentos</li>
+<li>Dados de parcelamentos, insights financeiros</li>
+<li>Endereço IP (logs de acesso ficam no Render, não repassados)</li>
+</ul>
+<p>Provedores de IA recebem <strong>apenas o texto da sua pergunta</strong> e o retorno das <em>function calls</em> (ex: lista de transações filtradas) — processamento ocorre no servidor Orvix, resultado via API.</p>
+</article>
+
+<article class="section" id="retencao">
+<h2>7. Retenção e Exclusão</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Item</th><th>Retenção</th><th>Exclusão</th></tr></thead>
+<tbody>
+<tr><td>JWT (<code>orvix_token</code>)</td><td>7 dias (expiração do token)</td><td>Auto-expira; limpeza manual remove antes</td></tr>
+<tr><td>Tema (<code>orvix_theme</code>)</td><td>Indefinido (preferência do usuário)</td><td>Ao trocar tema ou limpar dados do site</td></tr>
+<tr><td>Service Worker Cache</td><td>Até nova versão do app (atualização automática)</td><td>Atualização do SW ou "Limpar dados do site"</td></tr>
+<tr><td>Consentimento (<code>orvix_consent</code>)</td><td>12 meses (renovado a cada visita)</td><td>Limpeza de dados do site</td></tr>
+</tbody>
+</table>
+</div>
+<p>Dados financeiros no servidor seguem a <a href="orvix-politica-privacidade.html#retencao">Política de Privacidade — Seção 6</a> (conta ativa + 12 meses backup legal pós-exclusão).</p>
+</article>
+
+<article class="section" id="direitos">
+<h2>8. Seus Direitos (LGPD Art. 18)</h2>
+<p>Sobre cookies/storage, você pode:</p>
+<ul>
+<li><strong>Confirmar</strong> se usamos cookies/storage (sim, essenciais + funcionais);</li>
+<li><strong>Acessar</strong> quais chaves armazenamos (DevTools → Application → Local Storage / Session Storage);</li>
+<li><strong>Corrigir</strong> preferências (trocar tema no app);</li>
+<li><strong>Eliminar</strong> todos os dados locais (limpar dados do site no navegador);</li>
+<li><strong>Opor-se</strong> ao uso de funcionais (desativar PWA nas configurações do navegador);</li>
+<li><strong>Portabilidade</strong> — não aplicável (dados locais não são "seus dados financeiros");</li>
+<li><strong>Revogar consentimento</strong> a qualquer momento (limpar dados do site).</li>
+</ul>
+<div class="card">
+<h4>⚡ Exercício prático</h4>
+<p>Para revogar consentimento de essenciais: limpe dados do site do Orvix no navegador. Você será deslogado. Para voltar a usar, faça login novamente (novo consentimento implícito ao logar).</p>
+</div>
+</article>
+
+<article class="section" id="alteracoes">
+<h2>9. Alterações nesta Política</h2>
+<ul>
+<li>Mudanças materiais: aviso de <strong>30 dias</strong> via e-mail + banner no app;</li>
+<li>Versão anterior arquivada e disponível mediante solicitação;</li>
+<li>Continuar usando após vigência = aceitação.</li>
+</ul>
+</article>
+
+<article class="section" id="contato">
+<h2>10. Contato</h2>
+<div class="card">
+<p><strong>DPO (Encarregado LGPD):</strong> Jonas Sousa</p>
+<p><strong>E-mail:</strong> <a href="mailto:privacidade@orvix.app">privacidade@orvix.app</a></p>
+<p><strong>Resposta em até 15 dias úteis</strong> (LGPD art. 18, §1º).</p>
+</div>
+</article>
+</main>
+<footer>
+<p>Orvix — Financial Intelligence Platform &copy; 2026. Todos os direitos reservados.</p>
+<p><a href="orvix-politica-privacidade.html">Política de Privacidade</a> · <a href="orvix-termos-uso.html">Termos de Uso</a></p>
+</footer>
+
+<script>
+// Banner de consentimento simples
+(function(){
+const KEY='orvix_consent';
+const banner=document.querySelector('.cookie-banner');
+if(!banner) return;
+if(localStorage.getItem(KEY)){banner.classList.add('hidden');return;}
+function acceptCookies(){localStorage.setItem(KEY,'essential');banner.classList.add('hidden');}
+function openSettings(){window.location.href='orvix-politica-cookies.html';}
+window.acceptCookies=acceptCookies;
+window.openSettings=openSettings;
+// Mostra após 1s para não competir com paint
+setTimeout(()=>banner.classList.remove('hidden'),1000);
+})();
+</script>
+</body>
+</html>

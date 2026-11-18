@@ -1,0 +1,777 @@
+<title>Orvix Política de Privacidade LGPD</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+:root {
+  --bg: #fafafa;
+  --fg: #1a1a2e;
+  --fg-muted: #5a5a7a;
+  --accent: #0066cc;
+  --accent-hover: #0052a3;
+  --accent-light: #e8f0fe;
+  --border: #e0e0ea;
+  --card-bg: #ffffff;
+  --card-border: #e8e8f0;
+  --highlight-bg: #fffbe6;
+  --highlight-border: #ffe58a;
+  --success: #007a33;
+  --warning: #b86a00;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 2px 8px rgba(26, 26, 46, 0.06);
+  --shadow-hover: 0 4px 16px rgba(26, 26, 46, 0.1);
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --max-width: 800px;
+  --side-gutter: max(16px, env(safe-area-inset-left, 0px));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d0d14;
+    --fg: #e8e8f0;
+    --fg-muted: #9a9ab8;
+    --accent: #4d9fff;
+    --accent-hover: #7ab3ff;
+    --accent-light: #1a2a44;
+    --border: #2a2a3e;
+    --card-bg: #161622;
+    --card-border: #2a2a3e;
+    --highlight-bg: #2a2414;
+    --highlight-border: #5a4a1a;
+    --success: #33d46a;
+    --warning: #ffb84d;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0d0d14;
+  --fg: #e8e8f0;
+  --fg-muted: #9a9ab8;
+  --accent: #4d9fff;
+  --accent-hover: #7ab3ff;
+  --accent-light: #1a2a44;
+  --border: #2a2a3e;
+  --card-bg: #161622;
+  --card-border: #2a2a3e;
+  --highlight-bg: #2a2414;
+  --highlight-border: #5a4a1a;
+  --success: #33d46a;
+  --warning: #ffb84d;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.7;
+  font-size: 16px;
+  padding-left: var(--side-gutter);
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 48px 80px;
+}
+
+.wrapper {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+/* Typography */
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 700; line-height: 1.3; color: var(--fg); }
+h1 { font-size: clamp(2rem, 5vw, 2.75rem); margin-bottom: 8px; text-wrap: balance; }
+h2 { font-size: clamp(1.5rem, 3.5vw, 1.875rem); margin-top: 40px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+h3 { font-size: clamp(1.125rem, 2.5vw, 1.25rem); margin-top: 28px; margin-bottom: 12px; color: var(--accent); }
+h4 { font-size: 1rem; margin-top: 20px; margin-bottom: 10px; font-weight: 600; }
+
+p { margin-bottom: 16px; color: var(--fg); }
+p.intro { font-size: 1.1rem; color: var(--fg-muted); margin-bottom: 24px; }
+strong { font-weight: 600; color: var(--fg); }
+
+ul, ol { margin: 12px 0 20px 24px; }
+li { margin-bottom: 8px; line-height: 1.7; }
+li::marker { color: var(--accent); }
+
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s, color 0.2s; }
+a:hover { color: var(--accent-hover); border-bottom-color: var(--accent-hover); }
+
+/* Header */
+header { margin-bottom: 40px; text-align: center; }
+.logo { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-bottom: 16px; }
+.logo svg { width: 36px; height: 36px; flex-shrink: 0; }
+.version-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-light); color: var(--accent); padding: 6px 14px; border-radius: 999px; font-size: 0.875rem; font-weight: 600; margin-bottom: 20px; }
+.effective-date { color: var(--fg-muted); font-size: 0.95rem; }
+
+/* Executive Summary */
+.executive-summary {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow);
+}
+.executive-summary h2 { border-bottom: none; margin-top: 0; margin-bottom: 16px; font-size: 1.375rem; display: flex; align-items: center; gap: 10px; }
+.executive-summary h2::before { content: ""; width: 8px; height: 8px; background: var(--accent); border-radius: 2px; }
+.executive-summary p { margin-bottom: 12px; font-size: 0.95rem; }
+.executive-summary ul { margin-left: 20px; }
+.executive-summary li { margin-bottom: 6px; font-size: 0.95rem; }
+
+/* DPO Highlight */
+.dpo-card {
+  background: linear-gradient(135deg, var(--accent-light) 0%, var(--highlight-bg) 100%);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin: 32px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.dpo-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--accent); }
+.dpo-card h3 { margin-top: 0; color: var(--accent); display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1.25rem; }
+.dpo-card p { margin-bottom: 8px; }
+.dpo-contact { display: inline-flex; align-items: center; gap: 10px; background: var(--card-bg); border: 1px solid var(--accent); border-radius: var(--radius-sm); padding: 12px 20px; margin-top: 16px; font-weight: 600; color: var(--accent); font-family: var(--font-body); }
+.dpo-contact svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+/* Sections */
+.section { margin-bottom: 40px; }
+.section-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.section-card:hover { box-shadow: var(--shadow-hover); border-color: var(--accent-light); }
+.section-card h2 { margin-top: 0; display: flex; align-items: center; gap: 12px; }
+.section-card h2 .num { background: var(--accent); color: white; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 700; flex-shrink: 0; }
+.section-card h3 { margin-top: 20px; color: var(--fg); }
+.section-card h3:first-of-type { margin-top: 16px; }
+
+/* Tables */
+.table-wrapper { overflow-x: auto; margin: 16px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: var(--accent-light); color: var(--accent); font-weight: 600; font-family: var(--font-heading); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.02em; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--accent-light); }
+td code { background: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+
+/* Legal basis badges */
+.basis-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; font-family: var(--font-heading); margin-right: 8px; margin-bottom: 8px; }
+.basis-consent { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+.basis-contract { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+.basis-legitimate { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+
+@media (prefers-color-scheme: dark) {
+  .basis-consent { background: #1b3a1b; color: #81c784; border: 1px solid #2e7d32; }
+  .basis-contract { background: #1a2a44; color: #64b5f6; border: 1px solid #1565c0; }
+  .basis-legitimate { background: #3a2a1a; color: #ffb74d; border: 1px solid #e65100; }
+}
+
+/* Rights grid */
+.rights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+.right-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.right-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); border-color: var(--accent); }
+.right-card h4 { margin-top: 0; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+.right-card h4 svg { width: 22px; height: 22px; color: var(--accent); flex-shrink: 0; }
+.right-card p { margin: 0; font-size: 0.9rem; color: var(--fg-muted); line-height: 1.6; }
+
+/* Highlight boxes */
+.highlight-box {
+  background: var(--highlight-bg);
+  border: 1px solid var(--highlight-border);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  margin: 16px 0;
+  border-left: 4px solid var(--warning);
+}
+.highlight-box strong { display: block; margin-bottom: 6px; color: var(--warning); }
+
+/* Footer */
+footer { margin-top: 60px; padding-top: 32px; border-top: 1px solid var(--border); text-align: center; color: var(--fg-muted); font-size: 0.9rem; }
+footer p { margin-bottom: 8px; }
+footer a { color: var(--fg-muted); border-bottom-color: var(--border); }
+footer a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Responsive */
+@media (max-width: 480px) {
+  body { font-size: 15px; padding-block: 32px 60px; }
+  .executive-summary, .section-card, .dpo-card { padding: 20px; }
+  h2 { font-size: 1.375rem; }
+  th, td { padding: 10px 12px; }
+}
+
+/* Print styles */
+@media print {
+  body { background: white; color: black; }
+  .section-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+  .dpo-card { break-inside: avoid; }
+  a { color: black; border-bottom: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; }
+}
+</style>
+
+<div class="wrapper">
+  <header>
+    <div class="logo" aria-label="Orvix">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <path d="M9 12l2 2 4-4"></path>
+      </svg>
+      Orvix
+    </div>
+    <div class="version-badge">Versão 1.0 · Vigente desde 17 de novembro de 2026</div>
+    <p class="effective-date">Última atualização: 17 de novembro de 2026</p>
+  </header>
+
+  <section class="executive-summary" aria-labelledby="summary-title">
+    <h2 id="summary-title">Resumo Executivo</h2>
+    <p>A Orvix é uma aplicação de gestão financeira pessoal desenvolvida por Jonas Sousa (desenvolvedor solo). Esta política explica, em linguagem clara, quais dados coletamos, por que coletamos, como protegemos e quais são seus direitos.</p>
+    <p><strong>Em poucas palavras:</strong></p>
+    <ul>
+      <li>Coletamos apenas o necessário para o funcionamento do app: seu nome, e-mail, senha (criptografada) e dados financeiros que você insere voluntariamente.</li>
+      <li><strong>Não vendemos, alugamos ou compartilhamos seus dados com terceiros</strong> para fins de marketing ou publicidade.</li>
+      <li>Usamos provedores de IA (Groq e, opcionalmente, Anthropic) apenas para processar suas mensagens no chat — <strong>nenhum dado financeiro sensível é enviado à IA</strong>.</li>
+      <li>Seus dados ficam no Brasil (banco de dados) e nos EUA (hospedagem Render), com cláusulas contratuais padrão para transferência internacional.</li>
+      <li>Você tem controle total: pode acessar, corrigir, exportar ou excluir seus dados a qualquer momento.</li>
+      <li>O Encarregado de Proteção de Dados (DPO) é o próprio desenvolvedor: <strong>privacidade@orvix.app</strong>.</li>
+    </ul>
+  </section>
+
+  <div class="dpo-card" role="region" aria-labelledby="dpo-title">
+    <h3 id="dpo-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <path d="M9 12l2 2 4-4"></path>
+      </svg>
+      Encarregado de Proteção de Dados (DPO)
+    </h3>
+    <p>Conforme Art. 41 da LGPD, a Orvix nomeia seu Encarregado:</p>
+    <p><strong>Jonas Sousa</strong> — Desenvolvedor e Controlador de Dados</p>
+    <a href="mailto:privacidade@orvix.app" class="dpo-contact">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+      </svg>
+      privacidade@orvix.app
+    </a>
+    <p style="margin-top: 12px; font-size: 0.9rem; color: var(--fg-muted);">Respondo em até 15 dias corridos, conforme Art. 18, §1º da LGPD.</p>
+  </div>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">1</span> Quem Somos (Controlador)</h2>
+      <p><strong>Controlador:</strong> Jonas Sousa, desenvolvedor solo, brasileiro, residente no Brasil.</p>
+      <p><strong>Contato do Controlador:</strong> <a href="mailto:contato@orvix.app">contato@orvix.app</a></p>
+      <p><strong>Encarregado (DPO):</strong> Jonas Sousa — <a href="mailto:privacidade@orvix.app">privacidade@orvix.app</a></p>
+      <p>A Orvix não possui estabelecimento comercial, CNPJ ou equipe — é um projeto de software como serviço (SaaS) operado individualmente.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">2</span> Dados que Coletamos</h2>
+      <p>Coletamos apenas dados estritamente necessários para a prestação do serviço. <strong>Não coletamos</strong> dados de localização precisa, contatos, microfone, câmera, biometria ou dados de saúde.</p>
+
+      <h3>2.1 Dados de Cadastro e Autenticação</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Dado</th>
+              <th>Finalidade</th>
+              <th>Base Legal (LGPD)</th>
+              <th>Obrigatório?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Nome completo</td>
+              <td>Identificação e personalização</td>
+              <td><span class="basis-badge basis-contract">Art. 7º, V</span><span class="basis-badge basis-consent">Art. 7º, I</span></td>
+              <td>Sim</td>
+            </tr>
+            <tr>
+              <td>E-mail</td>
+              <td>Login, recuperação de senha, comunicações essenciais</td>
+              <td><span class="basis-badge basis-contract">Art. 7º, V</span><span class="basis-badge basis-consent">Art. 7º, I</span></td>
+              <td>Sim</td>
+            </tr>
+            <tr>
+              <td>Senha (hash bcrypt cost 12)</td>
+              <td>Autenticação segura</td>
+              <td><span class="basis-badge basis-contract">Art. 7º, V</span></td>
+              <td>Sim</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>2.2 Dados Financeiros (Inseridos Voluntariamente)</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Categoria</th>
+              <th>Exemplos</th>
+              <th>Finalidade</th>
+              <th>Base Legal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Transações</td>
+              <td>Descrição, valor, data, tipo (receita/despesa), categoria</td>
+              <td>Extrato, relatórios, gráficos, IA</td>
+              <td><span class="basis-badge basis-contract">Art. 7º, V</span></td>
+            </tr>
+            <tr>
+              <td>Categorias personalizadas</td>
+              <td>Nome, cor, ícone, tipo</td>
+              <td>Organização financeira</td>
+              <td><span class="basis-badge basis-contract">Art. 7º, V</span></td>
+            </tr>
+            <tr>
+              <td>Metas financeiras</td>
+              <td>Nome, valor alvo, data limite, categoria vinculada</td>
+              <td>Acompanhamento de objetivos</td>
+              <td><span class="basis-badge basis-contract">Art. 7º, V</span></td>
+            </tr>
+            <tr>
+              <td>Orçamentos</td>
+              <td>Período, valor limite por categoria</td>
+              <td>Controle de gastos</td>
+              <td><span class="basis-badge basis-contract">Art. 7º, V</span></td>
+            </tr>
+            <tr>
+              <td>Parcelamentos</td>
+              <td>Descrição, valor total, parcelas, data início, juros</td>
+              <td>Gestão de dívidas e compromissos</td>
+              <td><span class="basis-badge basis-contract">Art. 7º, V</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>2.3 Dados de Uso e Técnicos</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Dado</th>
+              <th>Finalidade</th>
+              <th>Base Legal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Logs de acesso (IP, user-agent, timestamp)</td>
+              <td>Segurança, prevenção a fraude, debugging</td>
+              <td><span class="basis-badge basis-legitimate">Art. 7º, IX</span></td>
+            </tr>
+            <tr>
+              <td>Token JWT (localStorage/sessionStorage)</td>
+              <td>Sessão autenticada (expira em 7 dias)</td>
+              <td><span class="basis-badge basis-contract">Art. 7º, V</span></td>
+            </tr>
+            <tr>
+              <td>Mensagens do chat com IA</td>
+              <td>Processamento pelo Groq/Anthropic para respostas</td>
+              <td><span class="basis-badge basis-consent">Art. 7º, I</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="highlight-box">
+        <strong>Importante:</strong> Dados financeiros <strong>nunca</strong> são enviados a provedores de IA. O chat recebe apenas o contexto textual da sua pergunta (ex: "como economizar no mercado?"), sem valores, saldos ou identificadores pessoais.
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">3</span> Bases Legais (Art. 7º da LGPD)</h2>
+      <p>Todo tratamento de dados pessoais na Orvix possui fundamento jurídico explícito:</p>
+
+      <h3>3.1 Consentimento (Art. 7º, I)</h3>
+      <p>Aplicado para: envio de mensagens ao chat de IA, comunicações de marketing (opt-in), cookies não essenciais (não usamos). O consentimento é livre, informado e pode ser revogado a qualquer momento.</p>
+
+      <h3>3.2 Execução de Contrato (Art. 7º, V)</h3>
+      <p>Aplicado para: cadastro, autenticação, armazenamento e processamento dos dados financeiros que você insere para usar o app. Sem esses dados, o serviço não funciona.</p>
+
+      <h3>3.3 Legítimo Interesse (Art. 7º, IX)</h3>
+      <p>Aplicado para: logs de segurança (IP, user-agent), prevenção a fraude, estabilidade do sistema. Realizamos Teste de Balanceamento (LIA) e concluímos que não há risco desproporcional aos seus direitos.</p>
+
+      <h3>3.4 Cumprimento de Obrigação Legal (Art. 7º, II)</h3>
+      <p>Aplicado para: retenção de dados por 12 meses após exclusão da conta (backup legal), atendimento a requisições de autoridades competentes com base legal válida.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">4</span> Finalidades do Tratamento</h2>
+      <p>Seus dados são usados <strong>exclusivamente</strong> para:</p>
+      <ol>
+        <li>Prestar o serviço de gestão financeira (CRUD de transações, metas, orçamentos, parcelamentos)</li>
+        <li>Autenticar e manter sua sessão segura (JWT, bcrypt)</li>
+        <li>Processar suas perguntas no chat de IA (Groq gratuito / Anthropic opcional)</li>
+        <li>Gerar relatórios, gráficos e insights financeiros <strong>no seu dispositivo</strong></li>
+        <li>Enviar comunicações essenciais (redefinição de senha, avisos de segurança, alterações desta política)</li>
+        <li>Cumprir obrigações legais e regulatórias</li>
+        <li>Proteger contra fraude, abuso e acesso não autorizado</li>
+      </ol>
+      <div class="highlight-box">
+        <strong>Não fazemos:</strong> perfilamento para publicidade, venda de dados, compartilhamento com data brokers, scoring de crédito, decisões automatizadas com efeito jurídico.
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">5</span> Compartilhamento e Subprocessadores</h2>
+
+      <h3>5.1 Princípio Geral</h3>
+      <p><strong>Não compartilhamos dados pessoais com terceiros</strong> para fins comerciais, de marketing ou publicidade.</p>
+
+      <h3>5.2 Subprocessadores Técnicos (Art. 7º, V + Art. 39)</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Subprocessador</th>
+              <th>Função</th>
+              <th>Dados Acessados</th>
+              <th>Localização</th>
+              <th>Garantias</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Render (hospedagem)</td>
+              <td>Servidor da aplicação e banco de dados PostgreSQL</td>
+              <td>Todos (processamento)</td>
+              <td>EUA (Oregon/Virgínia)</td>
+              <td>SCC + ISO 27001 + SOC 2</td>
+            </tr>
+            <tr>
+              <td>Groq (IA)</td>
+              <td>Processamento de linguagem natural (chat)</td>
+              <td>Apenas mensagens do chat (texto)</td>
+              <td>EUA</td>
+              <td>SCC + Data Processing Addendum</td>
+            </tr>
+            <tr>
+              <td>Anthropic (IA opcional)</td>
+              <td>Processamento avançado de linguagem (plano Pro)</td>
+              <td>Apenas mensagens do chat (texto)</td>
+              <td>EUA</td>
+              <td>SCC + Data Processing Addendum</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>5.3 Transferência Internacional (Art. 33–36)</h3>
+      <p>Os dados saem do Brasil para os EUA (Render, Groq, Anthropic). A transferência baseia-se em <strong>Cláusulas Contratuais Padrão (SCC)</strong> aprovadas pela ANPD, complementadas por medidas técnicas (criptografia em trânsito TLS 1.3, em repouso AES-256) e organizacionais (acesso restrito por <code>user_id</code>).</p>
+
+      <h3>5.4 Requisições Legais</h3>
+      <p>Podemos divulgar dados se exigido por lei, ordem judicial ou requisição de autoridade competente com fundamento legal válido (Art. 7º, II e III). Notificaremos você, salvo proibição legal.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">6</span> Retenção e Exclusão</h2>
+
+      <h3>6.1 Períodos de Retenção</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Categoria de Dados</th>
+              <th>Período</th>
+              <th>Fundamento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Dados de cadastro (nome, e-mail, hash senha)</td>
+              <td>Enquanto a conta estiver ativa + 12 meses após exclusão</td>
+              <td>Art. 7º, V (contrato) + Art. 16 (obrigação legal)</td>
+            </tr>
+            <tr>
+              <td>Transações, metas, orçamentos, parcelamentos, categorias</td>
+              <td>Enquanto a conta estiver ativa + 12 meses após exclusão</td>
+              <td>Art. 7º, V (contrato) + Art. 16 (obrigação legal)</td>
+            </tr>
+            <tr>
+              <td>Logs de acesso (IP, user-agent)</td>
+              <td>90 dias</td>
+              <td>Art. 7º, IX (legítimo interesse - segurança)</td>
+            </tr>
+            <tr>
+              <td>Mensagens do chat</td>
+              <td>Enquanto a conta estiver ativa (não armazenamos histórico no servidor)</td>
+              <td>Art. 7º, I (consentimento)</td>
+            </tr>
+            <tr>
+              <td>Backups de disaster recovery</td>
+              <td>Até 30 dias (rotação automática)</td>
+              <td>Art. 7º, IX (legítimo interesse - continuidade)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>6.2 Exclusão da Conta</h3>
+      <p>Ao solicitar exclusão (Art. 18, VI):</p>
+      <ol>
+        <li>Conta desativada imediatamente (login impedido)</li>
+        <li>Dados marcados para exclusão lógica</li>
+        <li>Exclusão física irreversível após 12 meses (período de backup legal)</li>
+        <li>Você pode cancelar a exclusão dentro de 7 dias (recuperação total)</li>
+      </ol>
+
+      <h3>6.3 Dados Anonimizados</h3>
+      <p>Após exclusão, dados agregados e anonimizados (ex: "média de gastos em alimentação por faixa etária") podem ser mantidos indefinidamente para melhorias estatísticas do produto. <strong>Não é possível reidentificar você a partir desses dados.</strong></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">7</span> Seus Direitos (Art. 18 da LGPD)</h2>
+      <p>Você tem controle total sobre seus dados. Todos os direitos podem ser exercidos gratuitamente, sem formalidades excessivas, bastando contatar <a href="mailto:privacidade@orvix.app">privacidade@orvix.app</a>.</p>
+
+      <div class="rights-grid" role="list" aria-label="Direitos do titular">
+        <article class="right-card" role="listitem">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            Confirmação e Acesso
+          </h4>
+          <p>Saber se tratamos seus dados e quais. Receber cópia legível (JSON/CSV) em até 15 dias.</p>
+        </article>
+        <article class="right-card" role="listitem">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+            Retificação
+          </h4>
+          <p>Corrigir dados incompletos, inexatos ou desatualizados. Nome e e-mail editáveis no app.</p>
+        </article>
+        <article class="right-card" role="listitem">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            Eliminação
+          </h4>
+          <p>Excluir seus dados pessoais (exceto quando houver obrigação legal de retenção — 12 meses).</p>
+        </article>
+        <article class="right-card" role="listitem">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Portabilidade
+          </h4>
+          <p>Receber seus dados em formato estruturado (JSON/CSV) para migrar a outro serviço.</p>
+        </article>
+        <article class="right-card" role="listitem">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+            Oposição e Restrição
+          </h4>
+          <p>Opor-se ao tratamento baseado em legítimo interesse (logs de segurança) ou marketing.</p>
+        </article>
+        <article class="right-card" role="listitem">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            Revogação do Consentimento
+          </h4>
+          <p>Retirar consentimento a qualquer momento (chat de IA, e-mails opcionais) sem afetar a regularidade do tratamento anterior.</p>
+        </article>
+        <article class="right-card" role="listitem">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Petição à ANPD
+          </h4>
+          <p>Registrar reclamação junto à Autoridade Nacional de Proteção de Dados (<a href="https://www.gov.br/anpd/pt-br" target="_blank" rel="noopener">gov.br/anpd</a>).</p>
+        </article>
+      </div>
+
+      <h3>7.1 Como Exercer Seus Direitos</h3>
+      <ol>
+        <li>Envie e-mail para <a href="mailto:privacidade@orvix.app">privacidade@orvix.app</a> com o assunto "LGPD - [Seu Direito]"</li>
+        <li>Informe o e-mail cadastrado na Orvix</li>
+        <li>Responderemos em até <strong>15 dias corridos</strong> (Art. 18, §1º)</li>
+        <li>Se precisarmos de mais tempo, avisaremos com justificativa</li>
+      </ol>
+
+      <h3>7.2 Verificação de Identidade</h3>
+      <p>Para proteger você, podemos solicitar confirmação via e-mail cadastrado ou código enviado ao seu e-mail antes de processar pedidos sensíveis (exclusão, portabilidade).</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">8</span> Segurança da Informação</h2>
+      <p>Adotamos medidas técnicas e organizacionais proporcionais ao risco (Art. 46–49):</p>
+
+      <h3>8.1 Medidas Técnicas</h3>
+      <ul>
+        <li><strong>Criptografia em trânsito:</strong> TLS 1.3 (HTTPS forçado via HSTS)</li>
+        <li><strong>Criptografia em repouso:</strong> AES-256 no banco de dados (Render PostgreSQL)</li>
+        <li><strong>Senhas:</strong> bcrypt com cost 12 (hash irreversível, nunca armazenamos senha em texto plano)</li>
+        <li><strong>Autenticação:</strong> JWT (RS256) com expiração de 7 dias, armazenado em <code>localStorage</code>/<code>sessionStorage</code> (não em cookies)</li>
+        <li><strong>Isolamento de dados:</strong> Todas as queries SQL usam parâmetros com <code>user_id</code> — impossível acessar dados de outro usuário</li>
+        <li><strong>Headers de segurança:</strong> Helmet.js (CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy)</li>
+        <li><strong>Proteção contra injeção:</strong> Query parametrizada (Prisma ORM), validação Zod em todas as entradas</li>
+        <li><strong>Rate limiting:</strong> Proteção contra força bruta e abuso de API</li>
+      </ul>
+
+      <h3>8.2 Medidas Organizacionais</h3>
+      <ul>
+        <li>Acesso ao banco de dados restrito ao desenvolvedor (chaves SSH, MFA no Render)</li>
+        <li>Princípio do menor privilégio — variáveis de ambiente segregadas por ambiente</li>
+        <li>Registro de auditoria de ações administrativas</li>
+        <li>Plano de resposta a incidentes (notificação à ANPD e titulares em até 48h se houver risco relevante)</li>
+      </ul>
+
+      <div class="highlight-box">
+        <strong>Limitação:</strong> Nenhum sistema é 100% seguro. Em caso de incidente de segurança com risco relevante aos seus direitos, notificaremos você e a ANPD conforme Art. 48 da LGPD.
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">9</span> Cookies e Armazenamento Local</h2>
+      <p>A Orvix <strong>não usa cookies de terceiros, pixels de rastreamento, fingerprinting ou analytics comportamental</strong>.</p>
+
+      <h3>9.1 Armazenamento Utilizado</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Mecanismo</th>
+              <th>Chave</th>
+              <th>Conteúdo</th>
+              <th>Expiração</th>
+              <th>Finalidade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>localStorage</td>
+              <td><code>orvix_token</code></td>
+              <td>JWT (assinado, não criptografado)</td>
+              <td>7 dias (renovável)</td>
+              <td>Sessão persistente</td>
+            </tr>
+            <tr>
+              <td>sessionStorage</td>
+              <td><code>orvix_token</code></td>
+              <td>JWT</td>
+              <td>Até fechar aba</td>
+              <td>Sessão temporária</td>
+            </tr>
+            <tr>
+              <td>localStorage</td>
+              <td><code>orvix_prefs</code></td>
+              <td>Preferências de UI (tema, moeda)</td>
+              <td>Indeterminada</td>
+              <td>Experiência do usuário</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>9.2 Controle</h3>
+      <p>Você pode limpar o armazenamento a qualquer momento nas configurações do navegador (logout automático). Não há cookies de sessão no servidor — o JWT é <strong>stateless</strong>.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">10</span> Inteligência Artificial (IA)</h2>
+
+      <h3>10.1 Como Funciona</h3>
+      <p>A Orvix oferece chat com IA para dúvidas financeiras. Duas opções:</p>
+      <ul>
+        <li><strong>Groq (gratuito, padrão):</strong> Modelos Llama 3 / Mixtral hospedados na GroqCloud</li>
+        <li><strong>Anthropic (opcional, plano Pro):</strong> Modelo Claude via API oficial</li>
+      </ul>
+
+      <h3>10.2 Dados Enviados à IA</h3>
+      <p><strong>Apenas o texto da sua mensagem</strong> é enviado. Não enviamos:</p>
+      <ul>
+        <li>Seu nome, e-mail ou identificadores</li>
+        <li>Saldo, transações, valores, metas, orçamentos</li>
+        <li>Histórico de chat anterior (cada mensagem é independente)</li>
+      </ul>
+
+      <h3>10.3 Retenção pelos Provedores</h3>
+      <ul>
+        <li><strong>Groq:</strong> Não armazena logs de inferência (política <em>zero-data retention</em> para API)</li>
+        <li><strong>Anthropic:</strong> Retenção de 30 dias para segurança/abuso, depois exclusão (conforme DPA)</li>
+      </ul>
+
+      <h3>10.4 Seu Controle</h3>
+      <p>O chat é <strong>opt-in</strong> — você decide quando usar. Pode alternar entre Groq e Anthropic nas configurações (plano Pro). Para não usar IA, simplesmente não abra o chat.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">11</span> Menores de 18 Anos</h2>
+      <p>A Orvix <strong>não é dirigida a menores de 18 anos</strong>. Não coletamos intencionalmente dados de menores.</p>
+      <p>Se você é pai/mãe/responsável e descobriu que seu filho nos forneceu dados, contate <a href="mailto:privacidade@orvix.app">privacidade@orvix.app</a> — excluiremos imediatamente.</p>
+      <p>Para usuários entre 16 e 18 anos, o consentimento pode ser dado pelo próprio adolescente (Art. 14, §1º), mas recomendamos supervisão dos responsáveis.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">12</span> Alterações nesta Política</h2>
+      <p>Podemos atualizar esta política para refletir mudanças legais, regulatórias ou no produto.</p>
+      <ul>
+        <li>Alterações materiais: notificação por e-mail (cadastro) e aviso no app com 30 dias de antecedência</li>
+        <li>Alterações não materiais (formatação, links, exemplos): publicação silenciosa com versão incrementada</li>
+        <li>Histórico de versões disponível em <code>/privacidade/historico</code> no app</li>
+      </ul>
+      <p>Versão atual: <strong>1.0</strong> — 17 de novembro de 2026.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-card">
+      <h2><span class="num">13</span> Contato e Lei Aplicável</h2>
+      <p>Esta política é regida pela Lei nº 13.709/2018 (LGPD) e legislação brasileira correlata.</p>
+      <p>Para dúvidas, exercício de direitos, reclamações ou sugestões:</p>
+      <ul>
+        <li><strong>Encarregado (DPO):</strong> <a href="mailto:privacidade@orvix.app">privacidade@orvix.app</a></li>
+        <li><strong>Controlador:</strong> <a href="mailto:contato@orvix.app">contato@orvix.app</a></li>
+        <li><strong>ANPD:</strong> <a href="https://www.gov.br/anpd/pt-br" target="_blank" rel="noopener">gov.br/anpd</a> — para petições formais</li>
+      </ul>
+      <p>Respondemos em português, em até 15 dias corridos, sem custo.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Orvix — Gestão Financeira Pessoal com IA</p>
+    <p>Desenvolvido por Jonas Sousa · <a href="https://orvix.app" target="_blank" rel="noopener">orvix.app</a></p>
+    <p>Política de Privacidade v1.0 · 17 de novembro de 2026 · Conforme LGPD (Lei 13.709/2018)</p>
+  </footer>
+</div>
