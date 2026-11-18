@@ -58,6 +58,11 @@ export interface ContributionsResponse {
   contributions: GoalContribution[];
 }
 
+// O PostgreSQL devolve NUMERIC como string; converte para número para somas e formatação
+function mapContribution(raw: GoalContribution): GoalContribution {
+  return { ...raw, amount: Number(raw.amount) };
+}
+
 @Injectable({ providedIn: 'root' })
 export class GoalApi extends ApiService {
   getAll(): Observable<GoalsResponse> {
@@ -85,15 +90,21 @@ export class GoalApi extends ApiService {
   // =========================
 
   addContribution(goalId: string, dto: AddContributionDto): Observable<{ contribution: GoalContribution }> {
-    return this.post<{ contribution: GoalContribution }>(`/goals/${goalId}/contributions`, dto);
+    return this.post<{ contribution: GoalContribution }>(`/goals/${goalId}/contributions`, dto).pipe(
+      map((r) => ({ contribution: mapContribution(r.contribution) })),
+    );
   }
 
   getContributions(goalId: string): Observable<ContributionsResponse> {
-    return this.get<ContributionsResponse>(`/goals/${goalId}/contributions`);
+    return this.get<ContributionsResponse>(`/goals/${goalId}/contributions`).pipe(
+      map((r) => ({ contributions: (r.contributions ?? []).map(mapContribution) })),
+    );
   }
 
   updateContribution(goalId: string, contributionId: string, dto: Partial<AddContributionDto>): Observable<{ contribution: GoalContribution }> {
-    return this.put<{ contribution: GoalContribution }>(`/goals/${goalId}/contributions/${contributionId}`, dto);
+    return this.put<{ contribution: GoalContribution }>(`/goals/${goalId}/contributions/${contributionId}`, dto).pipe(
+      map((r) => ({ contribution: mapContribution(r.contribution) })),
+    );
   }
 
   deleteContribution(goalId: string, contributionId: string): Observable<void> {
@@ -101,6 +112,8 @@ export class GoalApi extends ApiService {
   }
 
   addRecurringContributions(goalId: string, dto: AddRecurringContributionsDto): Observable<{ contributions: GoalContribution[] }> {
-    return this.post<{ contributions: GoalContribution[] }>(`/goals/${goalId}/contributions/recurring`, dto);
+    return this.post<{ contributions: GoalContribution[] }>(`/goals/${goalId}/contributions/recurring`, dto).pipe(
+      map((r) => ({ contributions: (r.contributions ?? []).map(mapContribution) })),
+    );
   }
 }

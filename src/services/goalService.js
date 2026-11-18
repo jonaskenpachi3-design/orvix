@@ -208,7 +208,7 @@ async function addGoalContribution(
                 installments_total,
                 type
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            VALUES ($1, $2, $3, $4, COALESCE($5::date, CURRENT_DATE), $6, $7, $8)
             RETURNING
                 id,
                 goal_id,
@@ -311,7 +311,7 @@ async function updateGoalContribution(
             SET
                 amount = $1,
                 description = $2,
-                contribution_date = $3
+                contribution_date = COALESCE($3::date, contribution_date)
             WHERE id = $4 AND goal_id = $5 AND user_id = $6
             RETURNING
                 id,

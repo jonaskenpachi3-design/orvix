@@ -1033,12 +1033,9 @@ export class GoalsComponent implements OnInit {
       month: nextMonth.getMonth() + 1,
       day: nextMonth.getDate(),
     };
-    this.firstDate.setValue(this.formatNgbDate(ngbDate));
+    // ngbDatepicker exige { year, month, day }; string ISO deixava o campo inválido
+    this.firstDate.setValue(ngbDate);
     this.recurringForm.controls.frequencyMonths.setValue(1);
-  }
-
-  private formatNgbDate(date: { year: number; month: number; day: number }): string {
-    return `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
   }
 
   private async loadGoals(): Promise<void> {
