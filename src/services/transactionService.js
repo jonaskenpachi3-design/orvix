@@ -124,6 +124,8 @@ async function getTransactionsByUser(userId, options = {}) {
             t.category_id,
             c.name AS category_name,
             c.type AS category_type,
+            c.icon AS category_icon,
+            c.color AS category_color,
             t.description,
             t.amount,
             t.type,

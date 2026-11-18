@@ -218,7 +218,10 @@ import { BankSyncCardComponent } from './bank-sync-card.component';
                       </td>
                       <td>
                         @if (tx.category) {
-                          <span class="badge" [class.bg-success-subtle]="tx.category.type === 'income'" [class.text-success]="tx.category.type === 'income'" [class.bg-danger-subtle]="tx.category.type === 'expense'" [class.text-danger]="tx.category.type === 'expense'">
+                          <span class="badge d-inline-flex align-items-center gap-1"
+                                [style.background-color]="tx.category.color + '20'"
+                                [style.color]="tx.category.color">
+                            <i [class]="tx.category.icon" aria-hidden="true"></i>
                             {{ tx.category.name }}
                           </span>
                         } @else {
@@ -393,7 +396,9 @@ import { BankSyncCardComponent } from './bank-sync-card.component';
               >
                 <option value="">Sem categoria</option>
                 @for (cat of filteredCategories(); track cat.id) {
-                  <option [value]="cat.id">{{ cat.name }}</option>
+                  <option [value]="cat.id" [style.color]="cat.color">
+                    <i [class]="cat.icon" aria-hidden="true"></i> {{ cat.name }}
+                  </option>
                 }
               </select>
             </div>

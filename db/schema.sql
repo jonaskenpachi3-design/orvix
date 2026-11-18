@@ -43,6 +43,10 @@ CREATE TABLE IF NOT EXISTS categories (
 
     type VARCHAR(20) NOT NULL,
 
+    icon VARCHAR(50) NOT NULL DEFAULT 'bi-tag',
+
+    color VARCHAR(7) NOT NULL DEFAULT '#6C757D',
+
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_categories_user

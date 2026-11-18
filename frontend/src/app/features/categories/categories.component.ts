@@ -1,9 +1,35 @@
-import { Component, signal, computed, inject, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModalModule, NgbModal, NgbAlertModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { CategoryApi, Category, CreateCategoryDto, CategoriesResponse } from '@core/api/category.api';
 import { ToastService } from '@shared/services/toast.service';
+
+// Lista de ícones Bootstrap Icons disponíveis
+const AVAILABLE_ICONS = [
+  'bi-tag', 'bi-egg-fried', 'bi-cart', 'bi-bus-front', 'bi-fuel-pump',
+  'bi-heart-pulse', 'bi-book', 'bi-controller', 'bi-credit-card', 'bi-bag',
+  'bi-house', 'bi-airplane', 'bi-gem', 'bi-tools', 'bi-arrow-left-right',
+  'bi-cash-stack', 'bi-graph-up', 'bi-arrow-return-left', 'bi-gift',
+  'bi-cup-hot', 'bi-pizza', 'bi-car-front', 'bi-truck', 'bi-bicycle',
+  'bi-phone', 'bi-laptop', 'bi-tv', 'bi-headphones', 'bi-camera',
+  'bi-music-note', 'bi-film', 'bi-gamepad', 'bi-dumbbell', 'bi-flower',
+  'bi-palette', 'bi-briefcase', 'bi-bank', 'bi-piggy-bank', 'bi-coin',
+  'bi-currency-dollar', 'bi-currency-euro', 'bi-wallet', 'bi-receipt',
+  'bi-file-earmark-text', 'bi-calendar', 'bi-clock', 'bi-alarm',
+  'bi-lightning', 'bi-droplet', 'bi-snow', 'bi-sun', 'bi-moon',
+  'bi-cloud', 'bi-umbrella', 'bi-tree', 'bi-leaf', 'bi-flower',
+  'bi-paw', 'bi-heart', 'bi-star', 'bi-trophy', 'bi-medal',
+  'bi-award', 'bi-gift', 'bi-balloon', 'bi-cake', 'bi-party-popper'
+];
+
+// Cores predefinidas
+const PRESET_COLORS = [
+  '#DC3545', '#FF6B6B', '#FF8E72', '#FFA56B', '#FFD166',
+  '#06D6A0', '#28A745', '#4ECDC4', '#118AB2', '#073B4C',
+  '#6F42C1', '#A855F7', '#D946EF', '#EC4899', '#F43F5E',
+  '#6C757D', '#495057', '#343A40', '#212529', '#000000'
+];
 
 @Component({
   selector: 'app-categories',
@@ -79,8 +105,11 @@ import { ToastService } from '@shared/services/toast.service';
                   @for (cat of incomeCategories(); track cat.id) {
                     <li class="list-group-item border-0 px-0 d-flex align-items-center justify-content-between">
                       <div class="d-flex align-items-center gap-3">
-                        <div class="category-icon bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center rounded" style="width: 36px; height: 36px;">
-                          <i class="bi bi-tag" aria-hidden="true"></i>
+                        <div class="category-icon d-flex align-items-center justify-content-center rounded"
+                             style="width: 36px; height: 36px;"
+                             [style.background-color]="cat.color + '20'"
+                             [style.color]="cat.color">
+                          <i [class]="cat.icon" aria-hidden="true"></i>
                         </div>
                         <div>
                           <h6 class="mb-0">{{ cat.name }}</h6>
@@ -156,8 +185,11 @@ import { ToastService } from '@shared/services/toast.service';
                   @for (cat of expenseCategories(); track cat.id) {
                     <li class="list-group-item border-0 px-0 d-flex align-items-center justify-content-between">
                       <div class="d-flex align-items-center gap-3">
-                        <div class="category-icon bg-danger bg-opacity-10 text-danger d-flex align-items-center justify-content-center rounded" style="width: 36px; height: 36px;">
-                          <i class="bi bi-tag" aria-hidden="true"></i>
+                        <div class="category-icon d-flex align-items-center justify-content-center rounded"
+                             style="width: 36px; height: 36px;"
+                             [style.background-color]="cat.color + '20'"
+                             [style.color]="cat.color">
+                          <i [class]="cat.icon" aria-hidden="true"></i>
                         </div>
                         <div>
                           <h6 class="mb-0">{{ cat.name }}</h6>
@@ -233,6 +265,7 @@ import { ToastService } from '@shared/services/toast.service';
                   value="income"
                   formControlName="type"
                   autocomplete="off"
+                  (change)="onTypeChange('income')"
                 />
                 <label class="btn btn-outline-success" for="typeIncome">
                   <i class="bi bi-arrow-down-circle me-1" aria-hidden="true"></i> Receita
@@ -245,10 +278,58 @@ import { ToastService } from '@shared/services/toast.service';
                   value="expense"
                   formControlName="type"
                   autocomplete="off"
+                  (change)="onTypeChange('expense')"
                 />
                 <label class="btn btn-outline-danger" for="typeExpense">
                   <i class="bi bi-arrow-up-circle me-1" aria-hidden="true"></i> Despesa
                 </label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Ícone</label>
+              <div class="icon-picker">
+                @for (icon of availableIcons; track icon) {
+                  <button
+                    type="button"
+                    class="icon-option"
+                    [class.selected]="icon === iconControl.value"
+                    (click)="iconControl.setValue(icon)"
+                    [attr.aria-label]="icon"
+                    [attr.aria-pressed]="icon === iconControl.value"
+                  >
+                    <i [class]="icon" aria-hidden="true"></i>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Cor</label>
+              <div class="color-picker">
+                @for (color of presetColors; track color) {
+                  <button
+                    type="button"
+                    class="color-option"
+                    [class.selected]="color === colorControl.value"
+                    (click)="colorControl.setValue(color)"
+                    [style.background-color]="color"
+                    [attr.aria-label]="'Cor ' + color"
+                    [attr.aria-pressed]="color === colorControl.value"
+                  ></button>
+                }
+              </div>
+              <div class="mt-2">
+                <label for="customColor" class="form-label small">Ou escolha uma cor personalizada:</label>
+                <input
+                  type="color"
+                  id="customColor"
+                  class="form-control form-control-color"
+                  formControlName="color"
+                  style="width: 60px; height: 38px;"
+                  [value]="colorControl.value"
+                  (input)="colorControl.setValue($event.target.value)"
+                />
               </div>
             </div>
           </form>
@@ -354,6 +435,95 @@ import { ToastService } from '@shared/services/toast.service';
       border-width: 2px;
     }
 
+    /* Icon Picker */
+    .icon-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 0.5rem 0;
+    }
+
+    .icon-option {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--orvix-border-color);
+      border-radius: 8px;
+      background: var(--orvix-surface);
+      color: var(--orvix-text-primary);
+      font-size: 1.25rem;
+      transition: all var(--transition-fast) ease;
+    }
+
+    .icon-option:hover {
+      border-color: var(--orvix-primary);
+      transform: scale(1.05);
+    }
+
+    .icon-option.selected {
+      border-color: var(--orvix-primary);
+      background: var(--orvix-primary);
+      color: white;
+    }
+
+    .icon-option:focus-visible {
+      outline: 2px solid var(--orvix-primary);
+      outline-offset: 2px;
+    }
+
+    /* Color Picker */
+    .color-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .color-option {
+      width: 32px;
+      height: 32px;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all var(--transition-fast) ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .color-option:hover {
+      transform: scale(1.15);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .color-option.selected {
+      border-color: var(--orvix-text-primary);
+      box-shadow: 0 0 0 2px var(--orvix-surface), 0 0 0 4px var(--orvix-primary);
+    }
+
+    .color-option:focus-visible {
+      outline: 2px solid var(--orvix-primary);
+      outline-offset: 2px;
+    }
+
+    .form-control-color {
+      border: none;
+      padding: 0;
+      background: none;
+      cursor: pointer;
+    }
+
+    .form-control-color::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    .form-control-color::-webkit-color-swatch {
+      border: 2px solid var(--orvix-border-color);
+      border-radius: 8px;
+    }
+
     @media (max-width: 767.98px) {
       .page-header {
         flex-direction: column;
@@ -364,6 +534,14 @@ import { ToastService } from '@shared/services/toast.service';
       .page-header > div {
         text-align: center;
       }
+
+      .icon-picker {
+        justify-content: center;
+      }
+
+      .color-picker {
+        justify-content: center;
+      }
     }
   `]
 })
@@ -372,6 +550,10 @@ export class CategoriesComponent implements OnInit {
   private readonly categoryApi = inject(CategoryApi);
   private readonly modalService = inject(NgbModal);
   private readonly toastService = inject(ToastService);
+
+  // Available icons and colors for the picker
+  readonly availableIcons = AVAILABLE_ICONS;
+  readonly presetColors = PRESET_COLORS;
 
   // Signals
   readonly categories = signal<Category[]>([]);
@@ -398,9 +580,26 @@ export class CategoriesComponent implements OnInit {
   readonly categoryForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(50)]],
     type: ['expense' as 'income' | 'expense', Validators.required],
+    icon: ['bi-tag' as string, Validators.required],
+    color: ['#DC3545' as string, Validators.required],
   });
 
   get name() { return this.categoryForm.controls.name; }
+  get iconControl() { return this.categoryForm.controls.icon; }
+  get colorControl() { return this.categoryForm.controls.color; }
+
+  onTypeChange(type: 'income' | 'expense'): void {
+    // Atualiza a cor padrão ao mudar o tipo
+    const currentColor = this.colorControl.value;
+    const isDefaultIncomeColor = currentColor === '#28A745' || currentColor === '#4ECDC4' || currentColor === '#06D6A0';
+    const isDefaultExpenseColor = currentColor === '#DC3545' || currentColor === '#FF6B6B' || currentColor === '#FF8E72';
+
+    if (type === 'income' && isDefaultExpenseColor) {
+      this.colorControl.setValue('#28A745');
+    } else if (type === 'expense' && isDefaultIncomeColor) {
+      this.colorControl.setValue('#DC3545');
+    }
+  }
 
   ngOnInit(): void {
     this.loadCategories();
@@ -422,11 +621,14 @@ export class CategoriesComponent implements OnInit {
 
   openCreateModal(prefillType?: 'income' | 'expense'): void {
     this.editingCategory.set(null);
+    const defaultColor = prefillType === 'income' ? '#28A745' : '#DC3545';
     this.categoryForm.reset({
       name: '',
       type: prefillType ?? 'expense',
+      icon: 'bi-tag',
+      color: defaultColor,
     });
-    this.modalService.open(this.categoryModalRef, { centered: true });
+    this.modalService.open(this.categoryModalRef, { centered: true, size: 'lg' });
   }
 
   openEditModal(category: Category): void {
@@ -434,8 +636,10 @@ export class CategoriesComponent implements OnInit {
     this.categoryForm.patchValue({
       name: category.name,
       type: category.type,
+      icon: category.icon || 'bi-tag',
+      color: category.color || (category.type === 'income' ? '#28A745' : '#DC3545'),
     });
-    this.modalService.open(this.categoryModalRef, { centered: true });
+    this.modalService.open(this.categoryModalRef, { centered: true, size: 'lg' });
   }
 
   async saveCategory(modal: any): Promise<void> {

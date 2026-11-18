@@ -253,6 +253,8 @@ export interface RawTransaction {
   category_id: string | null;
   category_name?: string | null;
   category_type?: string | null;
+  category_icon?: string | null;
+  category_color?: string | null;
   description: string;
   amount: unknown;
   type: 'income' | 'expense';
@@ -275,7 +277,13 @@ export function mapTransaction(raw: RawTransaction): Transaction {
     installment_number: raw.installment_number ?? null,
     category:
       raw.category_id && raw.category_name
-        ? { id: raw.category_id, name: raw.category_name, type: raw.category_type ?? raw.type }
+        ? {
+            id: raw.category_id,
+            name: raw.category_name,
+            type: raw.category_type ?? raw.type,
+            icon: raw.category_icon ?? 'bi-tag',
+            color: raw.category_color ?? (raw.category_type === 'income' ? '#28A745' : '#DC3545'),
+          }
         : undefined,
   };
 }

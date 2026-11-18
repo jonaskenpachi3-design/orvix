@@ -6,12 +6,16 @@ export interface Category {
   id: string;
   name: string;
   type: 'income' | 'expense';
+  icon: string;
+  color: string;
   transaction_count?: number;
 }
 
 export interface CreateCategoryDto {
   name: string;
   type: 'income' | 'expense';
+  icon?: string;
+  color?: string;
 }
 
 export interface CategoriesResponse {

@@ -1,22 +1,26 @@
 const pool = require("../config/database");
 
 
-async function createCategory(userId, name, type) {
+async function createCategory(userId, name, type, icon = 'bi-tag', color = '#6C757D') {
     const result = await pool.query(
         `
         INSERT INTO categories (
             user_id,
             name,
-            type
+            type,
+            icon,
+            color
         )
-        VALUES ($1, $2, $3)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING
             id,
             name,
             type,
+            icon,
+            color,
             created_at
         `,
-        [userId, name, type]
+        [userId, name, type, icon, color]
     );
 
     return result.rows[0];
@@ -30,6 +34,8 @@ async function getCategoriesByUser(userId) {
             c.id,
             c.name,
             c.type,
+            c.icon,
+            c.color,
             c.created_at,
             COUNT(t.id)::int AS transaction_count
         FROM categories c
@@ -47,24 +53,30 @@ async function getCategoriesByUser(userId) {
 }
 
 
-async function updateCategory(userId, categoryId, name, type) {
+async function updateCategory(userId, categoryId, name, type, icon, color) {
     const result = await pool.query(
         `
         UPDATE categories
         SET
             name = $1,
-            type = $2
-        WHERE id = $3
-          AND user_id = $4
+            type = $2,
+            icon = $3,
+            color = $4
+        WHERE id = $5
+          AND user_id = $6
         RETURNING
             id,
             name,
             type,
+            icon,
+            color,
             created_at
         `,
         [
             name,
             type,
+            icon,
+            color,
             categoryId,
             userId
         ]
