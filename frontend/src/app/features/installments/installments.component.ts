@@ -1,4 +1,4 @@
-import { Component, signal, computed, effect, inject, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, signal, computed, effect, inject, OnInit, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -130,6 +130,7 @@ interface InstallmentPreviewItem {
                     formControlName="firstDueDate"
                     placeholder="DD/MM/AAAA"
                     ngbDatepicker
+                    container="body"
                     #dp="ngbDatepicker"
                     [class.is-invalid]="firstDueDate.invalid && (firstDueDate.dirty || firstDueDate.touched)"
                   />
@@ -501,6 +502,7 @@ interface InstallmentPreviewItem {
 export class InstallmentsComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly installmentApi = inject(InstallmentApi);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly categoryApi = inject(CategoryApi);
   private readonly themeService = inject(ThemeService);
   private readonly toastService = inject(ToastService);
@@ -700,12 +702,16 @@ export class InstallmentsComponent implements OnInit, OnDestroy {
       const { startDate, endDate } = this.getForecastDateRange();
       const response = await this.installmentApi.getUpcoming(startDate, endDate).toPromise();
       this.forecastData.set(response?.installments || []);
-      this.renderForecastChart();
     } catch (err) {
       console.error('Erro ao carregar previsão:', err);
     } finally {
       this.loadingForecast.set(false);
     }
+
+    // O <canvas> só existe depois que o template sai do estado "carregando":
+    // renderiza a tela antes de desenhar o gráfico (antes ele rodava cedo demais e nunca aparecia)
+    this.cdr.detectChanges();
+    this.renderForecastChart();
   }
 
   private getForecastDateRange(): { startDate: string; endDate: string } {

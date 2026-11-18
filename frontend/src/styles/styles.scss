@@ -793,6 +793,10 @@ body {
   }
 }
 
+.btn-ghost.dropdown-toggle::after {
+  display: none; // ngbDropdownToggle adiciona uma seta; o botão de 3 pontos não precisa
+}
+
 .btn-ghost {
   background-color: transparent;
   border-color: transparent;

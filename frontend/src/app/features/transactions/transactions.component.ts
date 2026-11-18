@@ -1,7 +1,7 @@
 import { Component, signal, computed, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModalModule, NgbModal, NgbAlertModule, NgbTooltipModule, NgbDatepickerModule, NgbInputDatepicker, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule, NgbModal, NgbAlertModule, NgbTooltipModule, NgbDatepickerModule, NgbInputDatepicker, NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { TransactionApi, Transaction, CreateTransactionDto, TransactionsResponse } from '@core/api/transaction.api';
 import { CategoryApi, Category } from '@core/api/category.api';
 import { ToastService } from '@shared/services/toast.service';
@@ -18,6 +18,7 @@ import { BankSyncCardComponent } from './bank-sync-card.component';
     NgbTooltipModule,
     NgbDatepickerModule,
     NgbInputDatepicker,
+    NgbDropdownModule,
     NgbPaginationModule,
     BankSyncCardComponent,
   ],
@@ -132,6 +133,7 @@ import { BankSyncCardComponent } from './bank-sync-card.component';
                   formControlName="startDate"
                   placeholder="DD/MM/AAAA"
                   ngbDatepicker
+                  container="body"
                   #dpStart="ngbDatepicker"
                 />
                 <button class="btn btn-outline" type="button" (click)="dpStart.toggle()" aria-label="Abrir calendário">
@@ -149,6 +151,7 @@ import { BankSyncCardComponent } from './bank-sync-card.component';
                   formControlName="endDate"
                   placeholder="DD/MM/AAAA"
                   ngbDatepicker
+                  container="body"
                   #dpEnd="ngbDatepicker"
                 />
                 <button class="btn btn-outline" type="button" (click)="dpEnd.toggle()" aria-label="Abrir calendário">
@@ -239,21 +242,20 @@ import { BankSyncCardComponent } from './bank-sync-card.component';
                         }
                       </td>
                       <td>
-                        <div class="dropdown">
+                        <div ngbDropdown container="body" placement="bottom-end" class="d-inline-block">
                           <button
                             type="button"
                             class="btn btn-ghost btn-sm"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
+                            ngbDropdownToggle
                             [attr.aria-label]="'Opções para ' + tx.description"
                           >
                             <i class="bi bi-three-dots" aria-hidden="true"></i>
                           </button>
-                          <ul class="dropdown-menu dropdown-menu-end">
+                          <ul ngbDropdownMenu>
                             <li>
                               <button
                                 type="button"
-                                class="dropdown-item"
+                                ngbDropdownItem class="dropdown-item"
                                 (click)="openEditModal(tx)"
                               >
                                 <i class="bi bi-pencil me-2" aria-hidden="true"></i> Editar
@@ -406,6 +408,7 @@ import { BankSyncCardComponent } from './bank-sync-card.component';
                   formControlName="transactionDate"
                   placeholder="DD/MM/AAAA"
                   ngbDatepicker
+                  container="body"
                   #dpTx="ngbDatepicker"
                 />
                 <button class="btn btn-outline" type="button" (click)="dpTx.toggle()" aria-label="Abrir calendário">
