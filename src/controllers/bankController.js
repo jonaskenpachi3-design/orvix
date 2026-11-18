@@ -1,4 +1,5 @@
 const pluggyService = require("../services/pluggyService");
+const categorizationService = require("../services/categorizationService");
 
 function handleError(res, error, context) {
     if (error instanceof pluggyService.PluggyError) {
@@ -47,9 +48,28 @@ async function sync(req, res) {
         }
 
         const summary = await pluggyService.syncUser(req.user.id);
-        return res.status(200).json(summary);
+
+        // Categoriza o que acabou de entrar; se a IA falhar, a sincronização continua valendo
+        let categorization = null;
+        try {
+            categorization = await categorizationService.categorizeUser(req.user.id);
+        } catch (error) {
+            console.error("Erro ao categorizar após sincronizar:", error?.message);
+        }
+
+        return res.status(200).json({ ...summary, categorization });
     } catch (error) {
         return handleError(res, error, "sincronizar banco");
+    }
+}
+
+// POST /api/bank/categorize  (categoriza o que ainda está em categoria genérica)
+async function categorize(req, res) {
+    try {
+        const result = await categorizationService.categorizeUser(req.user.id);
+        return res.status(200).json(result);
+    } catch (error) {
+        return handleError(res, error, "categorizar transações");
     }
 }
 
@@ -69,4 +89,4 @@ async function removeConnection(req, res) {
     }
 }
 
-module.exports = { getStatus, addConnection, sync, removeConnection };
+module.exports = { getStatus, addConnection, sync, categorize, removeConnection };

@@ -14,12 +14,22 @@ export interface BankStatus {
   connections: BankConnection[];
 }
 
+export interface CategorizationResult {
+  considered: number;
+  byRules: number;
+  byAI: number;
+  createdCategories: string[];
+  pending: number;
+  aiStatus: 'not_needed' | 'ok' | 'not_configured' | 'rate_limited' | 'error';
+}
+
 export interface BankSyncResult {
   imported: number;
   updated: number;
   skipped: number;
   cards: number;
   bankAccounts: number;
+  categorization: CategorizationResult | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -34,6 +44,10 @@ export class BankApi extends ApiService {
 
   sync(): Observable<BankSyncResult> {
     return this.post<BankSyncResult>('/bank/sync', {});
+  }
+
+  categorize(): Observable<CategorizationResult> {
+    return this.post<CategorizationResult>('/bank/categorize', {});
   }
 
   disconnect(id: string): Observable<void> {
