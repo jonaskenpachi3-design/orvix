@@ -1,12 +1,10 @@
 # ◈ ORVIX
 
-🚀 Demonstração
+🚀 **Demonstração online**: <https://orvix-oxuw.onrender.com/>
 
-Aplicação online: https://orvix-oxuw.onrender.com/
+## Plataforma de Inteligência Financeira
 
-### Financial Intelligence Platform
-
-Plataforma web de controle e inteligência financeira pessoal. Reúne receitas, despesas, categorias, metas e orçamentos em uma interface escura e responsiva, com dashboard, relatórios e insights gerados a partir das movimentações do usuário.
+Plataforma web de controle e inteligência financeira pessoal. Reúne receitas, despesas, categorias, metas, orçamentos, parcelamentos e sincronização bancária (Open Finance) em uma interface escura e responsiva, com dashboard, relatórios, insights e chat com agente de IA.
 
 > **Controle. Inteligência. Planejamento.**
 
@@ -27,6 +25,7 @@ Plataforma web de controle e inteligência financeira pessoal. Reúne receitas, 
 - [Páginas do frontend](#páginas-do-frontend)
 - [Segurança](#segurança)
 - [Deploy](#deploy)
+- [Progressive Web App (PWA)](#progressive-web-app-pwa)
 - [Limitações conhecidas](#limitações-conhecidas)
 - [Autor e licença](#autor-e-licença)
 
@@ -34,27 +33,37 @@ Plataforma web de controle e inteligência financeira pessoal. Reúne receitas, 
 
 ## Funcionalidades
 
-- **Autenticação:** cadastro e login com senha criptografada e sessão via JWT.
-- **Transações:** cadastro, listagem, edição e exclusão de receitas e despesas.
-- **Categorias:** categorias próprias do usuário, separadas por tipo (receita ou despesa).
+- **Autenticação:** cadastro e login com senha criptografada (bcrypt, custo 12) e sessão via JWT (validade 7 dias).
+- **Transações:** cadastro, listagem, edição e exclusão de receitas e despesas. Suporte a parcelamentos (status `scheduled`/`paid`).
+- **Categorias:** categorias próprias do usuário, separadas por tipo (`income` ou `expense`).
 - **Metas:** metas com valor alvo, valor atual e prazo opcional.
-- **Orçamentos:** limite mensal por categoria de despesa, com acompanhamento do quanto já foi gasto.
-- **Dashboard:** resumo do período, taxa de economia, saúde financeira, categoria principal, comparação mensal e gráficos.
+- **Orçamentos:** limite mensal por categoria de despesa, com acompanhamento de uso e status (`within`, `attention`, `near_limit`, `exceeded`).
+- **Parcelamentos:** criação de planos de parcelamento com geração automática de parcelas agendadas, marcação de parcela paga, exclusão do plano (mantém parcelas já pagas).
+- **Sincronização bancária (Open Finance):** importação de compras de cartão de crédito e movimentações de conta corrente/poupança via [Pluggy](https://docs.pluggy.ai) (agregador autorizado do Open Finance Brasil). Upsert idempotente por `external_id`; janela de 120 dias; ignora pagamentos de fatura para não duplicar.
+- **Categorização automática:** após cada sincronização (e via botão **Categorizar com IA**), transações importadas em categorias genéricas ("Cartão de crédito", "Conta bancária", "Recebimentos") são classificadas. Primeiro por regras locais (Uber, iFood, Netflix, etc.); o restante via IA configurada (`GROQ_API_KEY` gratuita ou `ANTHROPIC_API_KEY`). À IA vai apenas o texto da descrição (sem valores, datas ou dados pessoais; números longos removidos). Pix/TED/transferências nunca são enviados. Recategorização manual é preservada. Limite de 10 categorias novas por execução.
+- **Dashboard:** resumo do período, taxa de economia, saúde financeira, categoria principal, comparação mensal, evolução mensal, despesas por categoria e parcelas futuras.
 - **Relatórios:** relatório financeiro por intervalo de datas, com evolução mensal e despesas por categoria.
-- **Insights:** análises automáticas sobre a taxa de economia e a concentração de gastos.
-- **IA contábil:** chat com consultas às transações, categorias e parcelas do usuário autenticado.
-- **Interface:** tema escuro, layout responsivo e gráficos com Chart.js.
+- **Insights:** análises automáticas sobre taxa de economia (negativa, baixa, positiva, excelente) e concentração de gastos (alerta se uma categoria ≥ 50%).
+- **IA contábil:** chat com agente que consulta transações, categorias, parcelas, planos de parcelamento e resumos do usuário autenticado. Ferramentas: `listar_transacoes`, `resumo_por_categoria`, `projetar_parcelas`, `listar_planos_parcelamento`, `resumo_financeiro_periodo`. Rate limit por usuário.
+- **Interface:** tema escuro, layout responsivo, gráficos com Chart.js, PWA instalável.
+
+---
 
 ## Tecnologias
 
 | Camada | Tecnologias |
 | --- | --- |
-| Frontend | Angular 18, Bootstrap 5, ng-bootstrap, [Chart.js](https://www.chartjs.org/) |
-| Backend | Node.js (>= 20), Express 5, API REST |
+| Frontend | Angular 18, Bootstrap 5, ng-bootstrap, Chart.js |
+| Backend | Node.js (≥ 20.19), Express 5, API REST |
 | Autenticação | JSON Web Token (`jsonwebtoken`), `bcryptjs` |
-| Banco de dados | PostgreSQL, `pg` (node-postgres) |
-| Segurança | Helmet, CORS, variáveis de ambiente com `dotenv` |
-| Hospedagem | Render |
+| Banco de dados | PostgreSQL, `pg` (node-postgres), pool de conexões |
+| IA (chat e categorização) | Groq (gratuito, padrão `openai/gpt-oss-120b`), Anthropic (`claude-sonnet-5-5`), compatível OpenAI |
+| Sincronização bancária | Pluggy (Open Finance Brasil) |
+| Segurança | Helmet, CORS, variáveis de ambiente com `dotenv`, rate limiting |
+| Hospedagem | Render (Web Service + PostgreSQL) |
+| PWA | Service Worker (Angular) |
+
+---
 
 ## Arquitetura
 
@@ -64,22 +73,24 @@ O backend segue uma organização em camadas, em que cada uma tem uma responsabi
 Requisição HTTP
       │
       ▼
-  server.js ──► Middleware (Helmet, CORS, parsers, arquivos estáticos)
+server.js ──► Middleware (Helmet, CORS, parsers, arquivos estáticos)
       │
       ▼
-   Routes ────► Middleware de autenticação (JWT)
+Routes ────► Middleware de autenticação (JWT)
       │
       ▼
- Controllers ─► validação da entrada e resposta HTTP
+Controllers ─► validação da entrada e resposta HTTP
       │
       ▼
-  Services ───► regras de negócio e consultas SQL
+Services ───► regras de negócio e consultas SQL
       │
       ▼
-  PostgreSQL (pool de conexões em src/config/database.js)
+PostgreSQL (pool de conexões em src/config/database.js)
 ```
 
 Em produção, o Express serve o build Angular de `frontend/dist/orvix-frontend`. Durante o desenvolvimento, use `npm start --prefix frontend` para servir o Angular e encaminhar `/api` ao backend.
+
+---
 
 ## Estrutura do projeto
 
@@ -87,9 +98,16 @@ Em produção, o Express serve o build Angular de `frontend/dist/orvix-frontend`
 orvix/
 ├── db/
 │   ├── migrations/             # Migrações aplicadas pelo runner
+│   │   ├── 001_installments.sql
+│   │   ├── 002_bank_sync.sql
+│   │   └── 003_goal_contributions.sql
 │   └── schema.sql              # Estrutura base do PostgreSQL
 ├── frontend/                   # Aplicação Angular
-│   ├── src/app/                # Páginas, serviços e componentes
+│   ├── src/app/
+│   │   ├── core/               # Auth, serviços de API, guards, interceptors
+│   │   ├── features/           # Páginas (dashboard, transactions, budgets, goals, installments, insights, reports, categories, bank-sync)
+│   │   ├── shared/             # Componentes/serviços compartilhados
+│   │   └── app.routes.ts       # Rotas do Angular
 │   ├── src/assets/             # Logo e demais arquivos estáticos
 │   └── package.json
 ├── public/                     # Páginas legadas servidas em desenvolvimento
@@ -97,10 +115,47 @@ orvix/
 │   ├── config/
 │   │   └── database.js         # Pool de conexões PostgreSQL
 │   ├── controllers/            # Entrada e saída HTTP
+│   │   ├── authController.js
+│   │   ├── transactionController.js
+│   │   ├── categoryController.js
+│   │   ├── goalController.js
+│   │   ├── budgetController.js
+│   │   ├── dashboardController.js
+│   │   ├── reportController.js
+│   │   ├── insightController.js
+│   │   ├── installmentController.js
+│   │   ├── aiController.js
+│   │   └── bankController.js
 │   ├── middleware/
-│   │   └── authMiddleware.js   # Validação do token JWT
+│   │   ├── authMiddleware.js   # Validação do token JWT
+│   │   └── aiRateLimit.js      # Rate limit do chat IA
 │   ├── routes/                 # Definição dos endpoints
+│   │   ├── authRoutes.js
+│   │   ├── transactionRoutes.js
+│   │   ├── categoryRoutes.js
+│   │   ├── goalRoutes.js
+│   │   ├── budgetRoutes.js
+│   │   ├── dashboardRoutes.js
+│   │   ├── reportRoutes.js
+│   │   ├── insightRoutes.js
+│   │   ├── installmentRoutes.js
+│   │   ├── aiRoutes.js
+│   │   └── bankRoutes.js
 │   └── services/               # Regras de negócio e SQL
+│       ├── authService.js
+│       ├── transactionService.js
+│       ├── categoryService.js
+│       ├── goalService.js
+│       ├── budgetService.js
+│       ├── dashboardService.js
+│       ├── reportService.js
+│       ├── insightService.js
+│       ├── installmentService.js
+│       ├── aiAccountingService.js  # Chat com IA + tools
+│       ├── aiProviders.js          # Abstração Groq/Anthropic/OpenAI-compatible
+│       ├── categorizationService.js # Categorização automática (regras + IA)
+│       ├── categoryRules.js        # Regras locais determinísticas
+│       └── pluggyService.js        # Cliente Pluggy + sync + upsert
 ├── scripts/
 │   ├── run-migrations.js       # Schema base + migrações
 │   └── test-db.js              # Teste de conexão com o banco
@@ -108,6 +163,8 @@ orvix/
 ├── package.json
 └── server.js                   # Ponto de entrada
 ```
+
+---
 
 ## Começando
 
@@ -172,23 +229,28 @@ curl http://localhost:3000/api/health
 { "status": "ok", "application": "Orvix", "environment": "development", "database": "connected", "aiConfigured": false }
 ```
 
+---
+
 ## Variáveis de ambiente
 
 | Variável | Obrigatória | Descrição | Exemplo |
 | --- | --- | --- | --- |
 | `PORT` | Não | Porta do servidor. Padrão: `3000`. | `3000` |
 | `DATABASE_URL` | Sim | String de conexão do PostgreSQL. | `postgresql://usuario:senha@localhost:5432/orvix` |
-| `JWT_SECRET` | Sim | Chave usada para assinar e validar os tokens. Use um valor longo e aleatório. | `uma-chave-longa-e-aleatoria` |
+| `JWT_SECRET` | Sim | Chave usada para assinar e validar os tokens. Use um valor longo e aleatório (≥ 32 chars em produção). | `uma-chave-longa-e-aleatoria` |
 | `NODE_ENV` | Não | `development` (padrão) ou `production`. | `development` |
 | `CORS_ORIGIN` | Não | Origem permitida quando o frontend está em outro domínio. Sem ela em produção, somente chamadas same-origin são permitidas. | `https://meu-orvix.onrender.com` |
-| `GROQ_API_KEY` | Não | Habilita o chat contábil com IA **gratuita** (Groq). Sem nenhuma chave de IA, o chat responde `503`; configure no provedor, nunca no Git. | Configure no provedor, nunca no Git. |
+| `GROQ_API_KEY` | Não | Habilita o chat contábil e categorização com IA **gratuita** (Groq). Configure no provedor, nunca no Git. | Configure no provedor, nunca no Git. |
 | `AI_MODEL` | Não | Modelo do provedor; padrão `openai/gpt-oss-120b` (Groq) ou `claude-sonnet-5-5` (Anthropic). | `openai/gpt-oss-120b` |
 | `AI_PROVIDER` | Não | `groq`, `anthropic` ou `openai-compatible`. Se omitido, é detectado pela chave presente. | `groq` |
-| `ANTHROPIC_API_KEY` | Não | Alternativa paga (Claude). | Configure no provedor, nunca no Git. |
+| `ANTHROPIC_API_KEY` | Não | Alternativa paga (Claude). Configure no provedor, nunca no Git. | Configure no provedor, nunca no Git. |
 | `AI_API_KEY`, `AI_BASE_URL` | Não | Para `openai-compatible` (OpenRouter, Cerebras etc.). | — |
-| `PLUGGY_CLIENT_ID`, `PLUGGY_CLIENT_SECRET` | Não | Habilitam a sincronização do cartão de crédito via Open Finance (Pluggy). São segredos: configure só no provedor, nunca no Git. | Configure no provedor, nunca no Git. |
+| `PLUGGY_CLIENT_ID`, `PLUGGY_CLIENT_SECRET` | Não | Habilitam a sincronização do cartão de crédito/conta via Open Finance (Pluggy). São segredos: configure só no provedor, nunca no Git. | Configure no provedor, nunca no Git. |
+| `PLUGGY_BASE_URL` | Não | Endpoint da API Pluggy (padrão `https://api.pluggy.ai`). | `https://api.pluggy.ai` |
 
-Em `production`, o Orvix exige `DATABASE_URL` e `JWT_SECRET` (mínimo de 32 caracteres), ativa `trust proxy`, usa SSL na conexão com o banco e aumenta o pool de conexões de 5 para 10. `CORS_ORIGIN` é opcional e restringe chamadas cross-origin quando definida; `GROQ_API_KEY` (gratuita) ou `ANTHROPIC_API_KEY` é opcional e habilita o chat com IA. Gere um segredo forte, por exemplo, com `openssl rand -base64 48`; não reutilize o valor de exemplo.
+Em `production`, o Orvix exige `DATABASE_URL` e `JWT_SECRET` (mínimo de 32 caracteres), ativa `trust proxy`, usa SSL na conexão com o banco e aumenta o pool de conexões de 5 para 10. `CORS_ORIGIN` é opcional e restringe chamadas cross-origin quando definida; `GROQ_API_KEY` (gratuita) ou `ANTHROPIC_API_KEY` é opcional e habilita o chat com IA e categorização automática. Gere um segredo forte, por exemplo, com `openssl rand -base64 48`; não reutilize o valor de exemplo.
+
+---
 
 ## Banco de dados
 
@@ -198,13 +260,17 @@ O arquivo `db/schema.sql` usa a extensão `pgcrypto` (para `gen_random_uuid()`) 
 
 | Tabela | Campos principais | Observações |
 | --- | --- | --- |
-| `users` | `id`, `name`, `email` (único), `password`, `created_at`, `updated_at` | A senha é guardada como hash bcrypt. |
+| `users` | `id`, `name`, `email` (único), `password`, `created_at`, `updated_at` | A senha é guardada como hash bcrypt (custo 12). |
 | `categories` | `id`, `user_id`, `name`, `type`, `created_at` | `type` é `income` ou `expense`. Combinação `user_id` + `name` + `type` é única. |
-| `transactions` | `id`, `user_id`, `category_id`, `description`, `amount`, `type`, `transaction_date`, `created_at`, `updated_at` | `amount` > 0, `NUMERIC(12,2)`. Ao excluir a categoria, `category_id` vira `NULL`. |
+| `transactions` | `id`, `user_id`, `category_id`, `description`, `amount`, `type`, `transaction_date`, `plan_id`, `installment_number`, `status`, `source`, `external_id`, `created_at`, `updated_at` | `amount` > 0, `NUMERIC(12,2)`. `status` ∈ {`scheduled`, `paid`}. `source` ∈ {`manual`, `pluggy`}. `external_id` para upsert idempotente na sincronização. Ao excluir a categoria, `category_id` vira `NULL`. |
+| `installment_plans` | `id`, `user_id`, `description`, `total_amount`, `installments_total`, `first_due_date`, `category_id`, `card_id`, `created_at`, `updated_at` | Plano de parcelamento; gera transações com `status = 'scheduled'`. |
 | `goals` | `id`, `user_id`, `name`, `target_amount`, `current_amount`, `deadline`, `created_at`, `updated_at` | `target_amount` > 0 e `0 <= current_amount <= target_amount`. |
-| `budgets` | `id`, `user_id`, `category_id`, `amount`, `month`, `created_at`, `updated_at` | `amount` > 0. Um orçamento por categoria em cada mês (`user_id` + `category_id` + `month` é único). `month` guarda o primeiro dia do mês. |
+| `budgets` | `id`, `user_id`, `category_id`, `amount`, `month`, `created_at`, `updated_at` | `amount` > 0. Um orçamento por categoria em cada mês (`user_id` + `category_id` + `month` único). `month` guarda o primeiro dia do mês. |
+| `bank_connections` | `id`, `user_id`, `provider`, `item_id`, `last_synced_at`, `created_at` | Conexão Pluggy (Open Finance). Única por `user_id` + `provider` + `item_id`. |
 
 Os dados de cada usuário são removidos em cascata quando a conta é excluída.
+
+---
 
 ## Autenticação
 
@@ -225,6 +291,8 @@ Respostas de falha de autenticação (`401`):
 | Cabeçalho ausente | `Token de acesso não informado.` |
 | Formato diferente de `Bearer <token>` | `Formato de token inválido.` |
 | Token inválido ou expirado | `Token inválido ou expirado.` |
+
+---
 
 ## Referência da API
 
@@ -266,8 +334,19 @@ Convenções:
 | GET | `/dashboard?period=` | Sim | Dados consolidados do dashboard. |
 | GET | `/reports/financial?start_date=&end_date=` | Sim | Relatório financeiro do período. |
 | GET | `/insights/financial?start_date=&end_date=` | Sim | Insights do período. |
-| POST | `/ai/chat` | Sim | Chat financeiro com consultas limitadas aos dados do usuário autenticado. |
+| POST | `/ai/chat` | Sim | Chat financeiro com IA (tools limitadas aos dados do usuário). |
 | GET | `/ai/tools` | Sim | Metadados das ferramentas disponíveis para a IA. |
+| POST | `/installments/plans` | Sim | Cria um plano de parcelamento. |
+| GET | `/installments/plans` | Sim | Lista todos os planos do usuário. |
+| GET | `/installments/plans/:id` | Sim | Busca um plano com suas parcelas. |
+| POST | `/installments/plans/:id/pay` | Sim | Marca uma parcela como paga (body: `{ "transactionId": "uuid" }`). |
+| DELETE | `/installments/plans/:id` | Sim | Exclui o plano (mantém parcelas pagas, remove agendadas). |
+| GET | `/installments/upcoming?start_date=&end_date=` | Sim | Parcelas futuras agrupadas por mês. |
+| GET | `/bank/status` | Sim | Indica se a integração está configurada e lista as conexões. |
+| POST | `/bank/connections` | Sim | Salva a conexão (`{ "itemId": "<uuid>" }`) após validar que há cartão/conta. Rate limit: 3/min. |
+| DELETE | `/bank/connections/:id` | Sim | Remove a conexão; as transações importadas são mantidas. |
+| POST | `/bank/sync` | Sim | Importa/atualiza as transações (janela 120 dias; upsert por external_id). Rate limit: 3/min. |
+| POST | `/bank/categorize` | Sim | Categoriza transações importadas ainda em categoria genérica (regras locais + IA; até 10 categorias novas). Rate limit: 5/min. |
 
 ---
 
@@ -337,7 +416,7 @@ Valida o token. `200`: `{ "message": "Token válido.", "user": { "id": "...", "e
 
 #### `GET /api/transactions`
 
-`200`: `{ "transactions": [ ... ] }`, ordenadas da data mais recente para a mais antiga. Cada item traz `id`, `category_id`, `description`, `amount`, `type`, `transaction_date` e `created_at`.
+`200`: `{ "transactions": [ ... ] }`, ordenadas da data mais recente para a mais antiga. Cada item traz `id`, `category_id`, `description`, `amount`, `type`, `transaction_date`, `plan_id`, `installment_number`, `status`, `source`, `external_id` e `created_at`.
 
 #### `PUT /api/transactions/:id`
 
@@ -460,6 +539,7 @@ A resposta contém:
 | `monthlyComparison` | Valores `current` e `previous` de receitas e despesas, mais `incomeVariation` e `expenseVariation` (variação percentual). |
 | `expensesByCategory` | Despesas agrupadas por categoria. |
 | `monthlyEvolution` | Lista de `{ month, income, expense }` por mês (`YYYY-MM`). |
+| `upcomingInstallments` | Parcelas futuras (scheduled) agrupadas por mês. |
 
 ### Relatórios
 
@@ -505,25 +585,95 @@ Mesmas regras de validação dos relatórios.
 
 `top_categories` traz até as 5 categorias com mais despesas no período.
 
-## Sincronização do cartão de crédito (Open Finance)
+### Parcelamentos (Installments)
 
-O Orvix importa as compras do cartão pela [Pluggy](https://docs.pluggy.ai), agregador autorizado do Open Finance Brasil. A importação grava em `transactions` com `source = 'pluggy'` e um `external_id` único, então sincronizar de novo não duplica.
+#### `POST /api/installments/plans`
+
+```json
+{
+  "description": "Notebook",
+  "totalAmount": 5000,
+  "installmentsTotal": 10,
+  "firstDueDate": "2026-11-15",
+  "categoryId": "uuid-da-categoria",
+  "cardId": "uuid-do-cartao"
+}
+```
+
+- `description`, `totalAmount`, `installmentsTotal`, `firstDueDate` obrigatórios; `categoryId` e `cardId` opcionais.
+- `totalAmount` > 0; `installmentsTotal` > 0.
+- Gera transações com `status = 'scheduled'`, `installment_number` de 1 a N, datas calculadas mês a mês (ajusta para último dia do mês se o dia não existir). A última parcela absorve a diferença de centavos.
+- `201`: `{ "plan": { ... }, "transactions": [ ... ] }`
+
+#### `GET /api/installments/plans`
+
+Lista todos os planos do usuário com contagem de parcelas pagas e pendentes.
+
+#### `GET /api/installments/plans/:id`
+
+Busca um plano específico com suas parcelas ordenadas por `installment_number`.
+
+#### `POST /api/installments/plans/:id/pay`
+
+```json
+{ "transactionId": "uuid-da-parcela" }
+```
+
+Marca uma parcela `scheduled` como `paid`. `200` com a transação atualizada; `404` se não encontrada ou já paga.
+
+#### `DELETE /api/installments/plans/:id`
+
+Exclui o plano. Parcelas `paid` ficam (sem `plan_id`); parcelas `scheduled` são removidas. `200` com o id do plano excluído; `404` se não encontrado.
+
+#### `GET /api/installments/upcoming?start_date=2026-11-01&end_date=2027-10-31`
+
+Parcelas futuras (`status = 'scheduled'`) agrupadas por mês (`YYYY-MM`) com soma dos valores.
+
+### IA Contábil (AI Accounting Agent)
+
+#### `POST /api/ai/chat`
+
+```json
+{ "message": "Quanto gastei com alimentação este mês?" }
+```
+
+- `message` obrigatório, máx. 1000 caracteres.
+- Rate limit por usuário (configurado em `aiRateLimit.js`).
+- Responde `503` se nenhum provedor de IA configurado; `429` se limite atingido; `422` se a IA precisou de muitos ciclos de ferramenta.
+- A IA tem acesso às ferramentas: `listar_transacoes`, `resumo_por_categoria`, `projetar_parcelas`, `listar_planos_parcelamento`, `resumo_financeiro_periodo`. Todas as consultas são filtradas pelo `user_id` do token.
+
+#### `GET /api/ai/tools`
+
+Retorna metadados das ferramentas disponíveis (para debug).
+
+### Sincronização bancária (Open Finance via Pluggy)
+
+O Orvix importa as compras do cartão e movimentações de conta corrente/poupança pela [Pluggy](https://docs.pluggy.ai), agregador autorizado do Open Finance Brasil. A importação grava em `transactions` com `source = 'pluggy'` e um `external_id` único, então sincronizar de novo não duplica.
 
 1. Conecte o banco no [MeuPluggy](https://meu.pluggy.ai) e crie uma aplicação em [dashboard.pluggy.ai](https://dashboard.pluggy.ai).
 2. Defina `PLUGGY_CLIENT_ID` e `PLUGGY_CLIENT_SECRET` no servidor e rode `npm run migrate`.
 3. Na tela **Transações**, cole o *Item ID* da conexão e clique em **Conectar**; depois, **Sincronizar cartão**.
 
-**Categorização automática:** após cada sincronização (e no botão **Categorizar com IA**), as transações importadas que ainda estão em "Cartão de crédito", "Conta bancária" ou "Recebimentos" são classificadas em Alimentação, Mercado, Transporte etc. Primeiro por regras locais (Uber, iFood, Netflix…); o restante vai para a IA configurada (`GROQ_API_KEY`), que pode criar categorias novas (até 10 por execução). À IA vai **apenas o texto da descrição** (sem valores, datas ou dados pessoais; números longos são removidos), e Pix/TED/transferências nunca são enviados. O que você recategorizar manualmente não é alterado.
+**Regras de mapeamento:**
 
-Regras: no **cartão**, só valores positivos viram despesa (categoria "Cartão de crédito"); na **conta bancária**, entradas viram receita (categoria "Recebimentos") e saídas viram despesa ("Conta bancária"). Pagamentos de fatura (que saem da conta) são ignorados para não contar em dobro com as compras do cartão. Datas futuras entram como `scheduled`, a janela é de 120 dias a cada sincronização, e a recategorização manual é preservada.
+- **Cartão de crédito:** só valores positivos viram despesa (categoria "Cartão de crédito"); parcelas aparecem com sufixo `(n/N)` e `status = 'scheduled'` se data futura, `'paid'` se passada.
+- **Conta bancária (BANK):** `CREDIT` = entrada vira receita (categoria "Recebimentos"); `DEBIT` = saída vira despesa (categoria "Conta bancária").
+- **Pagamentos de fatura** (que saem da conta) são ignorados para não contar em dobro com as compras do cartão.
+- Janela de sincronização: 120 dias a cada execução.
+- Datas futuras entram como `scheduled`.
+- Recategorização manual é preservada (não sobrescreve `category_id` se já foi alterado pelo usuário).
+
+**Categorização automática:** após cada sincronização (e no botão **Categorizar com IA**), as transações importadas que ainda estão em "Cartão de crédito", "Conta bancária" ou "Recebimentos" são classificadas em Alimentação, Mercado, Transporte etc. Primeiro por regras locais (Uber, iFood, Netflix…); o restante vai para a IA configurada (`GROQ_API_KEY`), que pode criar categorias novas (até 10 por execução). À IA vai **apenas o texto da descrição** (sem valores, datas ou dados pessoais; números longos são removidos), e Pix/TED/transferências nunca são enviados. O que você recategorizar manualmente não é alterado.
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | `GET` | `/api/bank/status` | Indica se a integração está configurada e lista as conexões. |
-| `POST` | `/api/bank/connections` | Salva a conexão (`{ "itemId": "<uuid>" }`) após validar que há cartão. |
+| `POST` | `/api/bank/connections` | Salva a conexão (`{ "itemId": "<uuid>" }`) após validar que há cartão/conta. Rate limit: 3/min. |
 | `POST` | `/api/bank/sync` | Importa/atualiza as transações (limite de 3 por minuto por usuário). |
 | `POST` | `/api/bank/categorize` | Categoriza as transações importadas ainda em categoria genérica (regras locais + IA; 5 por minuto). |
 | `DELETE` | `/api/bank/connections/:id` | Remove a conexão; as transações importadas são mantidas. |
+
+---
 
 ## Regras de negócio
 
@@ -553,21 +703,45 @@ Calculado por `gasto ÷ orçamento` em `GET /api/budgets/usage`:
 | 80% a menos de 100% | `near_limit` |
 | 100% ou mais | `exceeded` |
 
+### Parcelamentos
+
+- Parcelas são criadas com `status = 'scheduled'`.
+- A data de vencimento usa UTC para evitar problemas de fuso; se o dia não existir no mês (ex: 31 em fevereiro), usa o último dia do mês.
+- A última parcela absorve a diferença de centavos.
+- Ao pagar uma parcela (`POST /installments/plans/:id/pay`), o status muda para `'paid'`.
+- Ao excluir o plano, parcelas `paid` mantêm-se (sem `plan_id`); parcelas `scheduled` são removidas.
+
+### Categorização automática (Pluggy)
+
+1. Regras locais (determinísticas, gratuitas, instantâneas) rodam primeiro.
+2. Transações não classificadas pelas regras são agrupadas por descrição normalizada.
+3. Descrições são sanitizadas para IA: remove e-mails, números longos (CPF, CNPJ, cartão), limita a 80 chars.
+4. Pix/TED/transferências (detectados por regex) nunca vão para a IA; caem em "Transferências".
+5. IA recebe lote de até 40 descrições distintas por chamada, máx. 120 por execução.
+6. IA pode criar até 10 categorias novas por execução.
+7. Resposta da IA mapeada para categorias existentes ou criadas; fallback "Outros".
+8. Atualização em banco só afeta transações que ainda estão nas categorias genéricas ("Cartão de crédito", "Conta bancária", "Recebimentos").
+
+---
+
 ## Páginas do frontend
 
 | Página | Caminho | Função |
 | --- | --- | --- |
-| Login | `/` ou `/login.html` | Entrada na plataforma. |
-| Cadastro | `/register.html` | Criação de conta. |
-| Dashboard | `/dashboard.html` | Visão geral com indicadores e gráficos. |
-| Transações | `/transactions.html` | Gerenciamento de receitas e despesas. |
-| Categorias | `/categories.html` | Gerenciamento de categorias. |
-| Metas | `/goals.html` | Acompanhamento de metas. |
-| Orçamentos | `/budgets.html` | Limites mensais por categoria. |
-| Relatórios | `/reports.html` | Relatório por período. |
-| Insights | `/insights.html` | Análises automáticas. |
+| Login | `/` ou `/login` | Entrada na plataforma. |
+| Cadastro | `/register` | Criação de conta. |
+| Dashboard | `/dashboard` | Visão geral com indicadores, gráficos e parcelas futuras. |
+| Transações | `/transactions` | Gerenciamento de receitas, despesas e sincronização bancária. |
+| Categorias | `/categories` | Gerenciamento de categorias. |
+| Metas | `/goals` | Acompanhamento de metas. |
+| Orçamentos | `/budgets` | Limites mensais por categoria. |
+| Parcelamentos | `/installments` | Planos de parcelamento e parcelas. |
+| Relatórios | `/reports` | Relatório por período. |
+| Insights | `/insights` | Análises automáticas. |
 
-O estilo é compartilhado por um design system (`public/css/orvix-design-system.css`) e um layout comum (`app-shell.css`), com um arquivo de CSS e um de JavaScript por página.
+O estilo é compartilhado por um design system (`public/css/orvix-design-system.css`) e um layout comum (`app-shell.css`), com um arquivo de CSS e um de JavaScript por página. O Angular usa standalone components, services injetados e interceptors para auth.
+
+---
 
 ## Segurança
 
@@ -577,8 +751,12 @@ O estilo é compartilhado por um design system (`public/css/orvix-design-system.
 - **SQL:** consultas parametrizadas (`$1`, `$2`, ...), sem concatenação de valores.
 - **Headers HTTP:** Helmet ativo. A Content Security Policy fica desativada porque o dashboard carrega o Chart.js por CDN.
 - **CORS:** aberto em desenvolvimento; em produção, só permite a origem de `CORS_ORIGIN`; sem ela, não envia permissões cross-origin (o frontend servido pelo mesmo serviço continua funcionando).
+- **Rate limiting:** `express-rate-limit` em `/api/bank/sync` (3/min), `/api/bank/connections` (3/min), `/api/bank/categorize` (5/min), `/api/ai/chat` (configurado em `aiRateLimit.js`).
 - **Erros:** em produção, detalhes internos não são enviados ao cliente.
 - **Segredos:** o `.env` está no `.gitignore`. Nunca versione credenciais.
+- **Privacidade na IA:** à IA vão apenas descrições sanitizadas (sem valores, datas, dados pessoais, números longos); Pix/TED/transferências nunca são enviados.
+
+---
 
 ## Deploy
 
@@ -588,20 +766,28 @@ O projeto pode ser publicado como um único serviço Node no [Render](https://re
 2. Crie um *Web Service* apontando para a raiz do repositório.
 3. Configure o comando de build: `npm ci && npm ci --include=dev --prefix frontend && npm run build`. O `--include=dev` é necessário porque o Angular CLI (`ng`) está nas dependências de desenvolvimento e o Render pode omiti-las em produção.
 4. Configure o comando de start: `npm start`.
-5. Configure `NODE_ENV=production` e `JWT_SECRET` (pelo menos 32 caracteres aleatórios). Opcionalmente, defina `CORS_ORIGIN` se o frontend estiver em outra origem e `GROQ_API_KEY` (gratuita, em console.groq.com/keys) para habilitar o chat com IA.
+5. Configure `NODE_ENV=production` e `JWT_SECRET` (pelo menos 32 caracteres aleatórios). Opcionalmente, defina `CORS_ORIGIN` se o frontend estiver em outra origem e `GROQ_API_KEY` (gratuita, em console.groq.com/keys) para habilitar o chat com IA e categorização automática. `PLUGGY_CLIENT_ID` e `PLUGGY_CLIENT_SECRET` para sincronização bancária.
 6. Configure `npm run migrate` como comando de pre-deploy após criar o banco. Ele aplica o schema base e as migrações pendentes; faça backup antes de migrações em um banco com dados.
 
 A aplicação encerra a inicialização com erro claro se faltar `DATABASE_URL`, `JWT_SECRET` ou o build Angular. O health check `/api/health` testa a conexão com PostgreSQL; `aiConfigured` confirma apenas a presença da chave, não a validade da credencial ou disponibilidade do modelo.
 
+---
+
 ## Progressive Web App (PWA)
 
 O Orvix pode ser instalado pelo navegador em dispositivos compatíveis. Após acessar a aplicação por HTTPS (ou `localhost` durante o desenvolvimento), use **Instalar Orvix** quando o navegador oferecer essa opção. O service worker mantém as páginas e arquivos da interface disponíveis para abrir sem conexão; os dados financeiros e as chamadas da API não são armazenados em cache e continuam exigindo internet.
+
+---
 
 ## Limitações conhecidas
 
 - O comentário final do `schema.sql` diz que categorias padrão são criadas no cadastro, mas o código atual não faz isso. Cada usuário precisa criar suas categorias antes de lançar transações categorizadas ou orçamentos.
 - O projeto não possui suíte automatizada de testes do backend; `npm run test:db` apenas confere a conexão com o banco.
 - O token JWT fica no `localStorage` do navegador.
+- A categorização por IA depende de chave externa (Groq/Anthropic); sem chave, só as regras locais funcionam.
+- Sincronização Pluggy limitada a 3 requisições/minuto por usuário (rate limit da API e do nosso endpoint).
+
+---
 
 ## Autor e licença
 
