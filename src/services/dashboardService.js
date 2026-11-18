@@ -100,11 +100,16 @@ async function getDashboard(userId, period = "month") {
     const end = formatDate(endDate);
 
 
-    /* ============================================
-       RESUMO FINANCEIRO
-    ============================================ */
-
-    const summaryResult = await pool.query(
+    // As consultas são independentes: rodam em paralelo (antes eram 6 idas e vindas ao banco em sequência)
+    const [
+        summaryResult,
+        topCategoryResult,
+        currentMonthResult,
+        previousMonthResult,
+        categoryResult,
+        evolutionResult
+    ] = await Promise.all([
+        pool.query(
         `
         SELECT
             COALESCE(
@@ -145,7 +150,220 @@ async function getDashboard(userId, period = "month") {
             start,
             end
         ]
-    );
+    ),
+        pool.query(
+            `
+            SELECT
+                c.name AS category_name,
+                COALESCE(
+                    SUM(t.amount),
+                    0
+                ) AS total
+
+            FROM transactions t
+
+            LEFT JOIN categories c
+                ON c.id = t.category_id
+
+            WHERE t.user_id = $1
+
+            AND t.type = 'expense'
+
+            AND t.transaction_date
+                BETWEEN $2 AND $3
+
+            AND (t.status = 'paid' OR t.status IS NULL)
+
+            GROUP BY c.name
+
+            ORDER BY total DESC
+
+            LIMIT 1
+            `,
+            [
+                userId,
+                start,
+                end
+            ]
+        ),
+        pool.query(
+            `
+            SELECT
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN type = 'income'
+                            THEN amount
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) AS income,
+
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN type = 'expense'
+                            THEN amount
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) AS expense
+
+            FROM transactions
+
+            WHERE user_id = $1
+
+            AND DATE_TRUNC(
+                'month',
+                transaction_date
+            ) =
+                DATE_TRUNC(
+                    'month',
+                    CURRENT_DATE
+                )
+
+            AND (status = 'paid' OR status IS NULL)
+            `,
+            [userId]
+        ),
+        pool.query(
+            `
+            SELECT
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN type = 'income'
+                            THEN amount
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) AS income,
+
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN type = 'expense'
+                            THEN amount
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) AS expense
+
+            FROM transactions
+
+            WHERE user_id = $1
+
+            AND DATE_TRUNC(
+                'month',
+                transaction_date
+            ) =
+                DATE_TRUNC(
+                    'month',
+                    CURRENT_DATE - INTERVAL '1 month'
+                )
+
+            AND (status = 'paid' OR status IS NULL)
+            `,
+            [userId]
+        ),
+        pool.query(
+            `
+            SELECT
+                c.name AS category,
+                COALESCE(
+                    SUM(t.amount),
+                    0
+                ) AS total
+
+            FROM transactions t
+
+            LEFT JOIN categories c
+                ON c.id = t.category_id
+
+            WHERE t.user_id = $1
+
+            AND t.type = 'expense'
+
+            AND t.transaction_date
+                BETWEEN $2 AND $3
+
+            AND (t.status = 'paid' OR t.status IS NULL)
+
+            GROUP BY c.name
+
+            ORDER BY total DESC
+            `,
+            [
+                userId,
+                start,
+                end
+            ]
+        ),
+        pool.query(
+            `
+            SELECT
+
+                TO_CHAR(
+                    transaction_date,
+                    'YYYY-MM'
+                ) AS month,
+
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN type = 'income'
+                            THEN amount
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) AS income,
+
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN type = 'expense'
+                            THEN amount
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) AS expense
+
+            FROM transactions
+
+            WHERE user_id = $1
+
+            AND transaction_date
+                BETWEEN $2 AND $3
+
+            AND (status = 'paid' OR status IS NULL)
+
+            GROUP BY
+                TO_CHAR(
+                    transaction_date,
+                    'YYYY-MM'
+                )
+
+            ORDER BY month
+            `,
+            [
+                userId,
+                start,
+                end
+            ]
+        )
+    ]);
+
+    /* ============================================
+       RESUMO FINANCEIRO
+    ============================================ */
+
+
 
 
     const totalIncome =
@@ -229,42 +447,7 @@ async function getDashboard(userId, period = "month") {
        PRINCIPAL CATEGORIA DE GASTO
     ============================================ */
 
-    const topCategoryResult =
-        await pool.query(
-            `
-            SELECT
-                c.name AS category_name,
-                COALESCE(
-                    SUM(t.amount),
-                    0
-                ) AS total
 
-            FROM transactions t
-
-            LEFT JOIN categories c
-                ON c.id = t.category_id
-
-            WHERE t.user_id = $1
-
-            AND t.type = 'expense'
-
-            AND t.transaction_date
-                BETWEEN $2 AND $3
-
-            AND (t.status = 'paid' OR t.status IS NULL)
-
-            GROUP BY c.name
-
-            ORDER BY total DESC
-
-            LIMIT 1
-            `,
-            [
-                userId,
-                start,
-                end
-            ]
-        );
 
 
     let topCategory = null;
@@ -401,94 +584,10 @@ async function getDashboard(userId, period = "month") {
        COMPARAÇÃO MENSAL
     ============================================ */
 
-    const currentMonthResult =
-        await pool.query(
-            `
-            SELECT
-                COALESCE(
-                    SUM(
-                        CASE
-                            WHEN type = 'income'
-                            THEN amount
-                            ELSE 0
-                        END
-                    ),
-                    0
-                ) AS income,
-
-                COALESCE(
-                    SUM(
-                        CASE
-                            WHEN type = 'expense'
-                            THEN amount
-                            ELSE 0
-                        END
-                    ),
-                    0
-                ) AS expense
-
-            FROM transactions
-
-            WHERE user_id = $1
-
-            AND DATE_TRUNC(
-                'month',
-                transaction_date
-            ) =
-                DATE_TRUNC(
-                    'month',
-                    CURRENT_DATE
-                )
-
-            AND (status = 'paid' OR status IS NULL)
-            `,
-            [userId]
-        );
 
 
-    const previousMonthResult =
-        await pool.query(
-            `
-            SELECT
-                COALESCE(
-                    SUM(
-                        CASE
-                            WHEN type = 'income'
-                            THEN amount
-                            ELSE 0
-                        END
-                    ),
-                    0
-                ) AS income,
 
-                COALESCE(
-                    SUM(
-                        CASE
-                            WHEN type = 'expense'
-                            THEN amount
-                            ELSE 0
-                        END
-                    ),
-                    0
-                ) AS expense
 
-            FROM transactions
-
-            WHERE user_id = $1
-
-            AND DATE_TRUNC(
-                'month',
-                transaction_date
-            ) =
-                DATE_TRUNC(
-                    'month',
-                    CURRENT_DATE - INTERVAL '1 month'
-                )
-
-            AND (status = 'paid' OR status IS NULL)
-            `,
-            [userId]
-        );
 
 
     const currentIncome =
@@ -570,40 +669,7 @@ async function getDashboard(userId, period = "month") {
        GASTOS POR CATEGORIA
     ============================================ */
 
-    const categoryResult =
-        await pool.query(
-            `
-            SELECT
-                c.name AS category,
-                COALESCE(
-                    SUM(t.amount),
-                    0
-                ) AS total
 
-            FROM transactions t
-
-            LEFT JOIN categories c
-                ON c.id = t.category_id
-
-            WHERE t.user_id = $1
-
-            AND t.type = 'expense'
-
-            AND t.transaction_date
-                BETWEEN $2 AND $3
-
-            AND (t.status = 'paid' OR t.status IS NULL)
-
-            GROUP BY c.name
-
-            ORDER BY total DESC
-            `,
-            [
-                userId,
-                start,
-                end
-            ]
-        );
 
 
     const expensesByCategory =
@@ -624,61 +690,7 @@ async function getDashboard(userId, period = "month") {
        EVOLUÇÃO MENSAL
     ============================================ */
 
-    const evolutionResult =
-        await pool.query(
-            `
-            SELECT
 
-                TO_CHAR(
-                    transaction_date,
-                    'YYYY-MM'
-                ) AS month,
-
-                COALESCE(
-                    SUM(
-                        CASE
-                            WHEN type = 'income'
-                            THEN amount
-                            ELSE 0
-                        END
-                    ),
-                    0
-                ) AS income,
-
-                COALESCE(
-                    SUM(
-                        CASE
-                            WHEN type = 'expense'
-                            THEN amount
-                            ELSE 0
-                        END
-                    ),
-                    0
-                ) AS expense
-
-            FROM transactions
-
-            WHERE user_id = $1
-
-            AND transaction_date
-                BETWEEN $2 AND $3
-
-            AND (status = 'paid' OR status IS NULL)
-
-            GROUP BY
-                TO_CHAR(
-                    transaction_date,
-                    'YYYY-MM'
-                )
-
-            ORDER BY month
-            `,
-            [
-                userId,
-                start,
-                end
-            ]
-        );
 
 
     const monthlyEvolution =
