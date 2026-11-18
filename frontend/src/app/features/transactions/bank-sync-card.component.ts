@@ -12,7 +12,7 @@ import { BankApi, BankConnection } from '@core/api/bank.api';
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
           <div>
             <h2 class="h6 mb-1">
-              <i class="bi bi-credit-card-2-front me-2" aria-hidden="true"></i>Cartão de crédito (Open Finance)
+              <i class="bi bi-credit-card-2-front me-2" aria-hidden="true"></i>Conta e cartão (Open Finance)
             </h2>
             @if (!loaded()) {
               <p class="text-muted small mb-0">Carregando…</p>
@@ -29,7 +29,7 @@ import { BankApi, BankConnection } from '@core/api/bank.api';
               </p>
             } @else {
               <p class="text-muted small mb-0">
-                Cole o ID da conexão (Item ID) da Pluggy para importar as compras do cartão.
+                Cole o ID da conexão (Item ID) da Pluggy para importar entradas, saídas e compras do cartão.
               </p>
             }
           </div>
@@ -39,7 +39,7 @@ import { BankApi, BankConnection } from '@core/api/bank.api';
               <div class="d-flex gap-2">
                 <button type="button" class="btn btn-primary btn-sm" (click)="sync()" [disabled]="busy()">
                   @if (busy()) { <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span> }
-                  Sincronizar cartão
+                  Sincronizar
                 </button>
                 <button type="button" class="btn btn-outline-secondary btn-sm" (click)="disconnect()" [disabled]="busy()">
                   Desconectar
@@ -123,7 +123,7 @@ export class BankSyncCardComponent implements OnInit {
     this.message.set(null);
     this.bankApi.connect(value).subscribe({
       next: (result) => {
-        this.message.set(`Conectado (${result.cards} cartão(ões)). Clique em Sincronizar para importar.`);
+        this.message.set(`Conectado (${result.cards} cartão(ões), ${result.bankAccounts} conta(s)). Clique em Sincronizar para importar.`);
         this.isError.set(false);
         this.busy.set(false);
         this.refresh();

@@ -1,7 +1,7 @@
 import { Component, signal, computed, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModalModule, NgbModal, NgbAlertModule, NgbTooltipModule, NgbDatepickerModule, NgbInputDatepicker, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule, NgbModal, NgbAlertModule, NgbTooltipModule, NgbDatepickerModule, NgbInputDatepicker, NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { BudgetApi, Budget, CreateBudgetDto, BudgetUsage, BudgetsResponse, BudgetUsageResponse } from '@core/api/budget.api';
 import { CategoryApi, Category } from '@core/api/category.api';
 import { ToastService } from '@shared/services/toast.service';
@@ -17,6 +17,7 @@ import { ToastService } from '@shared/services/toast.service';
     NgbTooltipModule,
     NgbDatepickerModule,
     NgbInputDatepicker,
+    NgbDropdownModule,
     NgbPaginationModule,
   ],
   template: `
@@ -37,6 +38,7 @@ import { ToastService } from '@shared/services/toast.service';
               class="form-control"
               placeholder="MM/AAAA"
               ngbDatepicker
+              container="body"
               #dpMonth="ngbDatepicker"
               [formControl]="monthControl"
               (dateSelect)="onMonthChange($event)"
@@ -174,21 +176,20 @@ import { ToastService } from '@shared/services/toast.service';
                         <small class="text-muted d-block mt-1 text-end">{{ usage.percentage }}%</small>
                       </td>
                       <td>
-                        <div class="dropdown">
+                        <div ngbDropdown container="body" placement="bottom-end" class="d-inline-block">
                           <button
                             type="button"
                             class="btn btn-ghost btn-sm"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
+                            ngbDropdownToggle
                             [attr.aria-label]="'Opções para ' + usage.category_name"
                           >
                             <i class="bi bi-three-dots" aria-hidden="true"></i>
                           </button>
-                          <ul class="dropdown-menu dropdown-menu-end">
+                          <ul ngbDropdownMenu>
                             <li>
                               <button
                                 type="button"
-                                class="dropdown-item"
+                                ngbDropdownItem class="dropdown-item"
                                 (click)="openEditModal(usage)"
                               >
                                 <i class="bi bi-pencil me-2" aria-hidden="true"></i> Editar
@@ -299,6 +300,7 @@ import { ToastService } from '@shared/services/toast.service';
                   formControlName="month"
                   placeholder="MM/AAAA"
                   ngbDatepicker
+                  container="body"
                   #dpModal="ngbDatepicker"
                   [class.is-invalid]="month.invalid && (month.dirty || month.touched)"
                 />

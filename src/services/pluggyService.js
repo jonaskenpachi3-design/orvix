@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Sincronização de transações de cartão de crédito via Pluggy (Open Finance Brasil).
+ * Sincronização de transações de cartão de crédito e conta bancária via Pluggy (Open Finance Brasil).
  *
  * Variáveis de ambiente (somente no servidor, nunca no Git):
  *   PLUGGY_CLIENT_ID, PLUGGY_CLIENT_SECRET
@@ -14,9 +14,12 @@ const DEFAULT_BASE_URL = "https://api.pluggy.ai";
 const API_KEY_TTL_MS = 100 * 60 * 1000;     // a apiKey da Pluggy dura 2h; renova antes
 const REQUEST_TIMEOUT_MS = 20000;
 const MAX_PAGES = 20;                       // teto de páginas por conta (500 itens/página)
-const FIRST_SYNC_DAYS = 120;                // janela da primeira sincronização
-const OVERLAP_DAYS = 14;                    // reler os últimos dias para pegar atualizações
+const SYNC_WINDOW_DAYS = 120;               // janela fixa; o upsert é idempotente, então reler é seguro
 const CARD_CATEGORY_NAME = "Cartão de crédito";
+const BANK_EXPENSE_CATEGORY_NAME = "Conta bancária";
+const BANK_INCOME_CATEGORY_NAME = "Recebimentos";
+// Pagamento da fatura sai da conta, mas as compras já foram importadas do cartão: ignorar evita contar em dobro
+const CARD_BILL_PAYMENT_RE = /pag(amento|to|\.)?\s*(de\s*|da\s*)?fatura|fatura\s*(do\s*|de\s*)?cart[aã]o|cart[aã]o\s*de\s*cr[eé]dito.*fatura/i;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 class PluggyError extends Error {
@@ -132,10 +135,10 @@ function createClient(deps = {}) {
     }
 
     return {
-        // Contas de cartão de crédito de uma conexão (item)
-        async listCreditAccounts(itemId) {
+        // Contas de uma conexão (item): cartões de crédito (CREDIT) e contas correntes/poupança (BANK)
+        async listAccounts(itemId) {
             const data = await get("/accounts", { itemId });
-            return (data?.results || []).filter((account) => account.type === "CREDIT");
+            return (data?.results || []).filter((account) => account.type === "CREDIT" || account.type === "BANK");
         },
 
         // Transações de uma conta, paginadas por cursor (campo "next")
@@ -196,8 +199,45 @@ function mapCardTransaction(tx, today = localToday()) {
         description: (base.slice(0, 255 - suffix.length) + suffix),
         amount: Math.round(amount * 100) / 100,
         date,
+        type: "expense",
+        categoryName: CARD_CATEGORY_NAME,
         installmentNumber: hasInstallments ? number : null,
         // Compra já feita = gasto realizado; data futura (parcelas) = agendada
+        status: date <= today ? "paid" : "scheduled"
+    };
+}
+
+// Conta corrente/poupança: o sentido vem de "type" (CREDIT = entrou dinheiro, DEBIT = saiu)
+function mapBankTransaction(tx, today = localToday()) {
+    const amount = Math.abs(Number(tx?.amount));
+    const date = typeof tx?.date === "string" ? tx.date.slice(0, 10) : "";
+    const kind = String(tx?.type || "").toUpperCase();
+
+    if (!tx?.id || !Number.isFinite(amount) || amount === 0 || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        return null;
+    }
+    if (kind !== "CREDIT" && kind !== "DEBIT") {
+        return null;
+    }
+
+    const base = String(tx.description || tx.descriptionRaw || "Movimentação bancária").trim() || "Movimentação bancária";
+    const isCardPayment =
+        CARD_BILL_PAYMENT_RE.test(base) || /credit card payment/i.test(String(tx.category || ""));
+
+    if (kind === "DEBIT" && isCardPayment) {
+        return null;
+    }
+
+    const income = kind === "CREDIT";
+
+    return {
+        externalId: String(tx.id).slice(0, 120),
+        description: base.slice(0, 255),
+        amount: Math.round(amount * 100) / 100,
+        date,
+        type: income ? "income" : "expense",
+        categoryName: income ? BANK_INCOME_CATEGORY_NAME : BANK_EXPENSE_CATEGORY_NAME,
+        installmentNumber: null,
         status: date <= today ? "paid" : "scheduled"
     };
 }
@@ -206,13 +246,13 @@ function mapCardTransaction(tx, today = localToday()) {
 // PERSISTÊNCIA
 // ========================================
 
-async function ensureCardCategory(db, userId) {
+async function ensureCategory(db, userId, name, type) {
     const result = await db.query(
         `INSERT INTO categories (user_id, name, type)
-         VALUES ($1, $2, 'expense')
+         VALUES ($1, $2, $3)
          ON CONFLICT (user_id, name, type) DO UPDATE SET name = EXCLUDED.name
          RETURNING id`,
-        [userId, CARD_CATEGORY_NAME]
+        [userId, name, type]
     );
     return result.rows[0].id;
 }
@@ -223,16 +263,17 @@ async function upsertTransaction(db, userId, categoryId, t) {
         `INSERT INTO transactions
             (user_id, category_id, description, amount, type, transaction_date,
              installment_number, status, source, external_id)
-         VALUES ($1, $2, $3, $4, 'expense', $5, $6, $7, 'pluggy', $8)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pluggy', $9)
          ON CONFLICT (user_id, source, external_id) DO UPDATE SET
             description = EXCLUDED.description,
             amount = EXCLUDED.amount,
+            type = EXCLUDED.type,
             transaction_date = EXCLUDED.transaction_date,
             installment_number = EXCLUDED.installment_number,
             status = EXCLUDED.status,
             updated_at = CURRENT_TIMESTAMP
          RETURNING (xmax = 0) AS inserted`,
-        [userId, categoryId, t.description, t.amount, t.date, t.installmentNumber, t.status, t.externalId]
+        [userId, categoryId, t.description, t.amount, t.type, t.date, t.installmentNumber, t.status, t.externalId]
     );
     return result.rows[0].inserted === true;
 }
@@ -260,10 +301,10 @@ async function addConnection(userId, itemId, deps = {}) {
 
     const id = itemId.trim();
 
-    // Confirma que a conexão existe e tem cartão antes de salvar
-    const accounts = await client.listCreditAccounts(id);
+    // Confirma que a conexão existe e tem conta ou cartão antes de salvar
+    const accounts = await client.listAccounts(id);
     if (accounts.length === 0) {
-        throw new PluggyError("Nenhum cartão de crédito encontrado nessa conexão.", { status: 422, code: "no_cards" });
+        throw new PluggyError("Nenhuma conta ou cartão encontrado nessa conexão.", { status: 422, code: "no_accounts" });
     }
 
     const result = await db.query(
@@ -274,7 +315,11 @@ async function addConnection(userId, itemId, deps = {}) {
         [userId, id]
     );
 
-    return { ...result.rows[0], cards: accounts.length };
+    return {
+        ...result.rows[0],
+        cards: accounts.filter((a) => a.type === "CREDIT").length,
+        bankAccounts: accounts.filter((a) => a.type === "BANK").length
+    };
 }
 
 async function removeConnection(userId, connectionId, db = pool) {
@@ -303,26 +348,35 @@ async function syncUser(userId, deps = {}) {
         throw new PluggyError("Nenhum banco conectado.", { status: 409, code: "no_connection" });
     }
 
-    const categoryId = await ensureCardCategory(db, userId);
-    const summary = { imported: 0, updated: 0, skipped: 0, cards: 0 };
+    const categoryIds = new Map();
+    const categoryFor = async (name, type) => {
+        const key = `${type}:${name}`;
+        if (!categoryIds.has(key)) {
+            categoryIds.set(key, await ensureCategory(db, userId, name, type));
+        }
+        return categoryIds.get(key);
+    };
+
+    const summary = { imported: 0, updated: 0, skipped: 0, cards: 0, bankAccounts: 0 };
+    const dateFrom = addDays(today, -SYNC_WINDOW_DAYS);
 
     for (const connection of connections.rows) {
-        const dateFrom = connection.last_synced_at
-            ? addDays(new Date(connection.last_synced_at).toISOString().slice(0, 10), -OVERLAP_DAYS)
-            : addDays(today, -FIRST_SYNC_DAYS);
-
-        const accounts = await client.listCreditAccounts(connection.item_id);
-        summary.cards += accounts.length;
+        const accounts = await client.listAccounts(connection.item_id);
 
         for (const account of accounts) {
+            const isCard = account.type === "CREDIT";
+            if (isCard) summary.cards++;
+            else summary.bankAccounts++;
+
             const transactions = await client.listTransactions(account.id, dateFrom);
 
             for (const raw of transactions) {
-                const mapped = mapCardTransaction(raw, today);
+                const mapped = isCard ? mapCardTransaction(raw, today) : mapBankTransaction(raw, today);
                 if (!mapped) {
                     summary.skipped++;
                     continue;
                 }
+                const categoryId = await categoryFor(mapped.categoryName, mapped.type);
                 const inserted = await upsertTransaction(db, userId, categoryId, mapped);
                 if (inserted) summary.imported++;
                 else summary.updated++;
@@ -341,6 +395,7 @@ module.exports = {
     isValidItemId,
     createClient,
     mapCardTransaction,
+    mapBankTransaction,
     listConnections,
     addConnection,
     removeConnection,

@@ -19,6 +19,7 @@ export interface BankSyncResult {
   updated: number;
   skipped: number;
   cards: number;
+  bankAccounts: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -27,8 +28,8 @@ export class BankApi extends ApiService {
     return this.get<BankStatus>('/bank/status');
   }
 
-  connect(itemId: string): Observable<BankConnection & { cards: number }> {
-    return this.post<BankConnection & { cards: number }>('/bank/connections', { itemId });
+  connect(itemId: string): Observable<BankConnection & { cards: number; bankAccounts: number }> {
+    return this.post<BankConnection & { cards: number; bankAccounts: number }>('/bank/connections', { itemId });
   }
 
   sync(): Observable<BankSyncResult> {

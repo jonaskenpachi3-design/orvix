@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, effect } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, effect, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbAlertModule, NgbTooltipModule, NgbDatepickerModule, NgbInputDatepicker, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
@@ -62,6 +62,7 @@ Chart.register(...registerables);
                   formControlName="startDate"
                   placeholder="DD/MM/AAAA"
                   ngbDatepicker
+                  container="body"
                   #dpStart="ngbDatepicker"
                 />
                 <button class="btn btn-outline" type="button" (click)="dpStart.toggle()" aria-label="Abrir calendário">
@@ -79,6 +80,7 @@ Chart.register(...registerables);
                   formControlName="endDate"
                   placeholder="DD/MM/AAAA"
                   ngbDatepicker
+                  container="body"
                   #dpEnd="ngbDatepicker"
                 />
                 <button class="btn btn-outline" type="button" (click)="dpEnd.toggle()" aria-label="Abrir calendário">
@@ -370,6 +372,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly reportApi = inject(ReportApi);
   private readonly toastService = inject(ToastService);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly themeService = inject(ThemeService);
 
   // Signals
@@ -493,6 +496,9 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.reportData.set(response);
         this.assignCategoryColors(response.category_breakdown);
         this.loadingReport.set(false);
+        // Os <canvas> só entram na tela depois de sair do estado "carregando":
+        // renderiza o template antes de desenhar os gráficos
+        this.cdr.detectChanges();
         this.createCharts();
       },
       error: (err) => {

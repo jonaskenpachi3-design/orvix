@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit, ViewChild, ElementRef, OnDestroy, effect } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ViewChild, ElementRef, OnDestroy, effect, ChangeDetectorRef, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NgbModule, NgbAlertModule, NgbTooltipModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
@@ -536,13 +536,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     '#E5384F', '#FF6B7D', '#6C5CE7', '#A29BFE', '#00B894', '#55EFC4',
   ];
 
+  private readonly cdr = inject(ChangeDetectorRef);
   private categoryColorMap = new Map<string, string>();
 
   constructor() {
     // effect() precisa rodar em contexto de injeção (construtor), não em ngOnInit
+    // Recria o gráfico ao trocar tema (cores) ou tipo (linha/barras)
     effect(() => {
       this.themeService.currentTheme();
-      this.updateChart();
+      this.evolutionChartType();
+      untracked(() => this.createEvolutionChart());
     });
   }
 
@@ -568,6 +571,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.dashboardData.set(response);
         this.assignCategoryColors(response.category_breakdown);
         this.loadingDashboard.set(false);
+        // O <canvas> só entra na tela depois de sair do estado "carregando":
+        // renderiza o template antes de desenhar o gráfico (antes ele rodava cedo demais e nunca aparecia)
+        this.cdr.detectChanges();
         this.createEvolutionChart();
       },
       error: (err) => {
@@ -667,12 +673,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         },
       },
     });
-  }
-
-  private updateChart(): void {
-    if (this.evolutionChartInstance) {
-      this.evolutionChartInstance.update();
-    }
   }
 
   private getChartColors(): { text: string; grid: string } {

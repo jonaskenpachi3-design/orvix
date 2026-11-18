@@ -513,7 +513,7 @@ O Orvix importa as compras do cartão pela [Pluggy](https://docs.pluggy.ai), agr
 2. Defina `PLUGGY_CLIENT_ID` e `PLUGGY_CLIENT_SECRET` no servidor e rode `npm run migrate`.
 3. Na tela **Transações**, cole o *Item ID* da conexão e clique em **Conectar**; depois, **Sincronizar cartão**.
 
-Regras: só valores positivos viram despesa (pagamentos de fatura e estornos são ignorados para não contar em dobro); compras com data futura (parcelas) entram como `scheduled`; a categoria inicial é "Cartão de crédito" e a recategorização manual é preservada nas próximas sincronizações.
+Regras: no **cartão**, só valores positivos viram despesa (categoria "Cartão de crédito"); na **conta bancária**, entradas viram receita (categoria "Recebimentos") e saídas viram despesa ("Conta bancária"). Pagamentos de fatura (que saem da conta) são ignorados para não contar em dobro com as compras do cartão. Datas futuras entram como `scheduled`, a janela é de 120 dias a cada sincronização, e a recategorização manual é preservada.
 
 | Método | Rota | Descrição |
 | --- | --- | --- |

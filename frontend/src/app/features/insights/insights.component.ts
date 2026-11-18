@@ -59,6 +59,7 @@ interface ChatMessage {
                   formControlName="startDate"
                   placeholder="DD/MM/AAAA"
                   ngbDatepicker
+                  container="body"
                   #dpStart="ngbDatepicker"
                 />
                 <button class="btn btn-outline" type="button" (click)="dpStart.toggle()" aria-label="Abrir calendário">
@@ -76,6 +77,7 @@ interface ChatMessage {
                   formControlName="endDate"
                   placeholder="DD/MM/AAAA"
                   ngbDatepicker
+                  container="body"
                   #dpEnd="ngbDatepicker"
                 />
                 <button class="btn btn-outline" type="button" (click)="dpEnd.toggle()" aria-label="Abrir calendário">

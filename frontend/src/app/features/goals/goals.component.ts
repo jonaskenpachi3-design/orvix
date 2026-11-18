@@ -1,7 +1,7 @@
 import { Component, signal, computed, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModalModule, NgbModal, NgbAlertModule, NgbTooltipModule, NgbDatepickerModule, NgbInputDatepicker } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule, NgbModal, NgbAlertModule, NgbTooltipModule, NgbDatepickerModule, NgbInputDatepicker, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { GoalApi, Goal, CreateGoalDto, GoalsResponse, GoalContribution, AddContributionDto, AddRecurringContributionsDto } from '@core/api/goal.api';
 import { ToastService } from '@shared/services/toast.service';
 
@@ -16,6 +16,7 @@ import { ToastService } from '@shared/services/toast.service';
     NgbTooltipModule,
     NgbDatepickerModule,
     NgbInputDatepicker,
+    NgbDropdownModule,
   ],
   template: `
     <div class="goals-page">
@@ -79,21 +80,20 @@ import { ToastService } from '@shared/services/toast.service';
                         </small>
                       }
                     </div>
-                    <div class="dropdown ms-2">
+                    <div ngbDropdown container="body" placement="bottom-end" class="d-inline-block ms-2">
                       <button
                         type="button"
                         class="btn btn-ghost btn-sm"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
+                        ngbDropdownToggle
                         [attr.aria-label]="'Opções para ' + goal.name"
                       >
                         <i class="bi bi-three-dots" aria-hidden="true"></i>
                       </button>
-                      <ul class="dropdown-menu dropdown-menu-end">
+                      <ul ngbDropdownMenu>
                         <li>
                           <button
                             type="button"
-                            class="dropdown-item"
+                            ngbDropdownItem class="dropdown-item"
                             (click)="openContributeModal(goal)"
                           >
                             <i class="bi bi-cash-stack me-2" aria-hidden="true"></i> Contribuir (único)
@@ -102,7 +102,7 @@ import { ToastService } from '@shared/services/toast.service';
                         <li>
                           <button
                             type="button"
-                            class="dropdown-item"
+                            ngbDropdownItem class="dropdown-item"
                             (click)="openRecurringModal(goal)"
                           >
                             <i class="bi bi-calendar2-plus me-2" aria-hidden="true"></i> Parcelar/Recorrente
@@ -111,7 +111,7 @@ import { ToastService } from '@shared/services/toast.service';
                         <li>
                           <button
                             type="button"
-                            class="dropdown-item"
+                            ngbDropdownItem class="dropdown-item"
                             (click)="openHistoryModal(goal)"
                           >
                             <i class="bi bi-clock-history me-2" aria-hidden="true"></i> Ver histórico
@@ -120,7 +120,7 @@ import { ToastService } from '@shared/services/toast.service';
                         <li>
                           <button
                             type="button"
-                            class="dropdown-item"
+                            ngbDropdownItem class="dropdown-item"
                             (click)="openEditModal(goal)"
                           >
                             <i class="bi bi-pencil me-2" aria-hidden="true"></i> Editar
@@ -267,6 +267,7 @@ import { ToastService } from '@shared/services/toast.service';
                 formControlName="deadline"
                 placeholder="DD/MM/AAAA"
                 ngbDatepicker
+                container="body"
                 #dp="ngbDatepicker"
                 [minDate]="today"
               />
@@ -346,6 +347,7 @@ import { ToastService } from '@shared/services/toast.service';
                 formControlName="contributionDate"
                 placeholder="DD/MM/AAAA"
                 ngbDatepicker
+                container="body"
                 #cdp="ngbDatepicker"
               />
               <button
@@ -439,6 +441,7 @@ import { ToastService } from '@shared/services/toast.service';
                   formControlName="firstDate"
                   placeholder="DD/MM/AAAA"
                   ngbDatepicker
+                  container="body"
                   #fdp="ngbDatepicker"
                   [class.is-invalid]="firstDate.invalid && (firstDate.dirty || firstDate.touched)"
                 />
@@ -657,6 +660,7 @@ import { ToastService } from '@shared/services/toast.service';
                 formControlName="contributionDate"
                 placeholder="DD/MM/AAAA"
                 ngbDatepicker
+                container="body"
                 #edp="ngbDatepicker"
               />
               <button
