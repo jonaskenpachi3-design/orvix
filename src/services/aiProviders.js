@@ -200,11 +200,15 @@ function createOpenAICompatibleProvider(config, deps = {}) {
             const body = {
                 model: config.model,
                 messages: toOpenAIMessages(system, history),
-                tools: toOpenAITools(tools),
-                tool_choice: "auto",
                 temperature: 0.2,
                 max_tokens: config.maxTokens
             };
+
+            // Sem ferramentas (ex.: categorização), não envia "tools" vazio
+            if (tools?.length) {
+                body.tools = toOpenAITools(tools);
+                body.tool_choice = "auto";
+            }
 
             // gpt-oss é um modelo de raciocínio: esforço baixo = respostas mais rápidas e menos tokens
             if (config.name === "groq" && config.model.startsWith("openai/gpt-oss")) {
@@ -332,7 +336,7 @@ function createAnthropicProvider(config, deps = {}) {
                     model: config.model,
                     max_tokens: config.maxTokens,
                     system,
-                    tools,
+                    ...(tools?.length ? { tools } : {}),
                     messages: toAnthropicMessages(history)
                 });
             } catch (error) {

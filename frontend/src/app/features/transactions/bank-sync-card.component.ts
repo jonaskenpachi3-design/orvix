@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BankApi, BankConnection } from '@core/api/bank.api';
+import { BankApi, BankConnection, CategorizationResult } from '@core/api/bank.api';
 
 @Component({
   selector: 'app-bank-sync-card',
@@ -40,6 +40,9 @@ import { BankApi, BankConnection } from '@core/api/bank.api';
                 <button type="button" class="btn btn-primary btn-sm" (click)="sync()" [disabled]="busy()">
                   @if (busy()) { <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span> }
                   Sincronizar
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="categorize()" [disabled]="busy()">
+                  <i class="bi bi-stars me-1" aria-hidden="true"></i>Categorizar com IA
                 </button>
                 <button type="button" class="btn btn-outline-secondary btn-sm" (click)="disconnect()" [disabled]="busy()">
                   Desconectar
@@ -137,7 +140,7 @@ export class BankSyncCardComponent implements OnInit {
     this.message.set(null);
     this.bankApi.sync().subscribe({
       next: (r) => {
-        this.message.set(`Sincronizado: ${r.imported} nova(s), ${r.updated} atualizada(s).`);
+        this.message.set(`Sincronizado: ${r.imported} nova(s), ${r.updated} atualizada(s).${this.describe(r.categorization)}`);
         this.isError.set(false);
         this.busy.set(false);
         this.refresh();
@@ -145,6 +148,46 @@ export class BankSyncCardComponent implements OnInit {
       },
       error: (err) => this.fail(err),
     });
+  }
+
+  categorize(): void {
+    this.busy.set(true);
+    this.message.set(null);
+    this.bankApi.categorize().subscribe({
+      next: (result) => {
+        const text = this.describe(result).trim();
+        this.message.set(text || 'Nada para categorizar: tudo já está categorizado.');
+        this.isError.set(false);
+        this.busy.set(false);
+        this.synced.emit();
+      },
+      error: (err) => this.fail(err),
+    });
+  }
+
+  /** Texto curto com o resultado da categorização automática */
+  private describe(result: CategorizationResult | null): string {
+    if (!result || result.considered === 0) return '';
+
+    const done = result.byRules + result.byAI;
+    let text = ` Categorizadas: ${done}.`;
+
+    if (result.createdCategories.length > 0) {
+      text += ` Categorias criadas: ${result.createdCategories.join(', ')}.`;
+    }
+
+    if (result.pending > 0) {
+      const reasons: Record<string, string> = {
+        not_configured: 'a IA não está configurada no servidor',
+        rate_limited: 'o limite da IA foi atingido; tente de novo em instantes',
+        error: 'a IA está indisponível agora',
+        ok: 'continue em "Categorizar com IA"',
+        not_needed: '',
+      };
+      text += ` ${result.pending} pendente(s): ${reasons[result.aiStatus] ?? ''}.`;
+    }
+
+    return text;
   }
 
   disconnect(): void {
